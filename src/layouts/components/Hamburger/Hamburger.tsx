@@ -4,11 +4,15 @@ import Link from 'next/link'
 import { useState } from 'react'
 import logo from '../../../../public/images/logo.png'
 
-export default function Hamburger() {
+interface Props {
+  classNameWrapper: string
+}
+
+export default function Hamburger({ classNameWrapper }: Props) {
   const [show, setShow] = useState(false)
 
   return (
-    <div>
+    <div className={classNameWrapper}>
       <span onClick={() => setShow((prev) => !prev)}>
         <svg
           xmlns='http://www.w3.org/2000/svg'

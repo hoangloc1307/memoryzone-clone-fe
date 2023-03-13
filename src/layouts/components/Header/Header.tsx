@@ -18,23 +18,114 @@ export default function Header() {
           fill
         />
       </div>
-      <div className='divide-y divide-white/20 bg-primary text-xs text-white'>
-        <div className='c-container flex flex-col items-center justify-between gap-2 py-2 md:flex-row'>
-          <div className='flex gap-2'>
-            <a
-              href='#'
-              className='border-r pr-2'
-            >
-              Tự build PC
-            </a>
-            <p>Mở cửa: 8h đến 21h từ Thứ 2 đến Chủ Nhật</p>
+      <div className='bg-primary text-xs text-white'>
+        <div className='c-container'>
+          <div className='flex flex-col items-center justify-between gap-2 py-2 md:flex-row'>
+            <div className='flex items-center gap-2'>
+              <a
+                href='#'
+                className='border-r pr-2'
+              >
+                Tự build PC
+              </a>
+              <p>Mở cửa: 8h đến 21h từ Thứ 2 đến Chủ Nhật</p>
+            </div>
+            <div className='flex gap-0.5 sm:gap-2'>
+              <a
+                href='#'
+                className='group flex items-center gap-0.5 p-1 sm:gap-2 sm:p-2'
+              >
+                <span>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
+                    fill='currentColor'
+                    className='h-4 w-4'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                </span>
+                <span className='group-hover:text-second'>Tài khoản</span>
+              </a>
+              <a
+                href='#'
+                className='group flex items-center gap-0.5 p-1 sm:gap-1 sm:p-2'
+              >
+                <span>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='red'
+                    viewBox='0 0 24 24'
+                    strokeWidth={1.5}
+                    stroke='orange'
+                    className='h-4 w-4 text-red-500'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z'
+                    />
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      d='M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z'
+                    />
+                  </svg>
+                </span>
+                <span className='group-hover:text-second'>Khuyến mãi hot</span>
+              </a>
+              <a
+                href='#'
+                className='group flex items-center gap-0.5 p-1 sm:gap-1 sm:p-2'
+              >
+                <span>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
+                    fill='currentColor'
+                    className='h-4 w-4'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M5.337 21.718a6.707 6.707 0 01-.533-.074.75.75 0 01-.44-1.223 3.73 3.73 0 00.814-1.686c.023-.115-.022-.317-.254-.543C3.274 16.587 2.25 14.41 2.25 12c0-5.03 4.428-9 9.75-9s9.75 3.97 9.75 9c0 5.03-4.428 9-9.75 9-.833 0-1.643-.097-2.417-.279a6.721 6.721 0 01-4.246.997z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                </span>
+                <span className='group-hover:text-second'>Dịch vụ doanh nghiệp</span>
+              </a>
+            </div>
           </div>
-          <div className='flex gap-1'>
-            <a
-              href='#'
-              className='group flex items-center gap-1 p-2'
-            >
-              <span>
+          <div className='relative flex flex-wrap items-center justify-between py-5'>
+            <Hamburger classNameWrapper='absolute top-[23px] left-0' />
+            {/* Logo */}
+            <div className='w-full'>
+              <a
+                href='#'
+                className='mx-auto block h-[32px] w-[160px]'
+              >
+                <Image
+                  src={logo}
+                  priority
+                  alt='Memoryzone'
+                />
+              </a>
+            </div>
+            {/* Search form */}
+            <form className='relative my-5 flex w-full rounded-sm bg-white p-0.5'>
+              <input
+                type='text'
+                className='flex-1 rounded-sm px-2 text-black outline-none'
+                placeholder='Sản phẩm bạn muốn tìm...'
+              />
+              <button
+                className='shrink-0 rounded-sm bg-second px-6 py-2'
+                type='submit'
+              >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -46,72 +137,56 @@ export default function Header() {
                   <path
                     strokeLinecap='round'
                     strokeLinejoin='round'
-                    d='M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z'
+                    d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
                   />
                 </svg>
-              </span>
-              <span className='group-hover:text-second'>Tài khoản</span>
-            </a>
-            <a
-              href='#'
-              className='group flex items-center gap-1 p-2'
-            >
-              <span>
+              </button>
+            </form>
+            <div className='flex w-3/5 items-center gap-2'>
+              <span className='flex h-10 w-10 items-center justify-center rounded-full border-2 border-white p-1'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
-                  fill='red'
                   viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='orange'
-                  className='h-4 w-4 text-red-500'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z'
-                  />
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z'
-                  />
-                </svg>
-              </span>
-              <span className='group-hover:text-second'>Khuyến mãi hot</span>
-            </a>
-            <a
-              href='#'
-              className='group flex items-center gap-1 p-2'
-            >
-              <span>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
+                  fill='currentColor'
                   className='h-4 w-4'
                 >
                   <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z'
+                    fillRule='evenodd'
+                    d='M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z'
+                    clipRule='evenodd'
                   />
                 </svg>
               </span>
-              <span className='group-hover:text-second'>Dịch vụ doanh nghiệp</span>
-            </a>
+              <p className='flex flex-col'>
+                <span className='font-bold'>(028) 7301 3878 (10 line)</span>
+                <span className='text-[10px]'>
+                  DĐ: <span className='font-bold text-second'>0909 305 350</span>
+                </span>
+              </p>
+            </div>
+            <div className='flex w-2/5 items-center gap-2'>
+              <span className='flex h-10 w-10 items-center justify-center rounded-full border-2 border-white p-1'>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 24 24'
+                  fill='currentColor'
+                  className='h-4 w-4'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+              </span>
+              <p className='flex flex-col'>
+                <span className='font-bold'>
+                  (<span>0</span>) sản phẩm
+                </span>
+                <span className='text-[10px] text-[#ffdada]'>Giỏ hàng</span>
+              </p>
+            </div>
           </div>
-        </div>
-        <div>
-          <Hamburger />
-          <a href='#'>
-            <Image
-              src={logo}
-              priority
-              alt='Memoryzone'
-            />
-          </a>
         </div>
       </div>
     </header>
