@@ -2,10 +2,11 @@ import classnames from 'classnames'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import { navigationData } from '~/assets/data'
 import logo from '../../../../public/images/logo.png'
 
 interface Props {
-  classNameWrapper: string
+  classNameWrapper?: string
 }
 
 export default function Hamburger({ classNameWrapper }: Props) {
@@ -13,6 +14,7 @@ export default function Hamburger({ classNameWrapper }: Props) {
 
   return (
     <div className={classNameWrapper}>
+      {/* Icon */}
       <span onClick={() => setShow((prev) => !prev)}>
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -30,9 +32,10 @@ export default function Hamburger({ classNameWrapper }: Props) {
         </svg>
       </span>
 
+      {/* Popover */}
       <div
         className={classnames(
-          'fixed top-0 left-0 z-20 h-full w-[300px] bg-primary transition-transform duration-300 ease-in-out',
+          'fixed top-0 left-0 z-20 h-full w-[300px] bg-primary shadow-2xl transition-transform duration-300 ease-in-out',
           {
             'translate-x-[-300px]': !show,
           }
@@ -55,57 +58,19 @@ export default function Hamburger({ classNameWrapper }: Props) {
           </Link>
         </div>
         <ul className='divide-y font-normal text-white'>
-          <li>
-            <a
-              href='#'
-              className='block py-2 pl-8 pr-2 uppercase'
-            >
-              Thanh toán
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              className='block py-2 pl-8 pr-2 uppercase'
-            >
-              Trả góp
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              className='block py-2 pl-8 pr-2 uppercase'
-            >
-              Liên hệ
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              className='block py-2 pl-8 pr-2 uppercase'
-            >
-              Chăm sóc khách hàng
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              className='block py-2 pl-8 pr-2 uppercase'
-            >
-              Thư viện
-            </a>
-          </li>
-          <li>
-            <a
-              href='#'
-              className='block py-2 pl-8 pr-2 uppercase'
-            >
-              Tuyển dụng
-            </a>
-          </li>
+          {navigationData.map((item, index) => (
+            <li key={index}>
+              <a
+                href='#'
+                className='block py-2 pl-8 pr-2 uppercase'
+              >
+                {item}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
-
+      {/* Overlay */}
       {show && (
         <div
           className='fixed inset-0 z-10 bg-black/30'

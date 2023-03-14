@@ -4,6 +4,6 @@
 
 @layer components {
   .c-container {
-    @apply mx-auto max-w-7xl px-2 md:px-4 lg:px-8;
+    @apply mx-auto max-w-7xl px-3 md:px-4 lg:px-8;
   }
 }
