@@ -9,7 +9,6 @@ import Hamburger from '../Hamburger'
 
 export default function Header() {
   const width = useViewport()
-  console.log(categoryData)
 
   return (
     <header>
@@ -21,7 +20,7 @@ export default function Header() {
           fill
         />
       </div>
-      <div className='divide-y divide-white/20 bg-primary pt-3 text-xs text-white'>
+      <div className='divide-y divide-white/20 bg-primary py-3 text-xs text-white lg:pb-0 lg:text-sm'>
         <div className='c-container'>
           <div className='mb-3 flex flex-col items-center justify-between gap-2 md:flex-row'>
             <div className='flex items-center gap-2'>
@@ -105,10 +104,10 @@ export default function Header() {
           </div>
         </div>
         <div className='c-container'>
-          <div className='grid auto-cols-auto items-center gap-y-5 py-3 md:grid-cols-4 lg:grid-cols-9 lg:grid-rows-1 lg:gap-3'>
-            <Hamburger classNameWrapper='lg:hidden' />
+          <div className='grid grid-cols-12 items-center gap-y-5 py-3 lg:gap-5'>
+            <Hamburger classNameWrapper='col-span-1 lg:hidden md:col-span-2 ' />
             {/* Logo */}
-            <div className='col-span-2 lg:col-span-2 lg:justify-self-start'>
+            <div className='col-span-10 md:col-span-8 lg:col-span-3 lg:justify-self-start'>
               <a
                 href='#'
                 className='mx-auto block h-[32px] w-[160px]'
@@ -121,7 +120,7 @@ export default function Header() {
               </a>
             </div>
             {/* Search form */}
-            <form className='relative col-span-4 flex rounded-sm bg-white p-0.5 lg:col-span-3'>
+            <form className='relative col-span-12 flex rounded-sm bg-white p-0.5 lg:col-span-4'>
               <input
                 type='text'
                 className='flex-1 rounded-sm px-2 text-black outline-none'
@@ -147,7 +146,8 @@ export default function Header() {
                 </svg>
               </button>
             </form>
-            <div className='col-span-2 flex items-center gap-2 md:hidden lg:col-span-2 lg:flex lg:lg:justify-self-end'>
+            {/* Hotline */}
+            <div className='col-span-7 flex items-center gap-2 md:hidden lg:col-span-3 lg:flex lg:justify-self-end'>
               <span className='flex h-10 w-10 items-center justify-center rounded-full border-2 border-white p-1'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -169,7 +169,8 @@ export default function Header() {
                 </span>
               </p>
             </div>
-            <div className='col-span-2 flex items-center gap-2 md:col-span-1 md:col-start-4 md:row-start-1 lg:col-span-2 lg:row-auto lg:lg:justify-self-end'>
+            {/* Cart */}
+            <div className='col-span-5 flex items-center gap-2 justify-self-end md:col-span-2 md:col-start-11 md:row-start-1 lg:col-span-2 lg:row-start-auto'>
               <span className='flex h-10 w-10 items-center justify-center rounded-full border-2 border-white p-1'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -192,26 +193,56 @@ export default function Header() {
               </p>
             </div>
           </div>
+
           {/* Category */}
-          <div className='flex'>
-            <Popover placement='bottom-start'>
-              <div className='flex flex-grow items-center gap-3 bg-second py-2 px-5 font-semibold uppercase lg:flex-grow-0'>
-                <span>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='h-6 w-6'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </span>
-                <span>Danh mục sản phẩm</span>
-              </div>
+          <div className='relative flex'>
+            <Popover
+              placement='bottom-start'
+              referenceClassName='flex flex-grow items-center gap-3 bg-second py-2 px-5 font-semibold uppercase lg:flex-grow-0'
+              floatingClassName='shadow-2xl py-2 px-5 shadow-black z-10 bg-white w-full text-black h-max'
+              floatingElement={
+                <ul className='divide-y divide-dashed text-sm text-link'>
+                  {categoryData.map((item, index) => (
+                    <li key={index}>
+                      <a href={item.url}>{item.title}</a>
+                      {item.children && (
+                        <ul>
+                          {item.children.map((item2, index) => (
+                            <li key={index}>
+                              <a href={item2.url}>{item2.title}</a>
+                              {item.children && (
+                                <ul>
+                                  {item2.children.map((item3, index) => (
+                                    <li key={index}>
+                                      <a href={item3.url}>{item3.title}</a>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              }
+            >
+              <span>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  viewBox='0 0 24 24'
+                  fill='currentColor'
+                  className='h-6 w-6'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+              </span>
+              <span>Danh mục sản phẩm</span>
             </Popover>
 
             <ul className='hidden flex-grow items-stretch justify-evenly bg-dark lg:flex'>

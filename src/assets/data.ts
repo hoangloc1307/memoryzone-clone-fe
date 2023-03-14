@@ -9,7 +9,7 @@ export const categoryData = [
       {
         title: 'Thương hiệu chuột',
         url: '#',
-        chilrend: [
+        children: [
           {
             title: 'Corsair',
             url: '#',
@@ -23,7 +23,7 @@ export const categoryData = [
       {
         title: 'Mức giá chuột',
         url: '#',
-        chilrend: [
+        children: [
           {
             title: 'Dưới 500 ngàn',
             url: '#',
@@ -44,7 +44,7 @@ export const categoryData = [
       {
         title: 'Thương hiệu laptop',
         url: '#',
-        chilrend: [
+        children: [
           {
             title: 'MSI',
             url: '#',
@@ -58,7 +58,7 @@ export const categoryData = [
       {
         title: 'Mức giá laptop',
         url: '#',
-        chilrend: [
+        children: [
           {
             title: '5 - 10 triệu',
             url: '#',
