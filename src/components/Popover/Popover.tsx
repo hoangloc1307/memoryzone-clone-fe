@@ -1,4 +1,4 @@
-import { useFloating, useHover, useInteractions, safePolygon, shift, size, FloatingPortal } from '@floating-ui/react'
+import { useFloating, useHover, useInteractions, safePolygon } from '@floating-ui/react'
 import type { Placement } from '@floating-ui/react'
 import { ElementType, ReactNode, useState } from 'react'
 
@@ -19,24 +19,11 @@ export default function Popover({
   floatingElement,
   floatingClassName = 'w-full bg-dark',
 }: Props) {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const { x, y, refs, context, strategy } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
     placement,
-    middleware: [
-      shift(),
-      size({
-        apply({ availableWidth, availableHeight, elements }) {
-          console.log(availableWidth, availableHeight, elements)
-          // Do things with the data, e.g.
-          // Object.assign(elements.floating.style, {
-          //   maxWidth: `${availableWidth}px`,
-          //   maxHeight: `${availableHeight}px`,
-          // })
-        },
-      }),
-    ],
   })
   const hover = useHover(context, {
     handleClose: safePolygon(),
