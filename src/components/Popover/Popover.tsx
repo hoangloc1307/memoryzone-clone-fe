@@ -1,5 +1,5 @@
-import { useFloating, useHover, useInteractions, safePolygon } from '@floating-ui/react'
-import type { Placement } from '@floating-ui/react'
+import { useFloating, useHover, useInteractions, safePolygon, offset } from '@floating-ui/react'
+import type { Placement, OffsetOptions } from '@floating-ui/react'
 import { ElementType, ReactNode, useState } from 'react'
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
   referenceClassName?: string
   floatingElement?: ReactNode
   floatingClassName?: string
+  offsetOption?: { mainAxis?: number; crossAxis?: number }
 }
 
 export default function Popover({
@@ -18,12 +19,19 @@ export default function Popover({
   referenceClassName,
   floatingElement,
   floatingClassName = 'w-full bg-dark',
+  offsetOption,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const { x, y, refs, context, strategy } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
     placement,
+    middleware: [
+      offset({
+        mainAxis: offsetOption?.mainAxis || 0,
+        crossAxis: offsetOption?.crossAxis || 0,
+      }),
+    ],
   })
   const hover = useHover(context, {
     handleClose: safePolygon(),

@@ -1,9 +1,7 @@
-import classNames from 'classnames'
 import Image from 'next/image'
-import { useCallback, useState } from 'react'
-import { categoryData, HeaderCategory, navigationData } from '~/assets/data'
-import Popover from '~/components/Popover'
+import { navigationData } from '~/assets/data'
 import useViewport from '~/hooks/useViewport'
+import Category from '~/layouts/components/Category'
 import banner_mobile from '../../../../public/images/banners/banner-top-mobile.jpg'
 import banner from '../../../../public/images/banners/banner-top.jpg'
 import logo from '../../../../public/images/logo.png'
@@ -11,97 +9,6 @@ import Hamburger from '../Hamburger'
 
 export default function Header() {
   const width = useViewport()
-  const [currentCategory, setCurrentCategory] = useState(-1)
-
-  console.log(currentCategory)
-
-  const renderCategoryMobile = useCallback(
-    (listCategory: HeaderCategory[], level: number) => {
-      return (
-        <ul
-          className={classNames({
-            'divide-y divide-dashed text-sm text-link': level === 0,
-            'h-0 overflow-hidden group-hover:h-max': level === 1,
-          })}
-        >
-          {listCategory &&
-            listCategory.length > 0 &&
-            listCategory.map((item: HeaderCategory, index: number) => (
-              <li
-                key={item.title}
-                className={classNames({
-                  group: index === currentCategory,
-                })}
-                onClick={() => {
-                  if (level === 0) {
-                    if (currentCategory !== index) {
-                      setCurrentCategory(index)
-                    } else {
-                      setCurrentCategory(-1)
-                    }
-                  }
-                }}
-              >
-                {level === 0 ? (
-                  <div className='relative'>
-                    <a
-                      href='#'
-                      className='inline-block py-1 font-semibold group-hover:text-primary'
-                    >
-                      {item.title}
-                    </a>
-                    <span className='absolute right-0 top-1/2 -translate-y-1/2 font-semibold'>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        viewBox='0 0 24 24'
-                        fill='currentColor'
-                        className='h-4 w-4 group-hover:text-primary'
-                      >
-                        <path
-                          fillRule='evenodd'
-                          d='M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z'
-                          clipRule='evenodd'
-                        />
-                      </svg>
-                    </span>
-                  </div>
-                ) : level === 1 ? (
-                  <a
-                    href='#'
-                    className='flex items-center gap-1 py-1 pl-2 hover:text-primary'
-                  >
-                    <span>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        viewBox='0 0 24 24'
-                        fill='currentColor'
-                        className='h-3 w-3'
-                      >
-                        <path
-                          fillRule='evenodd'
-                          d='M4.72 3.97a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L11.69 12 4.72 5.03a.75.75 0 010-1.06zm6 0a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 11-1.06-1.06L17.69 12l-6.97-6.97a.75.75 0 010-1.06z'
-                          clipRule='evenodd'
-                        />
-                      </svg>
-                    </span>
-                    <span>{item.title}</span>
-                  </a>
-                ) : (
-                  <a
-                    href='#'
-                    className='block py-1 pl-10 hover:text-primary'
-                  >
-                    {item.title}
-                  </a>
-                )}
-                {item.children && item.children.length > 0 && renderCategoryMobile(item.children, level + 1)}
-              </li>
-            ))}
-        </ul>
-      )
-    },
-    [currentCategory]
-  )
 
   return (
     <header>
@@ -291,29 +198,9 @@ export default function Header() {
         <div className='lg:bg-dark'>
           <div className='c-container'>
             <div className='relative flex'>
-              <Popover
-                placement='bottom-start'
-                referenceClassName='flex flex-grow items-center gap-3 bg-second py-2 px-5 font-semibold uppercase lg:flex-grow-0'
-                floatingClassName='shadow-2xl py-2 px-5 shadow-slate-400 z-10 bg-white w-full text-black h-max'
-                floatingElement={renderCategoryMobile(categoryData, 0)}
-              >
-                <span>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='h-6 w-6'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </span>
-                <span>Danh mục sản phẩm</span>
-              </Popover>
-
+              {/* Product categories */}
+              <Category />
+              {/* Navigation */}
               <ul className='hidden flex-grow items-stretch justify-evenly bg-dark lg:flex'>
                 {navigationData.map((item, index) => (
                   <li key={index}>
