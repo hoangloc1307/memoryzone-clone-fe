@@ -1,14 +1,17 @@
-import { useFloating, useHover, useInteractions, safePolygon, offset } from '@floating-ui/react'
-import type { Placement, OffsetOptions } from '@floating-ui/react'
+import type { Placement } from '@floating-ui/react'
+import { offset, safePolygon, useFloating, useHover, useInteractions } from '@floating-ui/react'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { ElementType, ReactNode, useState } from 'react'
 
 interface Props {
   children: ReactNode
   as?: ElementType
   placement?: Placement
-  referenceClassName?: string
+  className?: string
   floatingElement?: ReactNode
-  floatingClassName?: string
+  floatingElementWidth?: number | string
+  floatingElementMaxWidth?: number
   offsetOption?: { mainAxis?: number; crossAxis?: number }
 }
 
@@ -16,12 +19,13 @@ export default function Popover({
   children,
   as: Element = 'div',
   placement = 'bottom-start',
-  referenceClassName,
+  className,
   floatingElement,
-  floatingClassName = 'w-full bg-dark',
   offsetOption,
+  floatingElementWidth,
+  floatingElementMaxWidth,
 }: Props) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true)
   const { x, y, refs, context, strategy } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
@@ -37,6 +41,7 @@ export default function Popover({
     handleClose: safePolygon(),
   })
   const { getReferenceProps, getFloatingProps } = useInteractions([hover])
+
   const handleChangeOpen = () => {
     if (isOpen) {
       setIsOpen(false)
@@ -48,7 +53,7 @@ export default function Popover({
       <Element
         ref={refs.setReference}
         {...getReferenceProps()}
-        className={referenceClassName}
+        className={className}
         onClick={handleChangeOpen}
       >
         {children}
@@ -57,15 +62,19 @@ export default function Popover({
       {isOpen && (
         <div
           ref={refs.setFloating}
-          style={{
-            position: strategy,
-            top: y ?? 0,
-            left: x ?? 0,
-          }}
+          style={omitBy(
+            {
+              position: strategy,
+              top: y ?? 0,
+              left: x ?? 0,
+              width: floatingElementWidth,
+              maxWidth: floatingElementMaxWidth,
+            },
+            isNil
+          )}
           {...getFloatingProps()}
-          className={floatingClassName}
         >
-          {floatingElement || 'Floating Element'}
+          {floatingElement || null}
         </div>
       )}
     </>

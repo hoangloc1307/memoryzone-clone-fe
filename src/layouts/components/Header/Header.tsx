@@ -22,7 +22,7 @@ export default function Header() {
       </div>
       <div className='bg-primary py-3 text-xs text-white lg:pb-0 lg:text-sm'>
         <div className='c-container'>
-          <div className='mb-3 flex flex-col items-center justify-between gap-2 md:flex-row'>
+          <div className='flex flex-col items-center justify-between gap-2 md:flex-row'>
             <div className='flex items-center gap-2'>
               <a
                 href='#'
@@ -32,10 +32,10 @@ export default function Header() {
               </a>
               <p>Mở cửa: 8h đến 21h từ Thứ 2 đến Chủ Nhật</p>
             </div>
-            <div className='flex gap-0.5 sm:gap-2'>
+            <div className='flex gap-3 sm:gap-5'>
               <a
                 href='#'
-                className='group flex items-center gap-0.5 p-1 sm:gap-2 sm:p-2'
+                className='group flex items-center gap-0.5 py-1 sm:py-2'
               >
                 <span>
                   <svg
@@ -55,7 +55,7 @@ export default function Header() {
               </a>
               <a
                 href='#'
-                className='group flex items-center gap-0.5 p-1 sm:gap-1 sm:p-2'
+                className='group flex items-center gap-0.5 py-1 sm:py-2'
               >
                 <span>
                   <svg
@@ -82,7 +82,7 @@ export default function Header() {
               </a>
               <a
                 href='#'
-                className='group flex items-center gap-0.5 p-1 sm:gap-1 sm:p-2'
+                className='group flex items-center gap-0.5 py-1 sm:py-2'
               >
                 <span>
                   <svg
@@ -104,13 +104,13 @@ export default function Header() {
           </div>
         </div>
         <div className='c-container'>
-          <div className='grid grid-cols-12 items-center gap-y-5 py-3 lg:gap-5 lg:py-8'>
+          <div className='grid grid-cols-12 items-center gap-y-5 py-3 lg:gap-5 lg:pb-8 lg:pt-5'>
             <Hamburger classNameWrapper='col-span-1 lg:hidden md:col-span-2 ' />
             {/* Logo */}
             <div className='col-span-10 md:col-span-8 lg:col-span-3 lg:justify-self-start'>
               <a
                 href='#'
-                className='mx-auto block h-[32px] w-[160px] lg:h-[40px] lg:w-[270px]'
+                className='lg:w-[22 0px] mx-auto block h-[32px] w-[160px]  lg:h-[40px]'
               >
                 <Image
                   src={logo}

@@ -1,5 +1,6 @@
 import classNames from 'classnames'
-import { useCallback, useState } from 'react'
+import Image from 'next/image'
+import { useState } from 'react'
 import { categoryData, HeaderCategory } from '~/assets/data'
 import useViewport from '~/hooks/useViewport'
 import Popover from '../../../components/Popover'
@@ -37,24 +38,26 @@ export default function Category() {
               <div className='relative'>
                 <a
                   href='#'
-                  className='inline-block py-1 font-semibold hover:underline group-hover:text-primary'
+                  className='inline-block py-2 font-semibold hover:underline group-hover:text-primary'
                 >
                   {item.title}
                 </a>
-                <span className='absolute right-0 top-1/2 -translate-y-1/2 font-semibold transition-transform duration-500 group-data-[active=true]:rotate-180'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='h-4 w-4 group-hover:text-primary'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </span>
+                {item.children && item.children.length > 0 && (
+                  <span className='absolute right-0 top-1/2 -translate-y-1/2 font-semibold transition-transform duration-500 group-data-[active=true]:rotate-180'>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      viewBox='0 0 24 24'
+                      fill='currentColor'
+                      className='h-4 w-4 group-hover:text-primary'
+                    >
+                      <path
+                        fillRule='evenodd'
+                        d='M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z'
+                        clipRule='evenodd'
+                      />
+                    </svg>
+                  </span>
+                )}
               </div>
             ) : level === 1 ? (
               <a
@@ -91,32 +94,88 @@ export default function Category() {
     </ul>
   )
 
-  const renderSubCategoryComputer = (currentChildrenList: HeaderCategory[], level: number) => (
-    <ul className=''>
-      {currentChildrenList &&
-        currentChildrenList.length > 0 &&
-        currentChildrenList.map((item: HeaderCategory, index: number) => (
-          <li key={index}>
-            <a href='#'>{item.title}</a>
-            {item.children && item.children.length > 0 && renderSubCategoryComputer(item.children, level + 1)}
-          </li>
-        ))}
-    </ul>
+  const renderSubCategoryComputer = (currentChildrenList: HeaderCategory[] | undefined, level: number) => (
+    <>
+      {currentChildrenList && currentChildrenList.length > 0 && (
+        <ul
+          className={classNames({
+            'grid grid-cols-4 gap-y-5': level === 0,
+          })}
+        >
+          {currentChildrenList.map((item: HeaderCategory, index: number) => (
+            <li key={index}>
+              <a
+                href='#'
+                className={classNames('block hover:text-primary hover:underline', {
+                  'pb-2 text-sm': level === 0,
+                  'py-0.5 text-[13px] text-gray': level === 1,
+                })}
+              >
+                {item.title}
+              </a>
+              {item.children && item.children.length > 0 && renderSubCategoryComputer(item.children, level + 1)}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   )
 
   const renderCategoryComputer = (listCategory: HeaderCategory[]) => (
     <Popover
       placement='right-start'
-      offsetOption={{ mainAxis: 20, crossAxis: -8 }}
-      floatingClassName='bg-blue-200 w-[988px] h-max'
-      floatingElement={renderSubCategoryComputer(listCategory[0].children as HeaderCategory[], 0)}
+      offsetOption={{ mainAxis: 0, crossAxis: -8 }}
+      floatingElement={
+        <div className={`h-max p-6 shadow-2xl empty:p-0`}>
+          {renderSubCategoryComputer(listCategory[currentCategory]?.children, 0)}
+        </div>
+      }
+      //screen width - level 0 category width - padding both side
+      floatingElementWidth={width - 270 - 64}
+      //max width - category width
+      floatingElementMaxWidth={1200 - 270}
     >
-      <ul className=''>
+      <ul>
         {listCategory &&
           listCategory.length > 0 &&
           listCategory.map((item: HeaderCategory, index: number) => (
-            <li key={index}>
-              <a href='#'>{item.title}</a>
+            <li
+              key={index}
+              onMouseEnter={() => setCurrentCategory(index)}
+              className={classNames('group relative hover:bg-primary hover:text-white', {
+                'bg-primary text-white': index === currentCategory,
+              })}
+              data-active={index === currentCategory}
+            >
+              <Image
+                src={item.icon}
+                alt={item.title}
+                width={20}
+                height={20}
+                className='absolute top-1/2 left-4 -translate-y-1/2 group-data-[active=true]:invert'
+              />
+              <a
+                href='#'
+                className='relative block py-2.5 pl-12 pr-9'
+              >
+                {item.title}
+              </a>
+              {item.children && item.children.length > 0 && (
+                <span className='absolute right-2.5 top-1/2 -translate-y-1/2'>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    viewBox='0 0 24 24'
+                    fill='currentColor'
+                    className='h-6 w-6'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                </span>
+              )}
             </li>
           ))}
       </ul>
@@ -126,12 +185,18 @@ export default function Category() {
   return (
     <Popover
       placement='bottom-start'
-      referenceClassName='flex flex-grow items-center gap-3 bg-second py-2 px-5 font-semibold uppercase lg:flex-grow-0'
-      floatingClassName={classNames('shadow-2xl py-2 px-5 shadow-slate-400 bg-white text-black h-max', {
-        'w-full': width < 1024,
-        'w-[228px]': width >= 1024,
-      })}
-      floatingElement={width < 1024 ? renderCategoryMobile(categoryData, 0) : renderCategoryComputer(categoryData)}
+      className='flex w-full items-center gap-3 bg-second py-2 px-5 font-semibold uppercase lg:w-[270px] lg:flex-grow-0'
+      floatingElement={
+        <div
+          className={classNames('h-max bg-white text-black shadow-2xl shadow-slate-400', {
+            'w-full py-2 px-5': width < 1024,
+            'w-[270px]': width >= 1024,
+          })}
+        >
+          {width < 1024 ? renderCategoryMobile(categoryData, 0) : renderCategoryComputer(categoryData)}
+        </div>
+      }
+      floatingElementWidth={width < 1024 ? '100%' : undefined}
     >
       <span>
         <svg
