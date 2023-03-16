@@ -2,9 +2,6 @@ import Image from 'next/image'
 import { navigationData } from '~/assets/data'
 import useViewport from '~/hooks/useViewport'
 import Category from '~/layouts/components/Category'
-import banner_mobile from '../../../../public/images/banners/banner-top-mobile.jpg'
-import banner from '../../../../public/images/banners/banner-top.jpg'
-import logo from '../../../../public/images/logo.png'
 import Hamburger from '../Hamburger'
 
 export default function Header() {
@@ -14,7 +11,7 @@ export default function Header() {
     <header>
       <div className='relative h-[60px]'>
         <Image
-          src={width > 500 ? banner : banner_mobile}
+          src={width > 500 ? '/images/banners/banner-top.jpg' : '/images/banners/banner-top-mobile.jpg'}
           alt='Samsung official store'
           priority
           fill
@@ -110,12 +107,14 @@ export default function Header() {
             <div className='col-span-10 md:col-span-8 lg:col-span-3 lg:justify-self-start'>
               <a
                 href='#'
-                className='lg:w-[22 0px] mx-auto block h-[32px] w-[160px]  lg:h-[40px]'
+                className='relative mx-auto block h-[32px] w-[160px] lg:h-[40px] lg:w-[220px]'
               >
                 <Image
-                  src={logo}
+                  src='/images/logo.png'
                   priority
                   alt='Memoryzone'
+                  fill
+                  sizes='(max-width: 1023x) 160px, (max-width: 2560px) 220px'
                 />
               </a>
             </div>

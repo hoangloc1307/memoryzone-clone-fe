@@ -25,7 +25,7 @@ export default function Popover({
   floatingElementWidth,
   floatingElementMaxWidth,
 }: Props) {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const { x, y, refs, context, strategy } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,

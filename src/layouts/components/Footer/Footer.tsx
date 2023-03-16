@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import Image from 'next/image'
 import { footerCategoryData } from '~/assets/data'
 import useViewport from '~/hooks/useViewport'
 
@@ -6,12 +7,12 @@ export default function Footer() {
   const width = useViewport()
   return (
     <footer>
-      <div className='c-container'>
-        <div className='grid grid-cols-12 gap-y-3 divide-y divide-dotted divide-slate-300 lg:divide-none'>
+      <div className='c-container pb-5'>
+        <div className='grid grid-cols-12 gap-y-3 divide-y divide-dotted divide-slate-300 md:divide-none'>
           {footerCategoryData.map((item, index) => (
             <div
               key={index}
-              className={classNames('col-span-12', {
+              className={classNames('col-span-12 md:col-span-6', {
                 'lg:col-span-3': index !== 0,
                 'lg:col-span-2': index === 0,
               })}
@@ -19,7 +20,7 @@ export default function Footer() {
               <details className='group peer'>
                 <summary className='flex items-center justify-between pb-1 pt-4'>
                   <h2 className='text-sm font-semibold uppercase'>{item.title}</h2>
-                  {width < 1024 && (
+                  {width < 768 && (
                     <span className='[transition:all_0.5s_ease-in-out] group-open:rotate-[135deg]'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
@@ -37,7 +38,7 @@ export default function Footer() {
                   )}
                 </summary>
               </details>
-              <ul className='max-h-0 overflow-hidden [transition:all_0.5s_ease-in-out] peer-open:max-h-[500px] lg:max-h-max'>
+              <ul className='max-h-0 overflow-hidden [transition:all_0.5s_ease-in-out] peer-open:max-h-[500px] md:max-h-max'>
                 {item.children.map((child, index) => (
                   <li key={index}>
                     <a
@@ -51,6 +52,115 @@ export default function Footer() {
               </ul>
             </div>
           ))}
+          <div className='col-span-12 md:col-span-6 lg:col-span-4'>
+            <h2 className='pb-1 pt-4 text-sm font-semibold uppercase'>CTY TNHH DỊCH VỤ TIN HỌC SIÊU TỐC</h2>
+            <p className='pt-2 text-sm text-[#444]'>
+              Trụ sở chính: Số 91-93 Đường số 5, Phường An Phú, Tp. Thủ Đức, Thành phố Hồ Chí Minh
+              <br />
+              MST: 0311427563 - Cấp ngày 22 tháng 12 năm 2011 tại Sở Kế Hoạch Và Đầu Tư Thành phố Hồ Chí Minh
+            </p>
+            <ul className='mt-5 flex flex-col gap-3 text-gray'>
+              <li className='text-sm'>
+                <p className='font-semibold uppercase text-black'>SHOWROOM HỒ CHÍ MINH:</p>
+                <p>Địa chỉ: 4C Đồng Xoài, Phường 13, Quận Tân Bình</p>
+                <p>
+                  Điện thoại: <span className='font-medium text-black'>(028) 7301 3878</span> - DĐ:{' '}
+                  <span className='font-medium text-black'>0909 305 350</span>
+                </p>
+                <p>Mở cửa: 8h đến 21h từ thứ 2 đến CN</p>
+              </li>
+              <li className='text-sm'>
+                <p className='font-semibold uppercase text-black'>SHOWROOM HÀ NỘI:</p>
+                <p>Địa chỉ: 60 Phố Dịch Vọng Hậu, Dịch Vọng Hậu, Quận Cầu Giấy</p>
+                <p>
+                  Điện thoại: <span className='font-medium text-black'>(028) 7301 3878</span> - DĐ:{' '}
+                  <span className='font-medium text-black'>0909 305 350</span>
+                </p>
+                <p>Mở cửa: 8h đến 21h từ thứ 2 đến CN</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className='border-t border-slate-300 pb-10'>
+        <div className='c-container'>
+          <div className='grid grid-cols-12 lg:gap-x-10'>
+            <div className='col-span-12 md:col-span-12 lg:col-span-5'>
+              <h2 className='py-5 text-sm font-semibold uppercase'>Đăng ký nhận tin khuyến mãi</h2>
+              <form className='flex items-stretch gap-2'>
+                <input
+                  type='email'
+                  placeholder='Nhập email của bạn'
+                  className='flex-grow rounded border border-slate-300 bg-[#f8f8f8] px-5 py-1.5 text-xs outline-none'
+                />
+                <button className='flex-shrink rounded bg-primary px-5 text-xs text-white'>Đăng ký</button>
+              </form>
+            </div>
+            <div className='col-span-12 md:col-span-6 lg:col-span-4'>
+              <h2 className='py-5 text-sm font-semibold uppercase'>Phương thức thanh toán</h2>
+              <Image
+                src='/images/payment.png'
+                alt='Phương thức thanh toán'
+                width={350}
+                height={33}
+              />
+            </div>
+            <div className='col-span-12 md:col-span-6 lg:col-span-3'>
+              <h2 className='py-5 text-sm font-semibold uppercase'>Kết nối với chúng tôi</h2>
+              <ul className='flex gap-3'>
+                <li>
+                  <a href='#'>
+                    <Image
+                      src='/images/icons/facebook.png'
+                      alt='Facebook'
+                      width={32}
+                      height={32}
+                    />
+                  </a>
+                </li>
+                <li>
+                  <a href='#'>
+                    <Image
+                      src='/images/icons/lazada.png'
+                      alt='Lazada'
+                      width={32}
+                      height={32}
+                    />
+                  </a>
+                </li>
+                <li>
+                  <a href='#'>
+                    <Image
+                      src='/images/icons/shopee.png'
+                      alt='Shopee'
+                      width={32}
+                      height={32}
+                    />
+                  </a>
+                </li>
+                <li>
+                  <a href='#'>
+                    <Image
+                      src='/images/icons/instagram.png'
+                      alt='Instagram'
+                      width={32}
+                      height={32}
+                    />
+                  </a>
+                </li>
+                <li>
+                  <a href='#'>
+                    <Image
+                      src='/images/icons/youtube.png'
+                      alt='Youtube'
+                      width={32}
+                      height={32}
+                    />
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

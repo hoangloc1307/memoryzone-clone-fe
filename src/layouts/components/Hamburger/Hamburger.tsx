@@ -3,7 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { navigationData } from '~/assets/data'
-import logo from '../../../../public/images/logo.png'
 
 interface Props {
   classNameWrapper?: string
@@ -48,11 +47,12 @@ export default function Hamburger({ classNameWrapper }: Props) {
           >
             <div className='relative h-full'>
               <Image
-                src={logo}
+                src='/images/logo.png'
                 alt='Memoryzone'
                 priority
                 fill
                 className='object-cover'
+                sizes='(max-width: 1023) 276px'
               />
             </div>
           </Link>
