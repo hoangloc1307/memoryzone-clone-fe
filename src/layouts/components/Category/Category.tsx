@@ -148,7 +148,7 @@ export default function Category() {
               data-active={index === currentCategory}
             >
               <Image
-                src={item.icon}
+                src={`/images/icons/${item.icon}`}
                 alt={item.title}
                 width={20}
                 height={20}

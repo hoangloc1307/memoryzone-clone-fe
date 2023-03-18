@@ -111,10 +111,9 @@ export default function Header() {
               >
                 <Image
                   src='/images/logo.png'
-                  priority
                   alt='Memoryzone'
                   fill
-                  sizes='(max-width: 1023x) 160px, (max-width: 2560px) 220px'
+                  sizes='160px, (min-width: 1024px) 220px'
                 />
               </a>
             </div>

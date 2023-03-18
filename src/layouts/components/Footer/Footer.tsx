@@ -1,15 +1,17 @@
 import classNames from 'classnames'
 import Image from 'next/image'
-import { footerCategoryData } from '~/assets/data'
+import { footerCategoryData, footerNavigationData } from '~/assets/data'
 import useViewport from '~/hooks/useViewport'
 
 export default function Footer() {
   const width = useViewport()
+
   return (
     <footer>
+      {/* Top */}
       <div className='c-container pb-5'>
         <div className='grid grid-cols-12 gap-y-3 divide-y divide-dotted divide-slate-300 md:divide-none'>
-          {footerCategoryData.map((item, index) => (
+          {footerNavigationData.map((item, index) => (
             <div
               key={index}
               className={classNames('col-span-12 md:col-span-6', {
@@ -82,6 +84,7 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      {/* Bottom */}
       <div className='border-t border-slate-300 pb-10'>
         <div className='c-container'>
           <div className='grid grid-cols-12 lg:gap-x-10'>
@@ -158,6 +161,32 @@ export default function Footer() {
                     />
                   </a>
                 </li>
+              </ul>
+            </div>
+            <div className='col-span-12'>
+              <h2 className='py-5 text-sm font-semibold uppercase'>Danh mục sản phẩm</h2>
+              <ul className='grid gap-3 md:grid-cols-2 lg:grid-cols-5'>
+                {footerCategoryData.map((item, index) => (
+                  <li
+                    key={index}
+                    className='text-[#898989]'
+                  >
+                    <h3 className='text-sm font-bold capitalize'>{item.title}</h3>
+                    {item.children && item.children.length > 0 && (
+                      <ul className='flex flex-wrap'>
+                        {item.children.map((child, index) => (
+                          <li
+                            key={index}
+                            className='text-xs capitalize'
+                          >
+                            {index !== 0 && <span className='px-1 text-xs'>/</span>}
+                            <a href={child.url}>{child.title}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

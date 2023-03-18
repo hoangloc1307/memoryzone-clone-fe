@@ -49,10 +49,9 @@ export default function Hamburger({ classNameWrapper }: Props) {
               <Image
                 src='/images/logo.png'
                 alt='Memoryzone'
-                priority
                 fill
                 className='object-cover'
-                sizes='(max-width: 1023) 276px'
+                sizes='276px'
               />
             </div>
           </Link>
