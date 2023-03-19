@@ -8,7 +8,7 @@ export default function Header() {
   const width = useViewport()
 
   return (
-    <header>
+    <header className='relative z-50'>
       <div className='relative h-[60px]'>
         <Image
           src={width > 500 ? '/images/banners/banner-top.jpg' : '/images/banners/banner-top-mobile.jpg'}

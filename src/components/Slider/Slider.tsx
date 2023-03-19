@@ -39,7 +39,7 @@ export default function Slider() {
               alt={slide.title}
               fill
               priority
-              sizes='(max-width: 1024px) 100vw, 75vw'
+              sizes='(max-width: 1023px) 100vw, 75vw'
               className='object-cover'
             />
           </a>

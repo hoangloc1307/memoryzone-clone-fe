@@ -99,7 +99,7 @@ export default function Category() {
       {currentChildrenList && currentChildrenList.length > 0 && (
         <ul
           className={classNames({
-            'grid grid-cols-4 gap-y-5': level === 0,
+            'grid grid-cols-4 gap-5': level === 0,
           })}
         >
           {currentChildrenList.map((item: HeaderCategory, index: number) => (
@@ -107,8 +107,8 @@ export default function Category() {
               <a
                 href='#'
                 className={classNames('block hover:text-primary hover:underline', {
-                  'pb-2 text-sm': level === 0,
-                  'py-0.5 text-[13px] text-gray': level === 1,
+                  'pb-1 text-sm': level === 0,
+                  'text-[13px] text-gray': level === 1,
                 })}
               >
                 {item.title}
@@ -124,16 +124,16 @@ export default function Category() {
   const renderCategoryComputer = (listCategory: HeaderCategory[]) => (
     <Popover
       placement='right-start'
-      offsetOption={{ mainAxis: 0, crossAxis: -8 }}
+      offsetOption={{ mainAxis: 0, crossAxis: 0 }}
       floatingElement={
-        <div className={`h-max p-6 shadow-2xl empty:p-0`}>
+        <div className='h-max p-6 shadow-2xl empty:p-0 bg-white'>
           {renderSubCategoryComputer(listCategory[currentCategory]?.children, 0)}
         </div>
       }
       //screen width - level 0 category width - padding both side
-      floatingElementWidth={width - 270 - 64}
+      floatingElementWidth={width - 64 - 270}
       //max width - category width
-      floatingElementMaxWidth={1200 - 270}
+      floatingElementMaxWidth={1280 - 64 - 270}
     >
       <ul>
         {listCategory &&
