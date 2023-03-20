@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { navigationData } from '~/assets/data'
+import { navigationData } from '~/assets/datas/navigationData'
 import useViewport from '~/hooks/useViewport'
 import Category from '~/layouts/components/Category'
 import Hamburger from '../Hamburger'
@@ -9,7 +9,7 @@ export default function Header() {
 
   return (
     <header className='relative z-50'>
-      <div className='relative h-[60px]'>
+      <div className='relative h-[40px]'>
         <Image
           src={width > 500 ? '/images/banners/banner-top.jpg' : '/images/banners/banner-top-mobile.jpg'}
           alt='Samsung official store'
@@ -17,8 +17,8 @@ export default function Header() {
           fill
         />
       </div>
-      <div className='bg-primary py-3 text-xs text-white lg:pb-0 lg:text-sm'>
-        <div className='c-container'>
+      <div className='bg-primary py-2 text-xs text-white lg:py-0 lg:text-sm'>
+        <div className='c-container border-b border-white/20 pb-2 lg:pb-0'>
           <div className='flex flex-col items-center justify-between gap-2 md:flex-row'>
             <div className='flex items-center gap-2'>
               <a

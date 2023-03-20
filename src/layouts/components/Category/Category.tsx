@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import Image from 'next/image'
 import { useState } from 'react'
-import { categoryData, HeaderCategory } from '~/assets/data'
+import { categoryData, HeaderCategory } from '~/assets/datas/categoryData'
 import useViewport from '~/hooks/useViewport'
 import Popover from '../../../components/Popover'
 
@@ -126,7 +126,7 @@ export default function Category() {
       placement='right-start'
       offsetOption={{ mainAxis: 0, crossAxis: 0 }}
       floatingElement={
-        <div className='h-max p-6 shadow-2xl empty:p-0 bg-white'>
+        <div className='h-max bg-white p-6 shadow-2xl empty:p-0'>
           {renderSubCategoryComputer(listCategory[currentCategory]?.children, 0)}
         </div>
       }

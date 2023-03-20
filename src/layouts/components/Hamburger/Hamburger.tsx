@@ -2,7 +2,7 @@ import classnames from 'classnames'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { navigationData } from '~/assets/data'
+import { navigationData } from '~/assets/datas/navigationData'
 
 interface Props {
   classNameWrapper?: string
