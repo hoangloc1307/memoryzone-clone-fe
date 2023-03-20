@@ -19,13 +19,13 @@ export default function ProductItem({ product, showRating, showDiscountPercent }
             src={`/images/products/${product.image}`}
             alt={product.name}
             fill
-            sizes='(max-width: 767px) 33vw, (max-width: 1023px) 25vw, 17vw'
+            sizes='(max-width: 639px) 33vw, (max-width: 1023px) 25vw, (max-width: 1279px) 20vw, 17vw'
             className='object-cover'
           />
         </div>
         {/* Name and price */}
         <div className='text-xs md:text-sm'>
-          <h3 className='mt-5 mb-2.5 min-h-[48px] line-clamp-3 md:min-h-[60px]'>{product.name}</h3>
+          <h3 className='my-2 min-h-[48px] line-clamp-3 md:min-h-[60px]'>{product.name}</h3>
           <p className='flex flex-col items-center lg:flex-row lg:items-end lg:justify-center lg:gap-2'>
             <span className='text-sm font-semibold text-primary md:text-base'>
               {formatNumberAsCurrency(product.newPrice)}
