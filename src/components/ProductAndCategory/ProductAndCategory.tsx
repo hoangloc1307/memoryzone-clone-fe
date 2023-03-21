@@ -1,8 +1,13 @@
-import { useId } from 'react'
+import { useId, useRef } from 'react'
 import { Banner as BannerType } from '~/types/banner.type'
 import { Product } from '~/types/product.type'
 import Banner from '../Banner'
 import ProductItem from '../ProductItem'
+import Slider from 'react-slick'
+import type { Settings } from 'react-slick'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+import useViewport from '~/hooks/useViewport'
 
 interface Props {
   data: {
@@ -19,6 +24,20 @@ interface Props {
 
 export default function ProductAndCategory({ data }: Props) {
   const inputId = useId()
+  const width = useViewport()
+  const slickRef = useRef<Slider>(null)
+
+  const settings: Settings = {
+    rows: 2,
+    slidesToShow: 4,
+    slidesToScroll: 4,
+    speed: 500,
+    infinite: true,
+    autoplay: true,
+    className: '-mx-1.5',
+    arrows: false,
+  }
+
   return (
     <div>
       {/* Categories bar */}
@@ -46,6 +65,48 @@ export default function ProductAndCategory({ data }: Props) {
               </a>
             </li>
           ))}
+          <li className='hidden  lg:list-item lg:text-[#444]'>
+            <div className='flex'>
+              <span
+                className='block cursor-pointer p-1 hover:text-primary'
+                onClick={() => slickRef.current?.slickPrev()}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='h-6 w-6'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M15.75 19.5L8.25 12l7.5-7.5'
+                  />
+                </svg>
+              </span>
+              <span
+                className='block cursor-pointer p-1 hover:text-primary'
+                onClick={() => slickRef.current?.slickNext()}
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  strokeWidth={1.5}
+                  stroke='currentColor'
+                  className='h-6 w-6'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    d='M8.25 4.5l7.5 7.5-7.5 7.5'
+                  />
+                </svg>
+              </span>
+            </div>
+          </li>
         </ul>
         <label
           htmlFor={inputId}
@@ -70,22 +131,41 @@ export default function ProductAndCategory({ data }: Props) {
       {/* Product list */}
       <div className='grid grid-cols-4 gap-3'>
         {/* Products */}
-        <div className='col-span-4 overflow-x-scroll rounded-b border-x border-slate-100 shadow-inner sm:col-span-3'>
-          <ul className='grid grid-cols-[repeat(12,calc((100vw-24px-12px*2)/3))] gap-3 p-3 sm:grid-cols-[repeat(12,calc((100vw-24px-12px*3)/4))] md:grid-cols-[repeat(12,calc((100vw-32px-12px*3)/4))] lg:grid-cols-[repeat(12,calc((100vw-64px-12px*4)/5))] min-[1280px]:grid-cols-[repeat(12,calc((1280px-64px-12px*5)/6))]'>
-            {data.products.map((product) => (
-              <li key={product.id}>
+        {width < 1024 ? (
+          <div className='col-span-4 overflow-x-scroll rounded-b border-x border-slate-100 shadow-inner sm:col-span-3'>
+            <ul className='grid grid-cols-[repeat(12,calc((100vw-24px-12px*2)/3))] gap-3 p-3 sm:grid-cols-[repeat(12,calc((100vw-24px-12px*3)/4))] md:grid-cols-[repeat(12,calc((100vw-32px-12px*3)/4))]'>
+              {data.products.map((product) => (
+                <li key={product.id}>
+                  <ProductItem
+                    product={product}
+                    showDiscountPercent
+                    showRating
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className='col-span-4 sm:col-span-3'>
+            <Slider
+              {...settings}
+              ref={slickRef}
+            >
+              {data.products.map((product) => (
                 <ProductItem
+                  key={product.id}
                   product={product}
                   showDiscountPercent
                   showRating
+                  classNameWrapper='m-1.5 shadow p-2'
                 />
-              </li>
-            ))}
-          </ul>
-        </div>
+              ))}
+            </Slider>
+          </div>
+        )}
         {/* Banners */}
         <div className='col-span-4 sm:col-span-1'>
-          <div className='grid h-full auto-rows-[200px] grid-cols-2 gap-2 py-3 sm:auto-rows-fr sm:grid-cols-1 sm:content-start'>
+          <div className='grid h-full auto-rows-[200px] grid-cols-2 gap-2 py-1.5 sm:auto-rows-fr sm:grid-cols-1 sm:content-start'>
             {data.banners.map((banner, index) => (
               <div key={index}>
                 <Banner
