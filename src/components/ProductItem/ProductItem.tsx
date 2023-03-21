@@ -7,11 +7,17 @@ interface Props {
   product: Product
   showRating?: boolean
   showDiscountPercent?: boolean
+  classNameWrapper?: string
 }
 
-export default function ProductItem({ product, showRating, showDiscountPercent }: Props) {
+export default function ProductItem({
+  product,
+  showRating,
+  showDiscountPercent,
+  classNameWrapper = 'p-2 rounded shadow',
+}: Props) {
   return (
-    <div className='relative rounded p-2 shadow'>
+    <div className={`relative ${classNameWrapper}`}>
       <a href={product.url}>
         {/* Image */}
         <div className='relative aspect-square'>
