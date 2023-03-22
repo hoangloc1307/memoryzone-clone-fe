@@ -37,10 +37,10 @@ export default function ProductItem({
               {formatNumberAsCurrency(product.newPrice)}
               <sup>đ</sup>
             </span>
-            <span className='text-gray line-through'>
+            <del className='text-gray'>
               {formatNumberAsCurrency(product.price)}
               <sup>đ</sup>
-            </span>
+            </del>
           </p>
         </div>
       </a>

@@ -5,9 +5,8 @@ import Banner from '../Banner'
 import ProductItem from '../ProductItem'
 import Slider from 'react-slick'
 import type { Settings } from 'react-slick'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
 import useViewport from '~/hooks/useViewport'
+import classNames from 'classnames'
 
 interface Props {
   data: {
@@ -20,9 +19,10 @@ interface Props {
     products: Product[]
     banners: BannerType[]
   }
+  bannerPosition?: 'left' | 'right'
 }
 
-export default function ProductAndCategory({ data }: Props) {
+export default function ProductAndCategory({ data, bannerPosition = 'left' }: Props) {
   const inputId = useId()
   const width = useViewport()
   const slickRef = useRef<Slider>(null)
@@ -34,8 +34,10 @@ export default function ProductAndCategory({ data }: Props) {
     speed: 500,
     infinite: true,
     autoplay: true,
-    className: '-mx-1.5',
+    className: 'shadow-inner border-x-1 rounded shadow-slate-200 px-1.5 py-1',
     arrows: false,
+    pauseOnHover: true,
+    autoplaySpeed: 3000,
   }
 
   return (
@@ -59,7 +61,7 @@ export default function ProductAndCategory({ data }: Props) {
             >
               <a
                 href={item.url}
-                className='block py-1.5'
+                className='block py-1.5 capitalize'
               >
                 {item.category}
               </a>
@@ -110,7 +112,7 @@ export default function ProductAndCategory({ data }: Props) {
         </ul>
         <label
           htmlFor={inputId}
-          className='absolute top-1/2 right-0 h-10 -translate-y-1/2 p-2 pr-0 transition-transform duration-700 peer-checked:-rotate-[540deg] lg:hidden'
+          className='absolute top-1/2 right-0 h-10 -translate-y-1/2 p-2 pr-0 transition-transform duration-700 peer-checked:rotate-[540deg] lg:hidden'
         >
           <span className='group-first-of-type:text-primary'>
             <svg
@@ -129,7 +131,7 @@ export default function ProductAndCategory({ data }: Props) {
         </label>
       </div>
       {/* Product list */}
-      <div className='grid grid-cols-4 gap-3'>
+      <div className='mt-2 grid grid-cols-4 gap-3'>
         {/* Products */}
         {width < 1024 ? (
           <div className='col-span-4 overflow-x-scroll rounded-b border-x border-slate-100 shadow-inner sm:col-span-3'>
@@ -157,14 +159,18 @@ export default function ProductAndCategory({ data }: Props) {
                   product={product}
                   showDiscountPercent
                   showRating
-                  classNameWrapper='m-1.5 shadow p-2'
+                  classNameWrapper='m-1.5 shadow p-2 rounded'
                 />
               ))}
             </Slider>
           </div>
         )}
         {/* Banners */}
-        <div className='col-span-4 sm:col-span-1'>
+        <div
+          className={classNames('col-span-4 sm:col-span-1', {
+            'sm:col-start-1 sm:row-start-1': bannerPosition === 'left',
+          })}
+        >
           <div className='grid h-full auto-rows-[200px] grid-cols-2 gap-2 py-1.5 sm:auto-rows-fr sm:grid-cols-1 sm:content-start'>
             {data.banners.map((banner, index) => (
               <div key={index}>

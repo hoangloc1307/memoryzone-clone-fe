@@ -24,7 +24,7 @@ export default function Banner({
   return (
     <a
       href={url}
-      className='relative block h-full w-full'
+      className='relative block h-full w-full select-none'
     >
       <Image
         src={image}

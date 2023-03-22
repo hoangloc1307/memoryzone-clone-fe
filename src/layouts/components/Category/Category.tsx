@@ -126,7 +126,7 @@ export default function Category() {
       placement='right-start'
       offsetOption={{ mainAxis: 0, crossAxis: 0 }}
       floatingElement={
-        <div className='h-max bg-white p-6 shadow-2xl empty:p-0'>
+        <div className='min-h-[440px] bg-white p-6 shadow-2xl empty:hidden'>
           {renderSubCategoryComputer(listCategory[currentCategory]?.children, 0)}
         </div>
       }
@@ -176,6 +176,9 @@ export default function Category() {
                   </svg>
                 </span>
               )}
+              {index === currentCategory && item.children && item.children.length > 0 && (
+                <span className='absolute top-0 left-full z-10 border-[20px] border-transparent border-l-primary'></span>
+              )}
             </li>
           ))}
       </ul>
@@ -197,6 +200,7 @@ export default function Category() {
         </div>
       }
       floatingElementWidth={width < 1024 ? '100%' : undefined}
+      onMouseEnter={() => setCurrentCategory(-1)}
     >
       <span>
         <svg

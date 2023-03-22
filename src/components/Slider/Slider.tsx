@@ -9,12 +9,12 @@ export default function Slider() {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
-    const autoPlay = window.setInterval(() => {
+    const autoPlay = window.setTimeout(() => {
       setCurrentIndex((prevIndex) => (prevIndex === sliderData.length - 1 ? 0 : prevIndex + 1))
     }, AUTO_PLAY_TIME)
 
     return () => {
-      window.clearInterval(autoPlay)
+      window.clearTimeout(autoPlay)
     }
   }, [currentIndex])
 

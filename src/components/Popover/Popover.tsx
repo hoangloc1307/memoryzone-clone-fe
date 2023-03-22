@@ -13,6 +13,7 @@ interface Props {
   floatingElementWidth?: number | string
   floatingElementMaxWidth?: number
   offsetOption?: { mainAxis?: number; crossAxis?: number }
+  onMouseEnter?: () => void
 }
 
 export default function Popover({
@@ -24,6 +25,7 @@ export default function Popover({
   offsetOption,
   floatingElementWidth,
   floatingElementMaxWidth,
+  onMouseEnter,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const { x, y, refs, context, strategy } = useFloating({
@@ -55,6 +57,7 @@ export default function Popover({
         {...getReferenceProps()}
         className={className}
         onClick={handleChangeOpen}
+        onMouseEnter={onMouseEnter}
       >
         {children}
       </Element>

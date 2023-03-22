@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import Head from 'next/head'
 import Image from 'next/image'
 import { bannerData } from '~/assets/datas/bannerData'
+import { hotBrandsData } from '~/assets/datas/hotBrandsData'
 import { hotCategoriesData } from '~/assets/datas/hotCategoriesData'
 import { productAndCategoryData } from '~/assets/datas/productAndCategoryData'
 import { productData } from '~/assets/datas/productData'
@@ -9,6 +10,8 @@ import Banner from '~/components/Banner'
 import ProductAndCategory from '~/components/ProductAndCategory'
 import ProductItem from '~/components/ProductItem'
 import Slider from '~/components/Slider'
+import SlickSlider from 'react-slick'
+import { sloganData } from '~/assets/datas/sloganData'
 
 export default function Home() {
   return (
@@ -19,7 +22,7 @@ export default function Home() {
 
       <div className='c-container'>
         {/* Slider */}
-        <section className='mt-5 grid grid-cols-12 gap-2'>
+        <section className='mt-2 grid grid-cols-12 gap-2'>
           <div className='col-span-12 md:col-span-9'>
             <Slider />
           </div>
@@ -113,11 +116,94 @@ export default function Home() {
             ))}
           </ul>
         </section>
-        {/* Laptop */}
+        {/* Product with category */}
+        <section className='mt-10 flex flex-col gap-10'>
+          <ProductAndCategory
+            data={productAndCategoryData[0]}
+            bannerPosition='left'
+          />
+          <ProductAndCategory
+            data={productAndCategoryData[1]}
+            bannerPosition='right'
+          />
+        </section>
+        {/* Hot brands */}
         <section className='mt-10'>
-          <ProductAndCategory data={productAndCategoryData[0]} />
+          <div className='relative flex justify-center before:absolute before:top-1/2 before:left-0 before:-z-10 before:w-full before:-translate-y-1/2 before:border-b before:border-primary'>
+            <h2 className='inline-block bg-white px-4 py-2 text-lg font-semibold uppercase text-[#444]'>
+              Các nhãn hiệu được ưa chuộng
+            </h2>
+          </div>
+          <SlickSlider
+            infinite
+            slidesToShow={6}
+            autoplay
+            slidesToScroll={1}
+            pauseOnHover={false}
+            arrows={false}
+            speed={500}
+            autoplaySpeed={2000}
+            className='my-5'
+            responsive={[
+              {
+                breakpoint: 480,
+                settings: {
+                  slidesToShow: 2,
+                  slidesToScroll: 2,
+                },
+              },
+              {
+                breakpoint: 768,
+                settings: {
+                  slidesToShow: 4,
+                  slidesToScroll: 2,
+                },
+              },
+            ]}
+          >
+            {hotBrandsData.map((item, index) => (
+              <div
+                key={index}
+                className='h-[100px] w-[170px]'
+              >
+                <Banner
+                  image={`/images/brands/${item.image}`}
+                  alt={item.alt}
+                  url={item.url}
+                  fill
+                  className='object-contain'
+                  sizes='170px'
+                />
+              </div>
+            ))}
+          </SlickSlider>
         </section>
       </div>
+      {/* Slogan */}
+      <section className='mt-10 border-y border-black/10 bg-[#f9f9f9] py-5'>
+        <div className='c-container'>
+          <ul className='grid grid-cols-2 gap-2 md:grid-cols-4 lg:items-center'>
+            {sloganData.map((item, index) => (
+              <li key={index}>
+                <div className='flex flex-col items-center gap-3 p-2 lg:flex-row'>
+                  <div className='w-[59px] flex-shrink-0'>
+                    <Image
+                      src={`/images/icons/${item.icon}`}
+                      alt={item.title}
+                      width={59}
+                      height={42}
+                    />
+                  </div>
+                  <p className='flex flex-col gap-1 text-center text-xs lg:items-start lg:text-left'>
+                    <span className='font-bold text-primary'>{item.title}</span>
+                    <span className='text-gray'>{item.description}</span>
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
     </>
   )
 }

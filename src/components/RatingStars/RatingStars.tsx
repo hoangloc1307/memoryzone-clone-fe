@@ -8,7 +8,7 @@ export default function RatingStars({ rating }: Props) {
   const grayStars = 5 - Math.ceil(rating)
 
   return (
-    <div className='flex flex-col-reverse items-center gap-1 md:flex-row'>
+    <div className='flex flex-col items-center gap-0 md:flex-row'>
       {/* Stars */}
       <div className='flex'>
         {/* Yellow stars */}
