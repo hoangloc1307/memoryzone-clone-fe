@@ -1,6 +1,7 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { Product } from '~/types/product.type'
-import { formatNumberAsCurrency } from '~/utils/utils'
+import { formatNumberAsCurrency, generateSlug } from '~/utils/utils'
 import RatingStars from '../RatingStars'
 
 interface Props {
@@ -18,7 +19,7 @@ export default function ProductItem({
 }: Props) {
   return (
     <div className={`relative ${classNameWrapper}`}>
-      <a href={product.url}>
+      <Link href={`/products/${generateSlug(product.name, product.id)}`}>
         {/* Image */}
         <div className='relative aspect-square'>
           <Image
@@ -43,7 +44,7 @@ export default function ProductItem({
             </del>
           </p>
         </div>
-      </a>
+      </Link>
       {/* Rating start */}
       {showRating && (
         <div className='mt-2 flex justify-center'>

@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { navigationData } from '~/assets/datas/navigationData'
 import useViewport from '~/hooks/useViewport'
 import Category from '~/layouts/components/Category'
@@ -105,8 +106,8 @@ export default function Header() {
             <Hamburger classNameWrapper='col-span-1 lg:hidden md:col-span-2 ' />
             {/* Logo */}
             <div className='col-span-10 md:col-span-8 lg:col-span-3 lg:justify-self-start'>
-              <a
-                href='#'
+              <Link
+                href='/'
                 className='relative mx-auto block h-[32px] w-[160px] lg:h-[40px] lg:w-[220px]'
               >
                 <Image
@@ -115,7 +116,7 @@ export default function Header() {
                   fill
                   sizes='160px, (min-width: 1024px) 220px'
                 />
-              </a>
+              </Link>
             </div>
             {/* Search form */}
             <form className='relative col-span-12 flex rounded-sm bg-white p-0.5 lg:col-span-4'>
