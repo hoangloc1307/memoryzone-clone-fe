@@ -17,9 +17,57 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Memoryclone</title>
+        <title>MemoryZone</title>
+        <meta
+          name='description'
+          content='MemoryZone là một thương hiệu chuyên cung cấp Laptop, PC, thiết bị lưu trữ, màn hình và các phụ kiện khác.'
+        />
+        <meta
+          name='robots'
+          content='noodp,index,follow'
+        />
+        <meta
+          http-equiv='content-language'
+          content='vi'
+        />
+        <meta
+          name='viewport'
+          content='width=device-width, initial-scale=1.0'
+        />
+        <meta
+          name='keywords'
+          content='Laptop, PC gaming, Gear, Thẻ nhớ điện thoại, máy ảnh chính hãng, USB, USB 3.0, ổ cứng di động, ổ cứng gắn ngoài, ổ cứng SSD, thiết bị wireless'
+        />
+        {/* Open graph */}
+        <meta
+          property='og:type'
+          content='website'
+        />
+        <meta
+          property='og:title'
+          content='MemoryZone Clone By Locdeptrai'
+        />
+        <meta
+          property='og:description'
+          content='Clone MemoryZone nhằm mục đích học NextJs.'
+        />
+        <meta
+          property='og:image'
+          content='https://memoryzone-clone-fe.vercel.app/images/og_image.png'
+        />
+        <meta
+          property='og:url'
+          content='https://memoryzone-clone-fe.vercel.app/'
+        />
+        <meta
+          property='og:site_name'
+          content='MemoryZone - Professional in memory'
+        />
       </Head>
-
+      <h1 className='hidden'>
+        MemoryZone - Professional in memory - MemoryZone là một thương hiệu chuyên cung cấp Laptop, PC, thiết bị lưu
+        trữ, màn hình và các phụ kiện khác.
+      </h1>
       <div className='c-container'>
         {/* Slider */}
         <section className='mt-2 grid grid-cols-12 gap-2'>
