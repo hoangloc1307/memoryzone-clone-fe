@@ -1,16 +1,26 @@
 interface Props {
   rating: number
+  showNumber?: boolean
+  starsColor?: string
+  classNameStars?: string
+  classNameWrapper?: string
 }
 
-export default function RatingStars({ rating }: Props) {
+export default function RatingStars({
+  rating,
+  showNumber = false,
+  starsColor = '#ffc107',
+  classNameStars = 'w-4 h-4',
+  classNameWrapper = 'flex flex-col items-center gap-0 md:flex-row',
+}: Props) {
   const wholeNumberPart = Math.floor(rating)
   const decimalPart = rating - wholeNumberPart
   const grayStars = 5 - Math.ceil(rating)
 
   return (
-    <div className='flex flex-col items-center gap-0 md:flex-row'>
+    <div className={classNameWrapper}>
       {/* Stars */}
-      <div className='flex'>
+      <div className='inline-flex'>
         {/* Yellow stars */}
         {Array(wholeNumberPart)
           .fill(0)
@@ -19,8 +29,8 @@ export default function RatingStars({ rating }: Props) {
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 24 24'
-                fill='#ffc107'
-                className='h-4 w-4'
+                fill={starsColor}
+                className={classNameStars}
               >
                 <path
                   fillRule='evenodd'
@@ -38,7 +48,7 @@ export default function RatingStars({ rating }: Props) {
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
               fill='#888888'
-              className='h-4 w-4'
+              className={classNameStars}
             >
               <path
                 fillRule='evenodd'
@@ -53,8 +63,8 @@ export default function RatingStars({ rating }: Props) {
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 viewBox='0 0 24 24'
-                fill='#ffc107'
-                className='h-4 w-4'
+                fill={starsColor}
+                className={classNameStars}
               >
                 <path
                   fillRule='evenodd'
@@ -76,7 +86,7 @@ export default function RatingStars({ rating }: Props) {
                   xmlns='http://www.w3.org/2000/svg'
                   viewBox='0 0 24 24'
                   fill='#888888'
-                  className='h-4 w-4'
+                  className={classNameStars}
                 >
                   <path
                     fillRule='evenodd'
@@ -89,7 +99,7 @@ export default function RatingStars({ rating }: Props) {
       </div>
 
       {/* Number */}
-      <p className='text-xs font-medium text-gray'>({rating}/5)</p>
+      {showNumber && <p className='text-xs font-medium text-gray'>({rating}/5)</p>}
     </div>
   )
 }

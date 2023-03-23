@@ -40,7 +40,7 @@ export default function Hamburger({ classNameWrapper }: Props) {
           }
         )}
       >
-        <div className='bg-second'>
+        <div className='bg-warn'>
           <Link
             href='/'
             className='block h-20 p-3'

@@ -188,7 +188,7 @@ export default function Category() {
   return (
     <Popover
       placement='bottom-start'
-      className='flex w-full items-center gap-3 bg-second py-2 px-5 font-semibold uppercase lg:w-[270px] lg:flex-grow-0'
+      className='bg-warn flex w-full items-center gap-3 py-2 px-5 font-semibold uppercase lg:w-[270px] lg:flex-grow-0'
       floatingElement={
         <div
           className={classNames('h-max bg-white text-black shadow-2xl shadow-slate-400', {

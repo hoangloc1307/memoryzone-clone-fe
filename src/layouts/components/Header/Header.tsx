@@ -49,7 +49,7 @@ export default function Header() {
                     />
                   </svg>
                 </span>
-                <span className='group-hover:text-second'>Tài khoản</span>
+                <span className='group-hover:text-warn'>Tài khoản</span>
               </a>
               <a
                 href='#'
@@ -76,7 +76,7 @@ export default function Header() {
                     />
                   </svg>
                 </span>
-                <span className='group-hover:text-second'>Khuyến mãi hot</span>
+                <span className='group-hover:text-warn'>Khuyến mãi hot</span>
               </a>
               <a
                 href='#'
@@ -96,7 +96,7 @@ export default function Header() {
                     />
                   </svg>
                 </span>
-                <span className='group-hover:text-second'>Dịch vụ doanh nghiệp</span>
+                <span className='group-hover:text-warn'>Dịch vụ doanh nghiệp</span>
               </a>
             </div>
           </div>
@@ -126,7 +126,7 @@ export default function Header() {
                 placeholder='Sản phẩm bạn muốn tìm...'
               />
               <button
-                className='shrink-0 rounded-sm bg-second px-6 py-2'
+                className='bg-warn shrink-0 rounded-sm px-6 py-2'
                 type='submit'
               >
                 <svg
@@ -164,7 +164,7 @@ export default function Header() {
               <p className='flex flex-col'>
                 <span className='font-bold'>(028) 7301 3878 (10 line)</span>
                 <span className='text-[10px]'>
-                  DĐ: <span className='font-bold text-second'>0909 305 350</span>
+                  DĐ: <span className='text-warn font-bold'>0909 305 350</span>
                 </span>
               </p>
             </div>

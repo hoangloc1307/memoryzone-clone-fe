@@ -9,6 +9,7 @@ interface Props {
   width?: number | undefined
   height?: number | undefined
   className?: string
+  priority?: boolean
 }
 
 export default function Banner({
@@ -20,6 +21,7 @@ export default function Banner({
   width,
   height,
   className = 'object-cover',
+  priority,
 }: Props) {
   return (
     <a
@@ -33,6 +35,7 @@ export default function Banner({
         width={width}
         height={height}
         sizes={sizes}
+        priority={priority}
         className={className}
       />
     </a>

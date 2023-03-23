@@ -12,8 +12,29 @@ import ProductItem from '~/components/ProductItem'
 import Slider from '~/components/Slider'
 import SlickSlider from 'react-slick'
 import { sloganData } from '~/assets/datas/sloganData'
+import { useEffect, useState } from 'react'
+import { Product } from '~/types/product.type'
+import { Banner as BannerType } from '~/types/banner.type'
+import sampleSize from 'lodash/sampleSize'
+
+interface DataProductWithCategory {
+  category: string
+  url: string
+  children: {
+    category: string
+    url: string
+  }[]
+  products: Product[]
+  banners: BannerType[]
+}
 
 export default function Home() {
+  const [data, setData] = useState<DataProductWithCategory[]>([])
+
+  useEffect(() => {
+    setData(productAndCategoryData())
+  }, [])
+
   return (
     <>
       <Head>
@@ -27,7 +48,7 @@ export default function Home() {
           content='noodp,index,follow'
         />
         <meta
-          http-equiv='content-language'
+          httpEquiv='content-language'
           content='vi'
         />
         <meta
@@ -70,7 +91,7 @@ export default function Home() {
       </h1>
       <div className='c-container'>
         {/* Slider */}
-        <section className='mt-2 grid grid-cols-12 gap-2'>
+        <section className='grid grid-cols-12 gap-2'>
           <div className='col-span-12 md:col-span-9'>
             <Slider />
           </div>
@@ -153,7 +174,7 @@ export default function Home() {
         <section className='mt-10'>
           <h2 className='border-b-2 border-primary text-base font-semibold uppercase leading-8'>Dành riêng cho bạn</h2>
           <ul className='mt-5 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
-            {productData.map((product) => (
+            {productData.slice(0, 12).map((product) => (
               <li key={product.id}>
                 <ProductItem
                   product={product}
@@ -167,11 +188,11 @@ export default function Home() {
         {/* Product with category */}
         <section className='mt-10 flex flex-col gap-10'>
           <ProductAndCategory
-            data={productAndCategoryData[0]}
+            data={data[0]}
             bannerPosition='left'
           />
           <ProductAndCategory
-            data={productAndCategoryData[1]}
+            data={data[1]}
             bannerPosition='right'
           />
         </section>
@@ -179,7 +200,7 @@ export default function Home() {
         <section className='mt-10'>
           <div className='relative flex justify-center before:absolute before:top-1/2 before:left-0 before:-z-10 before:w-full before:-translate-y-1/2 before:border-b before:border-primary'>
             <h2 className='inline-block bg-white px-4 py-2 text-lg font-semibold uppercase text-[#444]'>
-              Các nhãn hiệu được ưa chuộng
+              Nhãn hiệu được ưa chuộng
             </h2>
           </div>
           <SlickSlider

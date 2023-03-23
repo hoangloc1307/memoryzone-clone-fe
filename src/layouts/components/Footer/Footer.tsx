@@ -8,7 +8,7 @@ export default function Footer() {
   const width = useViewport()
 
   return (
-    <footer className='py-10'>
+    <footer className='bg-white py-10'>
       {/* Top */}
       <div className='c-container pb-5'>
         <div className='grid grid-cols-12 gap-y-3 divide-y divide-dotted divide-slate-300 md:divide-none'>
@@ -164,7 +164,7 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
-            <div className='col-span-12'>
+            {/* <div className='col-span-12'>
               <h2 className='py-5 text-sm font-semibold uppercase'>Danh mục sản phẩm</h2>
               <ul className='grid gap-3 md:grid-cols-2 lg:grid-cols-5'>
                 {footerCategoryData.map((item, index) => (
@@ -189,7 +189,7 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

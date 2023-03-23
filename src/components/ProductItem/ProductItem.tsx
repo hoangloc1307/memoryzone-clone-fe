@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Product } from '~/types/product.type'
-import { formatNumberAsCurrency, generateSlug } from '~/utils/utils'
+import { numberAsCurrency, generateSlug } from '~/utils/utils'
 import RatingStars from '../RatingStars'
 
 interface Props {
@@ -23,7 +23,7 @@ export default function ProductItem({
         {/* Image */}
         <div className='relative aspect-square'>
           <Image
-            src={`/images/products/${product.image}`}
+            src={`/images/products/${product.thumbnail}`}
             alt={product.name}
             fill
             sizes='(max-width: 639px) 33vw, (max-width: 1023px) 25vw, (max-width: 1279px) 20vw, 17vw'
@@ -35,11 +35,11 @@ export default function ProductItem({
           <h3 className='my-2 min-h-[48px] line-clamp-3 md:min-h-[60px]'>{product.name}</h3>
           <p className='flex flex-col items-center lg:flex-row lg:items-end lg:justify-center lg:gap-2'>
             <span className='text-sm font-semibold text-primary md:text-base'>
-              {formatNumberAsCurrency(product.newPrice)}
+              {numberAsCurrency(product.priceDiscount)}
               <sup>đ</sup>
             </span>
             <del className='text-gray'>
-              {formatNumberAsCurrency(product.price)}
+              {numberAsCurrency(product.price)}
               <sup>đ</sup>
             </del>
           </p>
@@ -69,7 +69,7 @@ export default function ProductItem({
             </svg>
           </span>
           <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] font-semibold leading-none text-white sm:text-xs'>
-            {`-${Math.round(((product.price - product.newPrice) / product.price) * 100)}%`}
+            {`-${Math.round(((product.price - product.priceDiscount) / product.price) * 100)}%`}
           </span>
         </div>
       )}

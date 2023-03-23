@@ -1,9 +1,17 @@
 export interface Product {
   id: string
-  image: string
+  thumbnail: string
   url: string
   price: number
-  newPrice: number
+  priceDiscount: number
   name: string
   rating: number
+  brand: string
+  quantity: number
+  description: string
+  images: string[]
+  categories: {
+    id: string
+    name: string
+  }[]
 }

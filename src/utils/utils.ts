@@ -1,6 +1,6 @@
 export const isBrowser = typeof window !== 'undefined'
 
-export const formatNumberAsCurrency = (number: number) => new Intl.NumberFormat('de-DE').format(number)
+export const numberAsCurrency = (number: number) => new Intl.NumberFormat('de-DE').format(number)
 
 export const textToBeautyURL = (text: string) => {
   let result = text.toLocaleLowerCase()
@@ -17,4 +17,11 @@ export const textToBeautyURL = (text: string) => {
 
 export const generateSlug = (name: string, id: string | number) => {
   return `${textToBeautyURL(name)}-id.${id}`
+}
+
+export const statusTextFromQuantity = (quantity: number) => {
+  if (quantity === -1) return 'Sắp có hàng'
+  if (quantity === 0) return 'Hết hàng'
+  if (quantity <= 5) return 'Sắp hết hàng'
+  return 'Còn hàng'
 }
