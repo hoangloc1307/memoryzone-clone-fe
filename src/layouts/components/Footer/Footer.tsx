@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import Image from 'next/image'
-import { footerCategoryData } from '~/assets/datas/footerCategoryData'
 import { footerNavigationData } from '~/assets/datas/footerNavigationData'
 import useViewport from '~/hooks/useViewport'
 
@@ -46,7 +45,7 @@ export default function Footer() {
                   <li key={index}>
                     <a
                       href={child.url}
-                      className='block py-2 text-xs text-gray hover:text-primary hover:underline'
+                      className='block py-2 text-sm text-gray hover:text-primary hover:underline'
                     >
                       {child.tiltle}
                     </a>
