@@ -23,11 +23,7 @@ export default function Hamburger({ classNameWrapper }: Props) {
           stroke='currentColor'
           className='h-6 w-6'
         >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5'
-          />
+          <path strokeLinecap='round' strokeLinejoin='round' d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' />
         </svg>
       </span>
 
@@ -41,28 +37,16 @@ export default function Hamburger({ classNameWrapper }: Props) {
         )}
       >
         <div className='bg-warn'>
-          <Link
-            href='/'
-            className='block h-20 p-3'
-          >
+          <Link href='/' className='block h-20 p-3'>
             <div className='relative h-full'>
-              <Image
-                src='/images/logo.png'
-                alt='Memoryzone'
-                fill
-                className='object-cover'
-                sizes='276px'
-              />
+              <Image src='/images/logo.png' alt='Memoryzone' fill className='object-cover' sizes='276px' />
             </div>
           </Link>
         </div>
         <ul className='divide-y font-normal text-white'>
           {navigationData.map((item, index) => (
             <li key={index}>
-              <a
-                href='#'
-                className='block py-2 pl-8 pr-2 uppercase'
-              >
+              <a href='#' className='block py-2 pl-8 pr-2 uppercase'>
                 {item}
               </a>
             </li>
@@ -70,12 +54,7 @@ export default function Hamburger({ classNameWrapper }: Props) {
         </ul>
       </div>
       {/* Overlay */}
-      {show && (
-        <div
-          className='fixed inset-0 z-10 bg-black/30'
-          onClick={() => setShow(false)}
-        ></div>
-      )}
+      {show && <div className='fixed inset-0 z-10 bg-black/30' onClick={() => setShow(false)}></div>}
     </div>
   )
 }

@@ -46,23 +46,12 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
             <h2 className='inline-block rounded-t bg-primary py-2.5 px-4 text-sm font-semibold uppercase text-white'>
               {data.category}
             </h2>
-            <input
-              type={'checkbox'}
-              className='peer'
-              hidden
-              id={inputId}
-            />
+            <input type={'checkbox'} className='peer' hidden id={inputId} />
             {/* Drop down */}
             <ul className='absolute left-0 top-[42px] z-10 max-h-0 w-full overflow-hidden rounded-b-lg border-2 border-t-0 border-primary bg-white px-3 text-sm transition-all duration-700 ease-in-out peer-checked:max-h-[216px] lg:static lg:flex lg:max-h-max lg:w-max lg:items-center lg:gap-4 lg:border-none lg:px-0'>
               {data.children.map((item, index) => (
-                <li
-                  key={index}
-                  className='hover:text-primary lg:text-[#444]'
-                >
-                  <a
-                    href={item.url}
-                    className='block py-1.5 capitalize'
-                  >
+                <li key={index} className='hover:text-primary lg:text-[#444]'>
+                  <a href={item.url} className='block py-1.5 capitalize'>
                     {item.category}
                   </a>
                 </li>
@@ -81,11 +70,7 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
                       stroke='currentColor'
                       className='h-6 w-6'
                     >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        d='M15.75 19.5L8.25 12l7.5-7.5'
-                      />
+                      <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
                     </svg>
                   </span>
                   <span
@@ -100,11 +85,7 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
                       stroke='currentColor'
                       className='h-6 w-6'
                     >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        d='M8.25 4.5l7.5 7.5-7.5 7.5'
-                      />
+                      <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
                     </svg>
                   </span>
                 </div>
@@ -116,12 +97,7 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
               className='absolute top-1/2 right-0 h-10 -translate-y-1/2 p-2 pr-0 transition-transform duration-700 peer-checked:rotate-[540deg] peer-checked:text-primary lg:hidden'
             >
               <span>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  fill='currentColor'
-                  className='h-6 w-6'
-                >
+                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-6 w-6'>
                   <path
                     fillRule='evenodd'
                     d='M2.25 4.5A.75.75 0 013 3.75h14.25a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75zm0 4.5A.75.75 0 013 8.25h9.75a.75.75 0 010 1.5H3A.75.75 0 012.25 9zm15-.75A.75.75 0 0118 9v10.19l2.47-2.47a.75.75 0 111.06 1.06l-3.75 3.75a.75.75 0 01-1.06 0l-3.75-3.75a.75.75 0 111.06-1.06l2.47 2.47V9a.75.75 0 01.75-.75zm-15 5.25a.75.75 0 01.75-.75h9.75a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75z'
@@ -139,21 +115,14 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
                 <ul className='grid grid-cols-[repeat(6,calc((100vw-24px-12px*2)/3))] gap-3 p-3 sm:grid-cols-[repeat(6,calc((100vw-24px-12px*3)/4))] md:grid-cols-[repeat(6,calc((100vw-32px-12px*3)/4))]'>
                   {data.products.map((product) => (
                     <li key={product.id}>
-                      <ProductItem
-                        product={product}
-                        showDiscountPercent
-                        showRating
-                      />
+                      <ProductItem product={product} showDiscountPercent showRating />
                     </li>
                   ))}
                 </ul>
               </div>
             ) : (
               <div className='col-span-4 sm:col-span-3'>
-                <Slider
-                  {...settings}
-                  ref={slickRef}
-                >
+                <Slider {...settings} ref={slickRef}>
                   {data.products.map((product) => (
                     <ProductItem
                       key={product.id}

@@ -43,10 +43,7 @@ export default function Footer() {
               <ul className='max-h-0 overflow-hidden [transition:all_0.5s_ease-in-out] peer-open:max-h-[500px] md:max-h-max'>
                 {item.children.map((child, index) => (
                   <li key={index}>
-                    <a
-                      href={child.url}
-                      className='block py-2 text-sm text-gray hover:text-primary hover:underline'
-                    >
+                    <a href={child.url} className='block py-2 text-sm text-gray hover:text-primary hover:underline'>
                       {child.tiltle}
                     </a>
                   </li>
@@ -101,64 +98,34 @@ export default function Footer() {
             </div>
             <div className='col-span-12 md:col-span-6 lg:col-span-4'>
               <h2 className='py-5 text-sm font-semibold uppercase'>Phương thức thanh toán</h2>
-              <Image
-                src='/images/payment.png'
-                alt='Phương thức thanh toán'
-                width={350}
-                height={33}
-              />
+              <Image src='/images/payment.png' alt='Phương thức thanh toán' width={350} height={33} />
             </div>
             <div className='col-span-12 md:col-span-6 lg:col-span-3'>
               <h2 className='py-5 text-sm font-semibold uppercase'>Kết nối với chúng tôi</h2>
               <ul className='flex gap-3'>
                 <li>
                   <a href='#'>
-                    <Image
-                      src='/images/icons/facebook.png'
-                      alt='Facebook'
-                      width={32}
-                      height={32}
-                    />
+                    <Image src='/images/icons/facebook.png' alt='Facebook' width={32} height={32} />
                   </a>
                 </li>
                 <li>
                   <a href='#'>
-                    <Image
-                      src='/images/icons/lazada.png'
-                      alt='Lazada'
-                      width={32}
-                      height={32}
-                    />
+                    <Image src='/images/icons/lazada.png' alt='Lazada' width={32} height={32} />
                   </a>
                 </li>
                 <li>
                   <a href='#'>
-                    <Image
-                      src='/images/icons/shopee.png'
-                      alt='Shopee'
-                      width={32}
-                      height={32}
-                    />
+                    <Image src='/images/icons/shopee.png' alt='Shopee' width={32} height={32} />
                   </a>
                 </li>
                 <li>
                   <a href='#'>
-                    <Image
-                      src='/images/icons/instagram.png'
-                      alt='Instagram'
-                      width={32}
-                      height={32}
-                    />
+                    <Image src='/images/icons/instagram.png' alt='Instagram' width={32} height={32} />
                   </a>
                 </li>
                 <li>
                   <a href='#'>
-                    <Image
-                      src='/images/icons/youtube.png'
-                      alt='Youtube'
-                      width={32}
-                      height={32}
-                    />
+                    <Image src='/images/icons/youtube.png' alt='Youtube' width={32} height={32} />
                   </a>
                 </li>
               </ul>

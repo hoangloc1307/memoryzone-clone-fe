@@ -11,7 +11,7 @@ import ProductAndCategory from '~/components/ProductAndCategory'
 import ProductItem from '~/components/ProductItem'
 import Slider from '~/components/Slider'
 import SlickSlider from 'react-slick'
-import { sloganData } from '~/assets/datas/sloganData'
+import { homeSlogan } from '~/assets/datas/sloganData'
 import { useEffect, useState } from 'react'
 import { Product } from '~/types/product.type'
 import { Banner as BannerType } from '~/types/banner.type'
@@ -43,47 +43,20 @@ export default function Home() {
           name='description'
           content='MemoryZone là một thương hiệu chuyên cung cấp Laptop, PC, thiết bị lưu trữ, màn hình và các phụ kiện khác.'
         />
-        <meta
-          name='robots'
-          content='noodp,index,follow'
-        />
-        <meta
-          httpEquiv='content-language'
-          content='vi'
-        />
-        <meta
-          name='viewport'
-          content='width=device-width, initial-scale=1.0'
-        />
+        <meta name='robots' content='noodp,index,follow' />
+        <meta httpEquiv='content-language' content='vi' />
+        <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         <meta
           name='keywords'
           content='Laptop, PC gaming, Gear, Thẻ nhớ điện thoại, máy ảnh chính hãng, USB, USB 3.0, ổ cứng di động, ổ cứng gắn ngoài, ổ cứng SSD, thiết bị wireless'
         />
         {/* Open graph */}
-        <meta
-          property='og:type'
-          content='website'
-        />
-        <meta
-          property='og:title'
-          content='MemoryZone Clone By Locdeptrai'
-        />
-        <meta
-          property='og:description'
-          content='Clone MemoryZone nhằm mục đích học NextJs.'
-        />
-        <meta
-          property='og:image'
-          content='https://memoryzone-clone-fe.vercel.app/images/og_image.png'
-        />
-        <meta
-          property='og:url'
-          content='https://memoryzone-clone-fe.vercel.app/'
-        />
-        <meta
-          property='og:site_name'
-          content='MemoryZone - Professional in memory'
-        />
+        <meta property='og:type' content='website' />
+        <meta property='og:title' content='MemoryZone Clone By Locdeptrai' />
+        <meta property='og:description' content='Clone MemoryZone nhằm mục đích học NextJs.' />
+        <meta property='og:image' content='https://memoryzone-clone-fe.vercel.app/images/og_image.png' />
+        <meta property='og:url' content='https://memoryzone-clone-fe.vercel.app/' />
+        <meta property='og:site_name' content='MemoryZone - Professional in memory' />
       </Head>
       <h1 className='hidden'>
         MemoryZone - Professional in memory - MemoryZone là một thương hiệu chuyên cung cấp Laptop, PC, thiết bị lưu
@@ -152,17 +125,9 @@ export default function Home() {
           <ul className='mt-5 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6'>
             {hotCategoriesData.map((item, index) => (
               <li key={index}>
-                <a
-                  href={item.url}
-                  className='flex flex-col items-center gap-2'
-                >
+                <a href={item.url} className='flex flex-col items-center gap-2'>
                   <span>
-                    <Image
-                      src={`/images/categories/${item.icon}`}
-                      alt={item.title}
-                      width={68}
-                      height={68}
-                    />
+                    <Image src={`/images/categories/${item.icon}`} alt={item.title} width={68} height={68} />
                   </span>
                   <h3 className='text-sm font-medium capitalize text-primary lg:text-base'>{item.title}</h3>
                 </a>
@@ -176,25 +141,15 @@ export default function Home() {
           <ul className='mt-5 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
             {productData.slice(0, 12).map((product) => (
               <li key={product.id}>
-                <ProductItem
-                  product={product}
-                  showRating
-                  showDiscountPercent
-                />
+                <ProductItem product={product} showRating showDiscountPercent />
               </li>
             ))}
           </ul>
         </section>
         {/* Product with category */}
         <section className='mt-10 flex flex-col gap-10'>
-          <ProductAndCategory
-            data={data[0]}
-            bannerPosition='left'
-          />
-          <ProductAndCategory
-            data={data[1]}
-            bannerPosition='right'
-          />
+          <ProductAndCategory data={data[0]} bannerPosition='left' />
+          <ProductAndCategory data={data[1]} bannerPosition='right' />
         </section>
         {/* Hot brands */}
         <section className='mt-10'>
@@ -231,10 +186,7 @@ export default function Home() {
             ]}
           >
             {hotBrandsData.map((item, index) => (
-              <div
-                key={index}
-                className='h-[100px] w-[170px]'
-              >
+              <div key={index} className='h-[100px] w-[170px]'>
                 <Banner
                   image={`/images/brands/${item.image}`}
                   alt={item.alt}
@@ -252,16 +204,11 @@ export default function Home() {
       <section className='mt-10 border-y border-black/10 bg-[#f9f9f9] py-5'>
         <div className='c-container'>
           <ul className='grid grid-cols-2 gap-2 md:grid-cols-4 lg:items-center'>
-            {sloganData.map((item, index) => (
+            {homeSlogan.map((item, index) => (
               <li key={index}>
                 <div className='flex flex-col items-center gap-3 p-2 lg:flex-row'>
                   <div className='w-[59px] flex-shrink-0'>
-                    <Image
-                      src={`/images/icons/${item.icon}`}
-                      alt={item.title}
-                      width={59}
-                      height={42}
-                    />
+                    <Image src={`/images/icons/${item.icon}`} alt={item.title} width={59} height={42} />
                   </div>
                   <p className='flex flex-col gap-1 text-center text-xs lg:items-start lg:text-left'>
                     <span className='font-bold text-primary'>{item.title}</span>

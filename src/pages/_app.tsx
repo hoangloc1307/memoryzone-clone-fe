@@ -15,10 +15,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       {width > 1535 && (
         <>
           {/* Left sticky banner */}
-          <div
-            className='absolute top-0 h-full'
-            style={{ left: 'calc((100vw - 1280px) / 2 - 120px)' }}
-          >
+          <div className='absolute top-0 h-full' style={{ left: 'calc((100vw - 1280px) / 2 - 120px)' }}>
             <div className='sticky top-[229px]'>
               <Banner
                 image='/images/banners/sticky_sandisk_0403.png'
@@ -31,10 +28,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             </div>
           </div>
           {/* Right sticky banner */}
-          <div
-            className='absolute top-0 h-full'
-            style={{ right: 'calc((100vw - 1280px) / 2 - 120px)' }}
-          >
+          <div className='absolute top-0 h-full' style={{ right: 'calc((100vw - 1280px) / 2 - 120px)' }}>
             <div className='sticky top-[229px]'>
               <Banner
                 image='/images/banners/sticky_samsung_0403.png'

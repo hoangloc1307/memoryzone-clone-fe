@@ -36,10 +36,7 @@ export default function Category() {
           >
             {level === 0 ? (
               <div className='relative'>
-                <a
-                  href='#'
-                  className='inline-block py-2 font-semibold hover:underline group-hover:text-primary'
-                >
+                <a href='#' className='inline-block py-2 font-semibold hover:underline group-hover:text-primary'>
                   {item.title}
                 </a>
                 {item.children && item.children.length > 0 && (
@@ -60,17 +57,9 @@ export default function Category() {
                 )}
               </div>
             ) : level === 1 ? (
-              <a
-                href='#'
-                className='flex items-center gap-1 py-1 pl-2 hover:text-primary hover:underline'
-              >
+              <a href='#' className='flex items-center gap-1 py-1 pl-2 hover:text-primary hover:underline'>
                 <span>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='h-3 w-3'
-                  >
+                  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-3 w-3'>
                     <path
                       fillRule='evenodd'
                       d='M4.72 3.97a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L11.69 12 4.72 5.03a.75.75 0 010-1.06zm6 0a.75.75 0 011.06 0l7.5 7.5a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 11-1.06-1.06L17.69 12l-6.97-6.97a.75.75 0 010-1.06z'
@@ -81,10 +70,7 @@ export default function Category() {
                 <span>{item.title}</span>
               </a>
             ) : (
-              <a
-                href='#'
-                className='block py-1 pl-10 hover:text-primary hover:underline'
-              >
+              <a href='#' className='block py-1 pl-10 hover:text-primary hover:underline'>
                 {item.title}
               </a>
             )}
@@ -154,20 +140,12 @@ export default function Category() {
                 height={20}
                 className='absolute top-1/2 left-4 -translate-y-1/2 group-data-[active=true]:invert'
               />
-              <a
-                href='#'
-                className='relative block py-2.5 pl-12 pr-9'
-              >
+              <a href='#' className='relative block py-2.5 pl-12 pr-9'>
                 {item.title}
               </a>
               {item.children && item.children.length > 0 && (
                 <span className='absolute right-2.5 top-1/2 -translate-y-1/2'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    viewBox='0 0 24 24'
-                    fill='currentColor'
-                    className='h-6 w-6'
-                  >
+                  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-6 w-6'>
                     <path
                       fillRule='evenodd'
                       d='M16.28 11.47a.75.75 0 010 1.06l-7.5 7.5a.75.75 0 01-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 011.06-1.06l7.5 7.5z'
@@ -188,7 +166,7 @@ export default function Category() {
   return (
     <Popover
       placement='bottom-start'
-      className='bg-warn flex w-full items-center gap-3 py-2 px-5 font-semibold uppercase lg:w-[270px] lg:flex-grow-0'
+      className='flex w-full items-center gap-3 bg-warn py-2 px-5 font-semibold uppercase lg:w-[270px] lg:flex-grow-0'
       floatingElement={
         <div
           className={classNames('h-max bg-white text-black shadow-2xl shadow-slate-400', {
@@ -203,12 +181,7 @@ export default function Category() {
       onMouseEnter={() => setCurrentCategory(-1)}
     >
       <span>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          viewBox='0 0 24 24'
-          fill='currentColor'
-          className='h-6 w-6'
-        >
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-6 w-6'>
           <path
             fillRule='evenodd'
             d='M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z'

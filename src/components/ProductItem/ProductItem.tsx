@@ -9,6 +9,7 @@ interface Props {
   showRating?: boolean
   showDiscountPercent?: boolean
   classNameWrapper?: string
+  classNameLink?: string
 }
 
 export default function ProductItem({
@@ -16,12 +17,13 @@ export default function ProductItem({
   showRating,
   showDiscountPercent,
   classNameWrapper = 'p-2 rounded shadow',
+  classNameLink,
 }: Props) {
   return (
     <div className={`relative ${classNameWrapper}`}>
-      <Link href={`/products/${generateSlug(product.name, product.id)}`}>
+      <Link href={`/products/${generateSlug(product.name, product.id)}`} className={classNameLink}>
         {/* Image */}
-        <div className='relative aspect-square'>
+        <div className='relative aspect-square min-w-[100px]'>
           <Image
             src={`/images/products/${product.thumbnail}`}
             alt={product.name}
