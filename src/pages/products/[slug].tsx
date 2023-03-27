@@ -108,12 +108,12 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
                 </p>
                 <span>|</span>
                 <p>
-                  Tình trạng:
+                  Tình trạng:{' '}
                   <span
                     className={classNames('font-medium', {
                       'text-blue-500': product.quantity === -1,
                       'text-danger': product.quantity === 0,
-                      'text-warn': product.quantity <= 5,
+                      'text-warn': 0 < product.quantity && product.quantity <= 5,
                       'text-primary': product.quantity > 5,
                     })}
                   >
@@ -139,26 +139,77 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
               />
               {/* Buttons */}
               <div className='mt-5 grid gap-2 lg:grid-cols-2'>
-                <div>
-                  <button className='w-full rounded bg-primary py-2 text-white'>
-                    <p className='text-sm font-medium uppercase'>Mua ngay</p>
-                    <p className='text-xs'>Giao hàng miễn phí tận nơi</p>
-                  </button>
-                </div>
-                <div>
-                  <button className='w-full rounded bg-danger py-2 text-white'>
-                    <p className='text-sm font-medium uppercase'>Trả góp</p>
-                    <p className='text-xs'>Duyệt nhanh qua điện thoại</p>
-                  </button>
-                </div>
-                <div className='lg:col-span-2'>
-                  <button className='w-full rounded bg-warn py-2 text-white'>
-                    <p className='text-sm font-medium uppercase'>Trả góp 0% qua thẻ Visa, Master, JCB</p>
-                    <p className='text-xs'>
-                      Áp dụng cho đơn hàng từ 3.000.000<sup>đ</sup>
-                    </p>
-                  </button>
-                </div>
+                {product.quantity > 0 && (
+                  <>
+                    <div>
+                      <button className='w-full rounded bg-primary py-2 text-white'>
+                        <p className='text-sm font-bold uppercase'>Mua ngay</p>
+                        <p className='text-xs'>Giao hàng miễn phí tận nơi</p>
+                      </button>
+                    </div>
+                    <div>
+                      <button className='w-full rounded bg-danger py-2 text-white'>
+                        <p className='text-sm font-bold uppercase'>Trả góp</p>
+                        <p className='text-xs'>Duyệt nhanh qua điện thoại</p>
+                      </button>
+                    </div>
+                    <div className='lg:col-span-2'>
+                      <button className='w-full rounded bg-warn py-2 text-white'>
+                        <p className='text-sm font-bold uppercase'>Trả góp 0% qua thẻ Visa, Master, JCB</p>
+                        <p className='text-xs'>
+                          Áp dụng cho đơn hàng từ 3.000.000<sup>đ</sup>
+                        </p>
+                      </button>
+                    </div>
+                  </>
+                )}
+                {product.quantity <= 0 && (
+                  <>
+                    <div>
+                      <button
+                        className='w-full rounded bg-primary/70 py-4 text-sm font-bold uppercase text-white'
+                        disabled
+                      >
+                        Hết hàng
+                      </button>
+                    </div>
+                    <div>
+                      <button className='w-full rounded bg-[#444] py-2 text-white'>
+                        <p className='text-sm font-bold uppercase'>Gọi đặt hàng</p>
+                        <p className='text-xs'>Vui lòng gọi ngay (028) 7301 3878</p>
+                      </button>
+                    </div>
+                    <div className='bg-[#f9f6d1] p-2 lg:col-span-2'>
+                      <p className='text-center text-sm font-bold uppercase text-[#800]'>
+                        Đăng ký nhận thông tin khi có hàng
+                      </p>
+                      <form className='mt-3 space-y-3'>
+                        <input
+                          type='text'
+                          placeholder='Họ tên của bạn (*)'
+                          required
+                          className='w-full px-4 py-2 text-sm text-[#55595c] outline-none'
+                        />
+                        <input
+                          type='email'
+                          placeholder='Email (để nhận thông báo khi có hàng)'
+                          className='w-full px-4 py-2 text-sm text-[#55595c] outline-none'
+                        />
+                        <input
+                          type='tel'
+                          placeholder='Số điện thoại (*)'
+                          className='w-full px-4 py-2 text-sm text-[#55595c] outline-none'
+                        />
+                        <button
+                          type='submit'
+                          className='w-full rounded bg-primary py-2 text-sm font-bold uppercase text-white'
+                        >
+                          Nhận thông báo khi có hàng
+                        </button>
+                      </form>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -261,7 +312,7 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
               ))}
             </div>
             {/* You will like */}
-            <div className='mt-10'>
+            <div className='sticky top-10 mt-10'>
               <h3 className='rounded bg-primary py-2 px-5 text-lg font-bold uppercase text-white'>Có thể bạn thích</h3>
               <ul>
                 {productData

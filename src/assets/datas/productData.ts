@@ -930,16 +930,16 @@ export const productDetailData: Product = {
     <p class='mt-2 sm:text-center'>
       Trên máy tính để bàn, màn hình được kết nối trực tiếp với card đồ họa GPU và việc xuất khung
       hình sẽ được GPU gửi thẳng hình ảnh tới màn hình và hiển thị ngay lập tức, gần như không có độ
-      trễ. Tuy nhiên trên các mẫu{' '}
+      trễ. Tuy nhiên trên các mẫu 
       <a href='#'>
         <b>Laptop Gaming</b>
-      </a>{' '}
+      </a> 
       đa số đều sẽ được trang bị 2 loại card đồ họa rời (dGPU) và card onboard (iGPU), dGPU sẽ đảm
       nhận việc render khung hình và gửi đến iGPU để hiển thị dữ liệu hình ảnh đến màn hình với mục
-      đích tối ưu năng lượng sử dụng pin trên{' '}
+      đích tối ưu năng lượng sử dụng pin trên 
       <a href='#'>
         <b>Laptop Gaming</b>
-      </a>{' '}
+      </a> 
       một cách hiệu quả nhất.
     </p>
     <p class='mt-2 sm:text-center'>
