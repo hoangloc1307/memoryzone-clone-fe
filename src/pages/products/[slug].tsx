@@ -1,10 +1,11 @@
+import { Tab } from '@headlessui/react'
 import classNames from 'classnames'
 import DOMPurify from 'isomorphic-dompurify'
 import map from 'lodash/map'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Slider, { Settings } from 'react-slick'
 import { productData, productDetailData } from '~/assets/datas/productData'
 import { productDetailSlogan } from '~/assets/datas/sloganData'
@@ -12,7 +13,6 @@ import ProductItem from '~/components/ProductItem'
 import RatingStars from '~/components/RatingStars'
 import { Product } from '~/types/product.type'
 import { generateSlug, numberAsCurrency, statusTextFromQuantity } from '~/utils/utils'
-import { Tab } from '@headlessui/react'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = productData.map((product) => ({ params: { slug: generateSlug(product.name, product.id) } }))
@@ -33,6 +33,9 @@ export const getStaticProps: GetStaticProps<{ product: Product }> = async ({ par
 
 export default function ProductDetail({ product }: InferGetStaticPropsType<typeof getStaticProps>) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const refDescription = useRef<HTMLDivElement>(null)
+  const [showDescription, setShowDescription] = useState(false)
+
   const title = `${productDetailData.name} | MemoryZone`
 
   const sliderSettings: Settings = {
@@ -105,12 +108,12 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
                 </p>
                 <span>|</span>
                 <p>
-                  Tình trạng:
+                  Tình trạng:{' '}
                   <span
                     className={classNames('font-medium', {
                       'text-blue-500': product.quantity === -1,
                       'text-danger': product.quantity === 0,
-                      'text-warn': product.quantity <= 5,
+                      'text-warn': 0 < product.quantity && product.quantity <= 5,
                       'text-primary': product.quantity > 5,
                     })}
                   >
@@ -136,26 +139,77 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
               />
               {/* Buttons */}
               <div className='mt-5 grid gap-2 lg:grid-cols-2'>
-                <div>
-                  <button className='w-full rounded bg-primary py-2 text-white'>
-                    <p className='text-sm font-medium uppercase'>Mua ngay</p>
-                    <p className='text-xs'>Giao hàng miễn phí tận nơi</p>
-                  </button>
-                </div>
-                <div>
-                  <button className='w-full rounded bg-danger py-2 text-white'>
-                    <p className='text-sm font-medium uppercase'>Trả góp</p>
-                    <p className='text-xs'>Duyệt nhanh qua điện thoại</p>
-                  </button>
-                </div>
-                <div className='lg:col-span-2'>
-                  <button className='w-full rounded bg-warn py-2 text-white'>
-                    <p className='text-sm font-medium uppercase'>Trả góp 0% qua thẻ Visa, Master, JCB</p>
-                    <p className='text-xs'>
-                      Áp dụng cho đơn hàng từ 3.000.000<sup>đ</sup>
-                    </p>
-                  </button>
-                </div>
+                {product.quantity > 0 && (
+                  <>
+                    <div>
+                      <button className='w-full rounded bg-primary py-2 text-white'>
+                        <p className='text-sm font-bold uppercase'>Mua ngay</p>
+                        <p className='text-xs'>Giao hàng miễn phí tận nơi</p>
+                      </button>
+                    </div>
+                    <div>
+                      <button className='w-full rounded bg-danger py-2 text-white'>
+                        <p className='text-sm font-bold uppercase'>Trả góp</p>
+                        <p className='text-xs'>Duyệt nhanh qua điện thoại</p>
+                      </button>
+                    </div>
+                    <div className='lg:col-span-2'>
+                      <button className='w-full rounded bg-warn py-2 text-white'>
+                        <p className='text-sm font-bold uppercase'>Trả góp 0% qua thẻ Visa, Master, JCB</p>
+                        <p className='text-xs'>
+                          Áp dụng cho đơn hàng từ 3.000.000<sup>đ</sup>
+                        </p>
+                      </button>
+                    </div>
+                  </>
+                )}
+                {product.quantity <= 0 && (
+                  <>
+                    <div>
+                      <button
+                        className='w-full rounded bg-primary/70 py-4 text-sm font-bold uppercase text-white'
+                        disabled
+                      >
+                        Hết hàng
+                      </button>
+                    </div>
+                    <div>
+                      <button className='w-full rounded bg-[#444] py-2 text-white'>
+                        <p className='text-sm font-bold uppercase'>Gọi đặt hàng</p>
+                        <p className='text-xs'>Vui lòng gọi ngay (028) 7301 3878</p>
+                      </button>
+                    </div>
+                    <div className='bg-[#f9f6d1] p-2 lg:col-span-2'>
+                      <p className='text-center text-sm font-bold uppercase text-[#800]'>
+                        Đăng ký nhận thông tin khi có hàng
+                      </p>
+                      <form className='mt-3 space-y-3'>
+                        <input
+                          type='text'
+                          placeholder='Họ tên của bạn (*)'
+                          required
+                          className='w-full px-4 py-2 text-sm text-[#55595c] outline-none'
+                        />
+                        <input
+                          type='email'
+                          placeholder='Email (để nhận thông báo khi có hàng)'
+                          className='w-full px-4 py-2 text-sm text-[#55595c] outline-none'
+                        />
+                        <input
+                          type='tel'
+                          placeholder='Số điện thoại (*)'
+                          className='w-full px-4 py-2 text-sm text-[#55595c] outline-none'
+                        />
+                        <button
+                          type='submit'
+                          className='w-full rounded bg-primary py-2 text-sm font-bold uppercase text-white'
+                        >
+                          Nhận thông báo khi có hàng
+                        </button>
+                      </form>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -179,11 +233,29 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
                 ))}
               </Tab.List>
               <Tab.Panels className='mt-1 border border-[#e5e5e5] p-5 outline-none md:mt-0'>
-                {/*  */}
-                <Tab.Panel
-                  className='text-sm outline-none'
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }}
-                ></Tab.Panel>
+                {/* Description */}
+                <Tab.Panel className='text-sm outline-none'>
+                  <div
+                    className='relative max-h-[350px] overflow-hidden'
+                    style={showDescription ? { maxHeight: `${(refDescription.current?.clientHeight || 0) + 1}px` } : {}}
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }}
+                      ref={refDescription}
+                    />
+                    {!showDescription && (
+                      <span className='absolute left-0 bottom-0 h-[120px] w-full bg-gradient-to-t from-white to-transparent' />
+                    )}
+                  </div>
+                  <div className='text-center'>
+                    <button
+                      className='mx-auto mt-5 rounded border border-primary px-5 py-1 text-primary'
+                      onClick={() => setShowDescription((prev) => !prev)}
+                    >
+                      {showDescription ? 'Thu gọn' : 'Xem đầy đủ'}
+                    </button>
+                  </div>
+                </Tab.Panel>
 
                 {/* Specifications */}
                 <Tab.Panel>
@@ -240,7 +312,7 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
               ))}
             </div>
             {/* You will like */}
-            <div className='mt-10'>
+            <div className='sticky top-10 mt-10'>
               <h3 className='rounded bg-primary py-2 px-5 text-lg font-bold uppercase text-white'>Có thể bạn thích</h3>
               <ul>
                 {productData
