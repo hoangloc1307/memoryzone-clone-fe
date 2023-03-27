@@ -11,7 +11,7 @@ export default function MainLayout({ children }: Props) {
   return (
     <>
       <Header />
-      <main className='relative py-5'>{children}</main>
+      <main className='relative pt-5'>{children}</main>
       <Footer />
       <BackToTop />
     </>

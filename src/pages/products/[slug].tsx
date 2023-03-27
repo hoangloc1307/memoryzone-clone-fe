@@ -1,10 +1,11 @@
+import { Tab } from '@headlessui/react'
 import classNames from 'classnames'
 import DOMPurify from 'isomorphic-dompurify'
 import map from 'lodash/map'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Slider, { Settings } from 'react-slick'
 import { productData, productDetailData } from '~/assets/datas/productData'
 import { productDetailSlogan } from '~/assets/datas/sloganData'
@@ -12,7 +13,6 @@ import ProductItem from '~/components/ProductItem'
 import RatingStars from '~/components/RatingStars'
 import { Product } from '~/types/product.type'
 import { generateSlug, numberAsCurrency, statusTextFromQuantity } from '~/utils/utils'
-import { Tab } from '@headlessui/react'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = productData.map((product) => ({ params: { slug: generateSlug(product.name, product.id) } }))
@@ -33,6 +33,9 @@ export const getStaticProps: GetStaticProps<{ product: Product }> = async ({ par
 
 export default function ProductDetail({ product }: InferGetStaticPropsType<typeof getStaticProps>) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const refDescription = useRef<HTMLDivElement>(null)
+  const [showDescription, setShowDescription] = useState(false)
+
   const title = `${productDetailData.name} | MemoryZone`
 
   const sliderSettings: Settings = {
@@ -179,11 +182,29 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
                 ))}
               </Tab.List>
               <Tab.Panels className='mt-1 border border-[#e5e5e5] p-5 outline-none md:mt-0'>
-                {/*  */}
-                <Tab.Panel
-                  className='text-sm outline-none'
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }}
-                ></Tab.Panel>
+                {/* Description */}
+                <Tab.Panel className='text-sm outline-none'>
+                  <div
+                    className='relative max-h-[350px] overflow-hidden'
+                    style={showDescription ? { maxHeight: `${(refDescription.current?.clientHeight || 0) + 1}px` } : {}}
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }}
+                      ref={refDescription}
+                    />
+                    {!showDescription && (
+                      <span className='absolute left-0 bottom-0 h-[120px] w-full bg-gradient-to-t from-white to-transparent' />
+                    )}
+                  </div>
+                  <div className='text-center'>
+                    <button
+                      className='mx-auto mt-5 rounded border border-primary px-5 py-1 text-primary'
+                      onClick={() => setShowDescription((prev) => !prev)}
+                    >
+                      {showDescription ? 'Thu gọn' : 'Xem đầy đủ'}
+                    </button>
+                  </div>
+                </Tab.Panel>
 
                 {/* Specifications */}
                 <Tab.Panel>
