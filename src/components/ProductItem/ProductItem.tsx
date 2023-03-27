@@ -23,13 +23,13 @@ export default function ProductItem({
     <div className={`relative ${classNameWrapper}`}>
       <Link href={`/products/${generateSlug(product.name, product.id)}`} className={classNameLink}>
         {/* Image */}
-        <div className='relative aspect-square min-w-[100px]'>
+        <div className='relative aspect-square min-w-[75px]'>
           <Image
             src={`/images/products/${product.thumbnail}`}
             alt={product.name}
             fill
             sizes='(max-width: 639px) 33vw, (max-width: 1023px) 25vw, (max-width: 1279px) 20vw, 17vw'
-            className='object-cover'
+            className='object-contain'
           />
         </div>
         {/* Name and price */}

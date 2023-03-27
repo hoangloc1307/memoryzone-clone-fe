@@ -6,13 +6,13 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useState } from 'react'
 import Slider, { Settings } from 'react-slick'
-import { productData } from '~/assets/datas/productData'
-import { productDetailData } from '~/assets/datas/productData'
+import { productData, productDetailData } from '~/assets/datas/productData'
 import { productDetailSlogan } from '~/assets/datas/sloganData'
-import RatingStars from '~/components/RatingStars'
 import ProductItem from '~/components/ProductItem'
+import RatingStars from '~/components/RatingStars'
 import { Product } from '~/types/product.type'
 import { generateSlug, numberAsCurrency, statusTextFromQuantity } from '~/utils/utils'
+import { Tab } from '@headlessui/react'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = productData.map((product) => ({ params: { slug: generateSlug(product.name, product.id) } }))
@@ -51,8 +51,8 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
       </Head>
 
       <div className='c-container'>
-        <div className='grid grid-cols-12 gap-5'>
-          <div className='col-span-12 grid auto-rows-max grid-cols-1 gap-5 self-start md:auto-rows-fr md:grid-cols-2 lg:col-span-9 lg:grid-cols-12'>
+        <div className='grid grid-flow-row grid-cols-12 gap-5'>
+          <section className='col-span-12 grid auto-rows-max grid-cols-1 gap-5 md:grid-cols-2 lg:col-span-9 lg:grid-cols-12'>
             {/* Image */}
             <div className='lg:col-span-5'>
               {/* Large image */}
@@ -93,7 +93,7 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
             </div>
 
             {/* Name and price */}
-            <div className='md:row-span-2 lg:col-span-7'>
+            <div className='md:col-start-2 md:row-span-3 lg:col-span-7'>
               {/* Name */}
               <h1 className='text-2xl font-medium text-dark'>{product.name}</h1>
               {/* Stars */}
@@ -130,80 +130,10 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
                 </del>
               </div>
               {/* Promotions */}
-              <div className='mt-5 rounded border border-dashed border-primary p-3'>
-                <div className='text-sm'>
-                  <p className='flex items-center gap-2'>
-                    <span className='text-red-500'>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        viewBox='0 0 24 24'
-                        fill='currentColor'
-                        className='h-6 w-6'
-                      >
-                        <path d='M9.375 3a1.875 1.875 0 000 3.75h1.875v4.5H3.375A1.875 1.875 0 011.5 9.375v-.75c0-1.036.84-1.875 1.875-1.875h3.193A3.375 3.375 0 0112 2.753a3.375 3.375 0 015.432 3.997h3.943c1.035 0 1.875.84 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875H12.75v-4.5h1.875a1.875 1.875 0 10-1.875-1.875V6.75h-1.5V4.875C11.25 3.839 10.41 3 9.375 3zM11.25 12.75H3v6.75a2.25 2.25 0 002.25 2.25h6v-9zM12.75 12.75v9h6.75a2.25 2.25 0 002.25-2.25v-6.75h-9z' />
-                      </svg>
-                    </span>
-                    <span className='font-bold uppercase text-red-500'>Back to school - Hành trang cool</span>
-                  </p>
-                  <ul className='mt-3 list-disc space-y-2 pl-10'>
-                    <li>
-                      <p className='font-bold uppercase'>
-                        Ram to không lo giật lag{' '}
-                        <a href='#' className='normal-case text-link'>
-                          (Click here)
-                        </a>
-                      </p>
-                    </li>
-                    <li>
-                      <p className='font-bold text-warn'>
-                        Tặng bộ Microsoft Office 365 + 1TB Onedrive bản quyền{' '}
-                        <a href='#' className='normal-case text-link'>
-                          (Click here)
-                        </a>
-                      </p>
-                    </li>
-                  </ul>
-                  <div className='relative my-2 aspect-[6/1]'>
-                    <Image
-                      src={'/images/banners/ramto.jpg'}
-                      alt='Ram to'
-                      fill
-                      priority
-                      sizes='(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 500px'
-                    />
-                  </div>
-                  <div>
-                    <p className='flex items-center gap-2'>
-                      <span className='text-red-500'>
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          viewBox='0 0 24 24'
-                          fill='currentColor'
-                          className='h-6 w-6'
-                        >
-                          <path d='M9.375 3a1.875 1.875 0 000 3.75h1.875v4.5H3.375A1.875 1.875 0 011.5 9.375v-.75c0-1.036.84-1.875 1.875-1.875h3.193A3.375 3.375 0 0112 2.753a3.375 3.375 0 015.432 3.997h3.943c1.035 0 1.875.84 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875H12.75v-4.5h1.875a1.875 1.875 0 10-1.875-1.875V6.75h-1.5V4.875C11.25 3.839 10.41 3 9.375 3zM11.25 12.75H3v6.75a2.25 2.25 0 002.25 2.25h6v-9zM12.75 12.75v9h6.75a2.25 2.25 0 002.25-2.25v-6.75h-9z' />
-                        </svg>
-                      </span>
-                      <span className='font-bold'>Khuyến mãi:</span>
-                    </p>
-                    <ul className='mt-3 list-disc space-y-2 pl-10'>
-                      <li>
-                        <p className='font-bold text-warn'>Túi chống sốc</p>
-                      </li>
-                      <li>
-                        <p>
-                          <span className='text-primary'>Miễn phí</span> vệ sinh trong thời gian bảo hành
-                        </p>
-                      </li>
-                      <li>
-                        <p>
-                          <span className='text-primary'>Miễn phí</span> vận chuyển toàn quốc
-                        </p>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              <div
+                className='mt-5 rounded border border-dashed border-primary p-3'
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.promotion) }}
+              />
               {/* Buttons */}
               <div className='mt-5 grid gap-2 lg:grid-cols-2'>
                 <div>
@@ -231,12 +161,59 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
 
             {/* Description */}
             <div className='lg:col-span-5'>
-              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }} />
+              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.shortSpecs) }} />
             </div>
-          </div>
+          </section>
+
+          {/* Description and specifications */}
+          <section className='col-span-12 lg:col-span-9'>
+            <Tab.Group>
+              <Tab.List className='flex flex-col gap-1 md:flex-row'>
+                {['Mô tả sản phẩm', 'Thông số kỹ thuật'].map((item, index) => (
+                  <Tab
+                    key={index}
+                    className='border border-slate-300 p-2 text-left text-sm font-bold uppercase text-[#444] outline-none data-[headlessui-state=selected]:border-b-2 data-[headlessui-state=selected]:border-b-primary data-[headlessui-state=selected]:text-primary md:rounded-t md:border-none md:bg-[#f2f2f2] md:px-4 md:data-[headlessui-state=selected]:bg-primary md:data-[headlessui-state=selected]:text-white'
+                  >
+                    {item}
+                  </Tab>
+                ))}
+              </Tab.List>
+              <Tab.Panels className='mt-1 border border-[#e5e5e5] p-5 outline-none md:mt-0'>
+                {/*  */}
+                <Tab.Panel
+                  className='text-sm outline-none'
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }}
+                ></Tab.Panel>
+
+                {/* Specifications */}
+                <Tab.Panel>
+                  <table className='w-full border-collapse border border-slate-300 text-sm'>
+                    <tbody>
+                      {product.specifications.map((item, index) => (
+                        <tr className='border border-slate-300 odd:bg-[#f9f6d1]' key={index}>
+                          <th className='w-[120px] shrink-0 border border-slate-300 pr-2 text-right sm:w-[200px]'>
+                            {item.name}
+                          </th>
+                          <td className='border border-slate-300 p-2'>
+                            {typeof item.value === 'string' ? (
+                              item.value
+                            ) : (
+                              <ul className='list-outside list-disc pl-4'>
+                                {item.value.length > 0 && item.value.map((li, index) => <li key={index}>{li}</li>)}
+                              </ul>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </Tab.Panel>
+              </Tab.Panels>
+            </Tab.Group>
+          </section>
 
           {/* Right sidebar when min-width 1024px */}
-          <div className='col-span-3 hidden lg:block'>
+          <aside className='col-span-3 col-start-10 row-span-3 row-start-1 hidden lg:block'>
             {/* Slogan */}
             <div className='flex flex-col gap-5 divide-y divide-slate-300 rounded-lg border border-primary px-3 py-5'>
               {productDetailSlogan.map((item, index) => (
@@ -271,12 +248,16 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
                   .slice(0, 5)
                   .map((product) => (
                     <li key={product.id}>
-                      <ProductItem product={product} classNameLink='flex gap-2' classNameWrapper='my-1' />
+                      <ProductItem
+                        product={product}
+                        classNameLink='flex shadow rounded p-2 gap-2'
+                        classNameWrapper='my-1'
+                      />
                     </li>
                   ))}
               </ul>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </>

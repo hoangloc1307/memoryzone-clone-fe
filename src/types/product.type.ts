@@ -8,7 +8,10 @@ export interface Product {
   rating: number
   brand: string
   quantity: number
+  shortSpecs: string
   description: string
+  promotion: string
+  specifications: { name: string; value: string | string[] }[]
   images: string[]
   categories: {
     id: string
