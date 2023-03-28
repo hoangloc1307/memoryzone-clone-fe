@@ -8,6 +8,7 @@ export default function useQueryConfig() {
   const queryParams: ProductListConfig = router.query
   const queryConfig: ProductListConfig = omitBy(
     {
+      slug: queryParams.slug,
       page: queryParams.page || 1,
       sort_by: queryParams.sort_by || 'default',
       price_min: queryParams.price_min,

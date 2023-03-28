@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { productData } from '~/assets/datas/productData'
+import Pagination from '~/components/Pagination'
 import ProductItem from '~/components/ProductItem'
 import useQueryConfig from '~/hooks/useQueryConfig'
 import { SortType } from '~/types/product.type'
@@ -23,7 +24,7 @@ export default function Category() {
   const handleChangeSortBy = (sortBy: SortType) => {
     router.push({
       pathname: '/categories/[slug]',
-      query: { ...queryConfig, sort_by: sortBy, slug: router.query.slug },
+      query: { ...queryConfig, sort_by: sortBy },
     })
   }
 
@@ -114,6 +115,8 @@ export default function Category() {
               </Listbox>
             </div>
           </div>
+
+          {/* Products */}
           <div
             className={classNames('mt-10', {
               'grid grid-cols-2 gap-3 md:grid-cols-4': viewLayout === 'grid',
@@ -122,6 +125,10 @@ export default function Category() {
             {productData.slice(0, 24).map((product) => (
               <ProductItem product={product} key={product.id} showRating showDiscountPercent />
             ))}
+          </div>
+          {/* Pagination */}
+          <div className='mt-10'>
+            <Pagination queryConfig={queryConfig} totalPage={11} />
           </div>
         </div>
       </div>

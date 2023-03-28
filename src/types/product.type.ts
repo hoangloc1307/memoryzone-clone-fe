@@ -26,4 +26,5 @@ export interface ProductListConfig {
   sort_by?: SortType
   price_min?: number | string
   price_max?: number | string
+  slug?: string
 }
