@@ -50,7 +50,7 @@ export default function ProductItem({
       {/* Rating start */}
       {showRating && (
         <div className='mt-2 flex justify-center'>
-          <RatingStars rating={product.rating} />
+          <RatingStars rating={product.rating} showNumber />
         </div>
       )}
       {/* Discount percent */}
