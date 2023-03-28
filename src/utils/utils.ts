@@ -1,3 +1,5 @@
+import { SortType } from '~/types/product.type'
+
 export const isBrowser = typeof window !== 'undefined'
 
 export const numberAsCurrency = (number: number) => new Intl.NumberFormat('de-DE').format(number)
@@ -24,4 +26,17 @@ export const statusTextFromQuantity = (quantity: number) => {
   if (quantity === 0) return 'Hết hàng'
   if (quantity <= 5) return 'Sắp hết hàng'
   return 'Còn hàng'
+}
+
+export const sortByValueToText = (value: SortType) => {
+  const sortTypeObject = {
+    default: 'Mặc định',
+    'name:asc': 'Tên A - Z',
+    'name:desc': 'Tên Z - A',
+    'price:asc': 'Giá tăng dần',
+    'price:desc': 'Giá giảm dần',
+    'time:asc': 'Hàng mới nhất',
+    'time:desc': 'Hàng cũ nhất',
+  }
+  return sortTypeObject[value]
 }

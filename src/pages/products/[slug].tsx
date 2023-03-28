@@ -312,7 +312,7 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
               ))}
             </div>
             {/* You will like */}
-            <div className='sticky top-10 mt-10'>
+            <div className='mt-10'>
               <h3 className='rounded bg-primary py-2 px-5 text-lg font-bold uppercase text-white'>Có thể bạn thích</h3>
               <ul>
                 {productData
