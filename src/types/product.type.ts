@@ -24,6 +24,7 @@ export interface Product {
 export type SortType = 'default' | 'name:asc' | 'name:desc' | 'price:asc' | 'price:desc' | 'time:asc' | 'time:desc'
 
 export interface ProductListConfig {
+  q?: string
   page?: number
   limit?: number
   view?: 'list' | 'grid'

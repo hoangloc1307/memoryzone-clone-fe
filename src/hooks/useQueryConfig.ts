@@ -8,6 +8,7 @@ export default function useQueryConfig() {
   const queryParams: ProductListConfig = router.query
   const queryConfig: ProductListConfig = omitBy(
     {
+      q: queryParams.q,
       slug: queryParams.slug,
       page: queryParams.page || 1,
       limit: queryParams.limit || 8,

@@ -27,12 +27,7 @@ export default function ProductItem({ product, showRating, showDiscountPercent, 
   const width = useViewport()
 
   return (
-    <div
-      className={twMerge(
-        'relative rounded border border-transparent p-2 shadow hover:border-primary',
-        customClass?.wrapper
-      )}
-    >
+    <div className={twMerge('rounded border border-transparent p-2 shadow hover:border-primary', customClass?.wrapper)}>
       <Link href={`/products/${generateSlug(product.name, product.id)}`} className={customClass?.link}>
         {/* Image */}
         <div className={twMerge('relative aspect-square min-w-[75px]', customClass?.imageWrapper)}>

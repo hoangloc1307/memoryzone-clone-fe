@@ -11,32 +11,108 @@ import { sortByValueToText, sortProductsBy } from '~/utils/utils'
 export default function Category() {
   const queryConfig = useQueryConfig()
   const router = useRouter()
-  const { view, page, limit, sort_by = 'default' } = queryConfig
+  const { q = '', view, page, limit, sort_by = 'default' } = queryConfig
+
+  console.log(q)
 
   const handleChangeViewStyle = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    const view = (event.target as HTMLElement).dataset.view
-    router.push({
-      pathname: '/categories/[slug]',
-      query: { ...queryConfig, view, limit: view === 'list' ? 4 : 8 },
-    })
+    const viewData = (event.target as HTMLElement).dataset.view
+    if (viewData !== view) {
+      router.push({
+        pathname: '/categories/[slug]',
+        query: { ...queryConfig, view: viewData, limit: viewData === 'list' ? 4 : 8 },
+      })
+    }
   }
 
   const handleChangeSortBy = (sortBy: SortType) => {
+    if (sortBy !== sort_by) {
+      router.push({
+        pathname: '/categories/[slug]',
+        query: { ...queryConfig, sort_by: sortBy },
+      })
+    }
+  }
+
+  const handleFilter = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    let qText = ''
+    const { field, value } = (event.target as HTMLElement).dataset
+    const qArray = q?.split('&&') || []
+
+    const qObject: {
+      [key: string]: string
+    } = qArray.reduce((obj, item) => {
+      const colonIndex = item.indexOf(':')
+      return { ...obj, [item.slice(0, colonIndex)]: item.slice(colonIndex + 1) }
+    }, {})
+
+    if (qObject.hasOwnProperty(field as string)) {
+      const valueFilter = qObject[field as string].split(',')
+      if (valueFilter.includes(value as string)) {
+        const indexOfValue = valueFilter.indexOf(value as string)
+        valueFilter.splice(indexOfValue, 1)
+      } else {
+        valueFilter.push(value as string)
+      }
+      qObject[field as string] = valueFilter.join(',')
+
+      qText = Object.keys(qObject)
+        .map((key) => `${key}:${qObject[key]}`)
+        .join('&&')
+    } else {
+      qText = q ? `${q}&&${field}:${value}` : `${field}:${value}`
+    }
+
     router.push({
       pathname: '/categories/[slug]',
-      query: { ...queryConfig, sort_by: sortBy },
+      query: { ...queryConfig, q: qText },
     })
   }
 
   return (
     <div className='c-container'>
-      <div className='grid grid-cols-12'>
+      <div className='grid grid-cols-12 gap-5'>
         {/* Filter */}
-        <div className='hidden lg:col-span-3 lg:block'>Filter</div>
+        <div className='hidden lg:col-span-3 lg:block'>
+          <div>
+            <p className='pt-12 text-sm font-semibold uppercase'>Thương hiệu</p>
+            <ul className='mt-5 max-h-[215px] space-y-3 overflow-y-scroll'>
+              {[
+                'ACER',
+                'APPLE',
+                'ASUS',
+                'AVITA',
+                'CHUWI',
+                'DELL',
+                'GIGABYTE',
+                'HP',
+                'HUAWEI',
+                'INTEL',
+                'LENOVO',
+                'LG',
+                'MSI',
+              ].map((item, index) => (
+                <li key={index}>
+                  <div
+                    className='group relative flex cursor-pointer items-center gap-1 text-sm hover:text-primary'
+                    data-field='vendor'
+                    data-value={item}
+                    data-checked={true}
+                    onClick={handleFilter}
+                  >
+                    <span className='pointer-events-none inline-block h-4 w-4 rounded border border-slate-300 group-data-[checked]:border-primary group-data-[checked]:bg-primary' />
+
+                    <span className='pointer-events-none'>{item}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
         {/* Product list */}
         <div className='col-span-12 lg:col-span-9'>
           <h2 className='text-lg font-bold text-[#444]'>Laptop</h2>
-          <div className='mt-5 flex items-center'>
+          <div className='mt-5 flex items-center lg:justify-end'>
             {/* View layout */}
             <span
               data-view='list'

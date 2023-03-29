@@ -112,7 +112,7 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
             {/* Products */}
             {width < 1024 ? (
               <div className='col-span-4 overflow-x-scroll rounded-b border-x border-slate-100 shadow-inner sm:col-span-3'>
-                <ul className='grid grid-cols-[repeat(6,calc((100vw-24px-12px*2)/2))] gap-3 p-3 sm:grid-cols-[repeat(6,calc((100vw-24px-12px*3)/4))] md:grid-cols-[repeat(6,calc((100vw-32px-12px*3)/4))]'>
+                <ul className='grid grid-cols-[repeat(6,calc((100vw-24px-12px*3)/2))] gap-3 p-3 sm:grid-cols-[repeat(6,calc((100vw-24px-12px*5)/4))] md:grid-cols-[repeat(6,calc((100vw-32px-12px*5)/4))]'>
                   {data.products.map((product) => (
                     <li key={product.id}>
                       <ProductItem product={product} showDiscountPercent showRating />
@@ -130,7 +130,7 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
                       showDiscountPercent
                       showRating
                       customClass={{
-                        wrapper: 'my-3 mx-1.5',
+                        wrapper: 'mx-1.5 my-3',
                       }}
                     />
                   ))}
@@ -151,7 +151,9 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
                       url={banner.url}
                       alt={banner.alt}
                       fill
-                      className='object-contain'
+                      className={`object-contain ${
+                        bannerPosition === 'left' ? 'sm:object-left-top' : 'sm:object-right-top'
+                      }`}
                       sizes='(max-width: 639px) 256px, (max-width: 1023) 20vw, 291px'
                     />
                   </div>
