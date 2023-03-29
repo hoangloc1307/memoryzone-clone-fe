@@ -10,6 +10,8 @@ export default function useQueryConfig() {
     {
       slug: queryParams.slug,
       page: queryParams.page || 1,
+      limit: queryParams.limit || 8,
+      view: queryParams.view || 'grid',
       sort_by: queryParams.sort_by || 'default',
       price_min: queryParams.price_min,
       price_max: queryParams.price_max,

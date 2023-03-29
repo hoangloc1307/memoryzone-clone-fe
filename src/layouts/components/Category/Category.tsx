@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 import { categoryData, HeaderCategory } from '~/assets/datas/categoryData'
 import useViewport from '~/hooks/useViewport'
@@ -36,9 +37,12 @@ export default function Category() {
           >
             {level === 0 ? (
               <div className='relative'>
-                <a href='#' className='inline-block py-2 font-semibold hover:underline group-hover:text-primary'>
+                <Link
+                  href={item.url}
+                  className='inline-block py-2 font-semibold hover:underline group-hover:text-primary'
+                >
                   {item.title}
-                </a>
+                </Link>
                 {item.children && item.children.length > 0 && (
                   <span className='absolute right-0 top-1/2 -translate-y-1/2 font-semibold transition-transform duration-500 group-data-[active=true]:rotate-180'>
                     <svg
@@ -57,7 +61,7 @@ export default function Category() {
                 )}
               </div>
             ) : level === 1 ? (
-              <a href='#' className='flex items-center gap-1 py-1 pl-2 hover:text-primary hover:underline'>
+              <Link href={item.url} className='flex items-center gap-1 py-1 pl-2 hover:text-primary hover:underline'>
                 <span>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-3 w-3'>
                     <path
@@ -68,11 +72,11 @@ export default function Category() {
                   </svg>
                 </span>
                 <span>{item.title}</span>
-              </a>
+              </Link>
             ) : (
-              <a href='#' className='block py-1 pl-10 hover:text-primary hover:underline'>
+              <Link href={item.url} className='block py-1 pl-10 hover:text-primary hover:underline'>
                 {item.title}
-              </a>
+              </Link>
             )}
             {item.children && item.children.length > 0 && renderCategoryMobile(item.children, level + 1)}
           </li>
@@ -90,15 +94,15 @@ export default function Category() {
         >
           {currentChildrenList.map((item: HeaderCategory, index: number) => (
             <li key={index}>
-              <a
-                href='#'
+              <Link
+                href={item.url}
                 className={classNames('block hover:text-primary hover:underline', {
                   'pb-1 text-sm': level === 0,
                   'text-[13px] text-gray': level === 1,
                 })}
               >
                 {item.title}
-              </a>
+              </Link>
               {item.children && item.children.length > 0 && renderSubCategoryComputer(item.children, level + 1)}
             </li>
           ))}
@@ -140,9 +144,9 @@ export default function Category() {
                 height={20}
                 className='absolute top-1/2 left-4 -translate-y-1/2 group-data-[active=true]:invert'
               />
-              <a href='#' className='relative block py-2.5 pl-12 pr-9'>
+              <Link href={item.url} className='relative block py-2.5 pl-12 pr-9'>
                 {item.title}
-              </a>
+              </Link>
               {item.children && item.children.length > 0 && (
                 <span className='absolute right-2.5 top-1/2 -translate-y-1/2'>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-6 w-6'>

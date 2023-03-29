@@ -8,7 +8,7 @@ export interface Product {
   rating: number
   brand: string
   quantity: number
-  shortSpecs: string
+  shortSpecs: string[]
   description: string
   promotion: string
   specifications: { name: string; value: string | string[] }[]
@@ -17,14 +17,18 @@ export interface Product {
     id: string
     name: string
   }[]
+  createdAt: string
+  updatedAt: string
 }
 
 export type SortType = 'default' | 'name:asc' | 'name:desc' | 'price:asc' | 'price:desc' | 'time:asc' | 'time:desc'
 
 export interface ProductListConfig {
-  page?: number | string
+  page?: number
+  limit?: number
+  view?: 'list' | 'grid'
   sort_by?: SortType
-  price_min?: number | string
-  price_max?: number | string
+  price_min?: number
+  price_max?: number
   slug?: string
 }

@@ -32,7 +32,7 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
     slidesToShow: 4,
     swipeToSlide: true,
     autoplay: true,
-    className: 'shadow-inner border-x-1 rounded shadow-slate-200 px-1.5 py-1',
+    className: 'shadow-inner border-x-1 rounded shadow-slate-200 pr-2 pl-1',
     arrows: false,
     pauseOnHover: true,
   }
@@ -112,7 +112,7 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
             {/* Products */}
             {width < 1024 ? (
               <div className='col-span-4 overflow-x-scroll rounded-b border-x border-slate-100 shadow-inner sm:col-span-3'>
-                <ul className='grid grid-cols-[repeat(6,calc((100vw-24px-12px*2)/3))] gap-3 p-3 sm:grid-cols-[repeat(6,calc((100vw-24px-12px*3)/4))] md:grid-cols-[repeat(6,calc((100vw-32px-12px*3)/4))]'>
+                <ul className='grid grid-cols-[repeat(6,calc((100vw-24px-12px*2)/2))] gap-3 p-3 sm:grid-cols-[repeat(6,calc((100vw-24px-12px*3)/4))] md:grid-cols-[repeat(6,calc((100vw-32px-12px*3)/4))]'>
                   {data.products.map((product) => (
                     <li key={product.id}>
                       <ProductItem product={product} showDiscountPercent showRating />
@@ -129,7 +129,9 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
                       product={product}
                       showDiscountPercent
                       showRating
-                      classNameWrapper='m-1.5 shadow p-2 rounded'
+                      customClass={{
+                        wrapper: 'my-3 mx-1.5',
+                      }}
                     />
                   ))}
                 </Slider>

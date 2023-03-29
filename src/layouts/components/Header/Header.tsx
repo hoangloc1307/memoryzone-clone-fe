@@ -81,7 +81,9 @@ export default function Header() {
         </div>
         <div className='c-container'>
           <div className='grid grid-cols-12 items-center gap-y-5 py-3 lg:gap-5 lg:pb-8 lg:pt-5'>
-            <Hamburger classNameWrapper='col-span-1 lg:hidden md:col-span-2 ' />
+            <div className='col-span-1 md:col-span-2 lg:hidden'>
+              <Hamburger />
+            </div>
             {/* Logo */}
             <div className='col-span-10 md:col-span-8 lg:col-span-3 lg:justify-self-start'>
               <Link href='/' className='relative mx-auto block h-[32px] w-[160px] lg:h-[40px] lg:w-[220px]'>

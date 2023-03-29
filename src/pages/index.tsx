@@ -1,21 +1,20 @@
 import classNames from 'classnames'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import SlickSlider from 'react-slick'
 import { bannerData } from '~/assets/datas/bannerData'
-import { hotBrandsData } from '~/assets/datas/hotBrandsData'
-import { hotCategoriesData } from '~/assets/datas/hotCategoriesData'
+import { hotCategoriesData } from '~/assets/datas/categoryData'
 import { productAndCategoryData } from '~/assets/datas/productAndCategoryData'
-import { productData } from '~/assets/datas/productData'
+import { productsData } from '~/assets/datas/productData'
+import { hotBrandsData } from '~/assets/datas/sliderData'
+import { homeSlogan } from '~/assets/datas/sloganData'
 import Banner from '~/components/Banner'
 import ProductAndCategory from '~/components/ProductAndCategory'
 import ProductItem from '~/components/ProductItem'
 import Slider from '~/components/Slider'
-import SlickSlider from 'react-slick'
-import { homeSlogan } from '~/assets/datas/sloganData'
-import { useEffect, useState } from 'react'
-import { Product } from '~/types/product.type'
 import { Banner as BannerType } from '~/types/banner.type'
-import sampleSize from 'lodash/sampleSize'
+import { Product } from '~/types/product.type'
 
 interface DataProductWithCategory {
   category: string
@@ -139,7 +138,7 @@ export default function Home() {
         <section className='mt-10'>
           <h2 className='border-b-2 border-primary text-base font-semibold uppercase leading-8'>Dành riêng cho bạn</h2>
           <ul className='mt-5 grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
-            {productData.slice(0, 12).map((product) => (
+            {productsData.slice(0, 12).map((product) => (
               <li key={product.id}>
                 <ProductItem product={product} showRating showDiscountPercent />
               </li>

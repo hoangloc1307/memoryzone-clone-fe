@@ -5,11 +5,10 @@ import { ProductListConfig } from '~/types/product.type'
 interface Props {
   queryConfig: ProductListConfig
   totalPage: number
+  range?: number
 }
 
-const RANGE = 1
-
-export default function Pagination({ queryConfig, totalPage }: Props) {
+export default function Pagination({ queryConfig, totalPage, range = 1 }: Props) {
   const currentPage = Number(queryConfig.page)
 
   const renderPagination = () => {
@@ -48,18 +47,18 @@ export default function Pagination({ queryConfig, totalPage }: Props) {
             const pageNumber = index + 1
 
             if (
-              currentPage <= RANGE * 2 + 1 &&
-              pageNumber > currentPage + RANGE &&
-              pageNumber < totalPage - RANGE + 1
+              currentPage <= range * 2 + 1 &&
+              pageNumber > currentPage + range &&
+              pageNumber < totalPage - range + 1
             ) {
               return renderDotAfter(index)
-            } else if (currentPage > RANGE * 2 + 1 && currentPage < totalPage - RANGE * 2) {
-              if (pageNumber > currentPage + RANGE && pageNumber < totalPage - RANGE + 1) {
+            } else if (currentPage > range * 2 + 1 && currentPage < totalPage - range * 2) {
+              if (pageNumber > currentPage + range && pageNumber < totalPage - range + 1) {
                 return renderDotAfter(index)
-              } else if (pageNumber > RANGE && pageNumber < currentPage - RANGE) {
+              } else if (pageNumber > range && pageNumber < currentPage - range) {
                 return renderDotBefore(index)
               }
-            } else if (currentPage >= totalPage - RANGE * 2 && pageNumber > RANGE && pageNumber < currentPage - RANGE) {
+            } else if (currentPage >= totalPage - range * 2 && pageNumber > range && pageNumber < currentPage - range) {
               return renderDotBefore(index)
             }
 

@@ -4,15 +4,11 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { navigationData } from '~/assets/datas/navigationData'
 
-interface Props {
-  classNameWrapper?: string
-}
-
-export default function Hamburger({ classNameWrapper }: Props) {
+export default function Hamburger() {
   const [show, setShow] = useState(false)
 
   return (
-    <div className={classNameWrapper}>
+    <>
       {/* Icon */}
       <span onClick={() => setShow((prev) => !prev)}>
         <svg
@@ -55,6 +51,6 @@ export default function Hamburger({ classNameWrapper }: Props) {
       </div>
       {/* Overlay */}
       {show && <div className='fixed inset-0 z-10 bg-black/30' onClick={() => setShow(false)}></div>}
-    </div>
+    </>
   )
 }

@@ -7,15 +7,15 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import Slider, { Settings } from 'react-slick'
-import { productData, productDetailData } from '~/assets/datas/productData'
+import { productsData, productDetailData } from '~/assets/datas/productData'
 import { productDetailSlogan } from '~/assets/datas/sloganData'
 import ProductItem from '~/components/ProductItem'
 import RatingStars from '~/components/RatingStars'
 import { Product } from '~/types/product.type'
-import { generateSlug, numberAsCurrency, statusTextFromQuantity } from '~/utils/utils'
+import { generateSlug, numberAsCurrency, shortSpecsToHTML, statusTextFromQuantity } from '~/utils/utils'
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = productData.map((product) => ({ params: { slug: generateSlug(product.name, product.id) } }))
+  const paths = productsData.map((product) => ({ params: { slug: generateSlug(product.name, product.id) } }))
 
   return {
     paths,
@@ -100,7 +100,7 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
               {/* Name */}
               <h1 className='text-2xl font-medium text-dark'>{product.name}</h1>
               {/* Stars */}
-              <RatingStars rating={product.rating} classNameStars='w-6 h-6' classNameWrapper='mt-2' />
+              <RatingStars rating={product.rating} classNameStars='w-6 h-6' classNameWrapper='mt-2 items-start' />
               {/* Brand and status */}
               <div className='mt-2 flex items-center gap-2 text-sm'>
                 <p>
@@ -123,14 +123,14 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
               </div>
               {/* Price */}
               <div className='mt-2 flex items-end gap-5'>
-                <p className='text-2xl font-medium text-primary'>
-                  {numberAsCurrency(product.priceDiscount)}
-                  <sup>đ</sup>
-                </p>
                 <del className='text-gray'>
                   {numberAsCurrency(product.price)}
                   <sup>đ</sup>
                 </del>
+                <p className='text-2xl font-medium text-primary'>
+                  {numberAsCurrency(product.priceDiscount)}
+                  <sup>đ</sup>
+                </p>
               </div>
               {/* Promotions */}
               <div
@@ -213,9 +213,9 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
               </div>
             </div>
 
-            {/* Description */}
+            {/* Short specs */}
             <div className='lg:col-span-5'>
-              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.shortSpecs) }} />
+              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(shortSpecsToHTML(product.shortSpecs)) }} />
             </div>
           </section>
 
@@ -312,18 +312,21 @@ export default function ProductDetail({ product }: InferGetStaticPropsType<typeo
               ))}
             </div>
             {/* You will like */}
-            <div className='sticky top-10 mt-10'>
+            <div className='mt-10'>
               <h3 className='rounded bg-primary py-2 px-5 text-lg font-bold uppercase text-white'>Có thể bạn thích</h3>
               <ul>
-                {productData
+                {productsData
                   .filter((product) => map(product.categories, 'name').includes('Laptop'))
                   .slice(0, 5)
                   .map((product) => (
                     <li key={product.id}>
                       <ProductItem
                         product={product}
-                        classNameLink='flex shadow rounded p-2 gap-2'
-                        classNameWrapper='my-1'
+                        customClass={{
+                          link: 'flex gap-2',
+                          name: 'mt-0',
+                          wrapper: 'mt-2',
+                        }}
                       />
                     </li>
                   ))}

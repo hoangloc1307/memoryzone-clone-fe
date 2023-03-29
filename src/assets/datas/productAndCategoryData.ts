@@ -1,4 +1,4 @@
-import { productData } from './productData'
+import { productsData } from './productData'
 import map from 'lodash/map'
 import sampleSize from 'lodash/sampleSize'
 import { Product } from '~/types/product.type'
@@ -16,7 +16,7 @@ export const productAndCategoryData = () => [
       { category: 'Xem tất cả', url: '#' },
     ],
     products: sampleSize(
-      productData.filter((product) => map(product.categories, 'name').includes('Laptop')),
+      productsData.filter((product) => map(product.categories, 'name').includes('Laptop')),
       12
     ) as Product[],
     banners: [
@@ -44,7 +44,7 @@ export const productAndCategoryData = () => [
       { category: 'Xem tất cả', url: '#' },
     ],
     products: sampleSize(
-      productData.filter((product) => map(product.categories, 'name').includes('Gear')),
+      productsData.filter((product) => map(product.categories, 'name').includes('Gear')),
       12
     ) as Product[],
     banners: [

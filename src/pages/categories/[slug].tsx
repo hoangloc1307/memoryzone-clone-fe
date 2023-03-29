@@ -1,24 +1,24 @@
 import { Listbox } from '@headlessui/react'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { productData } from '~/assets/datas/productData'
+import { productsData } from '~/assets/datas/productData'
 import Pagination from '~/components/Pagination'
 import ProductItem from '~/components/ProductItem'
 import useQueryConfig from '~/hooks/useQueryConfig'
 import { SortType } from '~/types/product.type'
-import { sortByValueToText } from '~/utils/utils'
-
-type ViewLayout = 'list' | 'grid'
+import { sortByValueToText, sortProductsBy } from '~/utils/utils'
 
 export default function Category() {
-  const [viewLayout, setViewLayout] = useState<ViewLayout>('grid')
   const queryConfig = useQueryConfig()
   const router = useRouter()
+  const { view, page, limit, sort_by = 'default' } = queryConfig
 
   const handleChangeViewStyle = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     const view = (event.target as HTMLElement).dataset.view
-    setViewLayout(view as ViewLayout)
+    router.push({
+      pathname: '/categories/[slug]',
+      query: { ...queryConfig, view, limit: view === 'list' ? 4 : 8 },
+    })
   }
 
   const handleChangeSortBy = (sortBy: SortType) => {
@@ -40,8 +40,8 @@ export default function Category() {
             {/* View layout */}
             <span
               data-view='list'
-              data-view-active={viewLayout === 'list'}
-              className='inline-block cursor-pointer rounded border border-slate-300 p-1.5 text-slate-300 data-[view-active=true]:border-primary data-[view-active=true]:bg-primary data-[view-active=true]:text-white'
+              data-view-active={view === 'list'}
+              className='inline-block cursor-pointer rounded border border-slate-400 p-1.5 text-slate-400 data-[view-active=true]:border-primary data-[view-active=true]:bg-primary data-[view-active=true]:text-white'
               onClick={handleChangeViewStyle}
             >
               <svg
@@ -59,8 +59,8 @@ export default function Category() {
             </span>
             <span
               data-view='grid'
-              data-view-active={viewLayout === 'grid'}
-              className='ml-1 inline-block cursor-pointer rounded border border-slate-300 p-1.5 text-slate-300 data-[view-active=true]:border-primary data-[view-active=true]:bg-primary data-[view-active=true]:text-white'
+              data-view-active={view === 'grid'}
+              className='ml-1 inline-block cursor-pointer rounded border border-slate-400 p-1.5 text-slate-400 data-[view-active=true]:border-primary data-[view-active=true]:bg-primary data-[view-active=true]:text-white'
               onClick={handleChangeViewStyle}
             >
               <svg
@@ -80,9 +80,9 @@ export default function Category() {
             {/* Sort by */}
             <div className='relative ml-5 text-sm'>
               <Listbox value={queryConfig.sort_by} onChange={handleChangeSortBy}>
-                <Listbox.Button className='group relative h-[34px] w-[180px] rounded border border-slate-300 px-3 py-1.5 text-left leading-4 text-[#444] data-[headlessui-state=open]:rounded-b-none data-[headlessui-state=open]:border-primary'>
+                <Listbox.Button className='group relative h-[34px] w-[180px] rounded border border-slate-400 px-3 py-1.5 text-left leading-4 text-[#444] data-[headlessui-state=open]:rounded-b-none data-[headlessui-state=open]:border-primary'>
                   {sortByValueToText(queryConfig.sort_by as SortType)}
-                  <span className='absolute top-1/2 right-3 -translate-y-1/2 transition-transform duration-500 ease-in-out group-data-[headlessui-state=open]:rotate-180'>
+                  <span className='absolute top-1/2 right-3 -translate-y-1/2'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
                       fill='none'
@@ -99,13 +99,13 @@ export default function Category() {
                     </svg>
                   </span>
                 </Listbox.Button>
-                <Listbox.Options className='absolute top-[34px] left-0 z-10 w-full rounded-b border border-t-0 border-slate-300 bg-white shadow'>
+                <Listbox.Options className='absolute top-[34px] left-0 z-10 w-full rounded-b border border-y-0 border-slate-400 bg-white shadow'>
                   {['default', 'name:asc', 'name:desc', 'price:asc', 'price:desc', 'time:asc', 'time:desc'].map(
                     (item, index) => (
                       <Listbox.Option
                         key={index}
                         value={item}
-                        className='cursor-pointer border-b border-slate-300 px-3 py-1 hover:text-primary'
+                        className='cursor-pointer border-b border-slate-400 px-3 py-1 hover:text-primary'
                       >
                         {sortByValueToText(item as SortType)}
                       </Listbox.Option>
@@ -119,16 +119,42 @@ export default function Category() {
           {/* Products */}
           <div
             className={classNames('mt-10', {
-              'grid grid-cols-2 gap-3 md:grid-cols-4': viewLayout === 'grid',
+              'grid grid-cols-2 gap-3 md:grid-cols-4': view === 'grid',
             })}
           >
-            {productData.slice(0, 24).map((product) => (
-              <ProductItem product={product} key={product.id} showRating showDiscountPercent />
-            ))}
+            {sortProductsBy(productsData, sort_by)
+              .slice((Number(page) - 1) * Number(limit), Number(page) * Number(limit))
+              .map((product) => (
+                <ProductItem
+                  product={product}
+                  key={product.id}
+                  showRating
+                  showDiscountPercent
+                  showShortSpecs={view === 'list'}
+                  customClass={
+                    view === 'list'
+                      ? {
+                          wrapper: 'mt-5 p-5',
+                          imageWrapper: 'mx-auto w-[200px] shrink-0 lg:w-[250px]',
+                          name: 'text-base font-semibold min-h-0 md:min-h-0',
+                          priceWrapper: 'flex-row justify-start xl:justify-start gap-2 items-end text-base',
+                          priceDiscount: 'text-lg md:text-xl',
+                          link: 'md:flex md:gap-5 lg:gap-10',
+                          stars: 'h-5 w-5',
+                          starsWrapper: 'justify-start',
+                        }
+                      : undefined
+                  }
+                />
+              ))}
           </div>
           {/* Pagination */}
           <div className='mt-10'>
-            <Pagination queryConfig={queryConfig} totalPage={11} />
+            <Pagination
+              queryConfig={queryConfig}
+              range={2}
+              totalPage={Math.ceil(productsData.length / Number(limit))}
+            />
           </div>
         </div>
       </div>

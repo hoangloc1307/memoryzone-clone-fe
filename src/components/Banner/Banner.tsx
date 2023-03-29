@@ -24,7 +24,7 @@ export default function Banner({
   priority,
 }: Props) {
   return (
-    <a href={url} className='relative block h-full w-full select-none'>
+    <a title={alt} href={url} className='relative block h-full w-full select-none'>
       <Image
         src={image}
         alt={alt}
