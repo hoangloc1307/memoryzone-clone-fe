@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { Product } from '~/types/product.type'
-import { numberAsCurrency, generateSlug } from '~/utils/utils'
-import RatingStars from '../RatingStars'
 import { twMerge } from 'tailwind-merge'
 import useViewport from '~/hooks/useViewport'
+import { Product } from '~/types/product.type'
+import { generateSlug } from '~/utils/url'
+import { numberAsCurrency } from '~/utils/utils'
+import RatingStars from '../RatingStars'
 
 interface Props {
   product: Product

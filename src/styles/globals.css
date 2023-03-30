@@ -7,3 +7,32 @@
     @apply mx-auto max-w-7xl px-3 md:px-4 lg:px-8;
   }
 }
+
+@layer utilities {
+  .c-scrollbar::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .c-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #0a804a;
+  }
+
+  .c-scrollbar::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: #ebebeb;
+  }
+
+  .c-input::-webkit-inner-spin-button,
+  .c-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+  .c-input-range::-webkit-slider-thumb {
+    height: 17px;
+    width: 17px;
+    border-radius: 50%;
+    background: #0a804a;
+    -webkit-appearance: none;
+    pointer-events: auto;
+  }
+}

@@ -7,12 +7,13 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import Slider, { Settings } from 'react-slick'
-import { productsData, productDetailData } from '~/assets/datas/productData'
+import { productDetailData, productsData } from '~/assets/datas/productData'
 import { productDetailSlogan } from '~/assets/datas/sloganData'
 import ProductItem from '~/components/ProductItem'
 import RatingStars from '~/components/RatingStars'
 import { Product } from '~/types/product.type'
-import { generateSlug, numberAsCurrency, shortSpecsToHTML, statusTextFromQuantity } from '~/utils/utils'
+import { generateSlug } from '~/utils/url'
+import { numberAsCurrency, shortSpecsToHTML, statusTextFromQuantity } from '~/utils/utils'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = productsData.map((product) => ({ params: { slug: generateSlug(product.name, product.id) } }))
