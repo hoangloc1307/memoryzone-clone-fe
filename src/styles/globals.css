@@ -35,4 +35,7 @@
     -webkit-appearance: none;
     pointer-events: auto;
   }
+  .c-input-range:active::-webkit-slider-thumb {
+    outline: 4px solid rgb(10 128 74 / 60%);
+  }
 }

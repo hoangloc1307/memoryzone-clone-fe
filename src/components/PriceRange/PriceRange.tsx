@@ -1,72 +1,91 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import { numberAsCurrency } from '~/utils/utils'
+interface Props {
+  minRange: number
+  maxRange: number
+  step?: number
+  gap?: number
+  onSubmit?: (min: number, max: number) => void
+}
 
-const MIN_RANGE = 0
-const MAX_RANGE = 110_000_000
-const STEP = 500_000
+export default function PriceRange({
+  minRange,
+  maxRange,
+  step = (maxRange - minRange) / 100,
+  gap = 0,
+  onSubmit,
+}: Props) {
+  const [minMax, setMinMax] = useState<{ min: number; max: number }>({ min: minRange, max: maxRange })
 
-export default function PriceRange() {
-  const [minMax, setMinMax] = useState([0, 110_000_000])
-  const refButtons = useRef<HTMLInputElement[]>([])
-
-  const addSlideImageRef = (e: HTMLInputElement) => {
-    if (e && !refButtons.current.includes(e)) {
-      refButtons.current.push(e)
+  const handleRangeChange = (event: React.FormEvent<HTMLInputElement>) => {
+    const value = Number((event.target as HTMLInputElement).value)
+    const type = (event.target as HTMLInputElement).dataset.type as string
+    if ((type === 'min' && value <= maxRange - gap) || (type === 'max' && value >= minRange + gap)) {
+      if (type === 'min' && value + gap >= minMax.max) {
+        setMinMax({ ...minMax, min: value, max: value + gap })
+      } else if (type === 'max' && value - gap <= minMax.min) {
+        setMinMax({ ...minMax, min: value - gap, max: value })
+      } else {
+        setMinMax({ ...minMax, [type]: value })
+      }
     }
   }
 
-  useEffect(() => {
-    const handleSliderChange = () => {
-      let minValue = Number(refButtons.current[0].value)
-      let maxValue = Number(refButtons.current[1].value)
-      console.log(minValue, maxValue)
-    }
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number((event.target as HTMLInputElement).value)
+    const type = (event.target as HTMLInputElement).dataset.type as string
+  }
 
-    const buttons = refButtons.current
-
-    buttons.forEach((input) => {
-      input.addEventListener('input', handleSliderChange)
-    })
-
-    return () => {
-      buttons.forEach((input) => {
-        input.removeEventListener('input', handleSliderChange)
-      })
-    }
-  }, [])
-
-  const handleInputChange = () => {}
+  const handleSubmit = () => {
+    onSubmit && onSubmit(minMax.min, minMax.max)
+  }
 
   return (
-    <div>
+    <div className='px-1'>
+      {/* Slider */}
       <div className='relative mt-5 h-[5px] rounded-[5px] bg-slate-300'>
-        <div className='absolute left-1/4 right-1/4 h-[5px] rounded-[5px] bg-primary'></div>
+        <div
+          className='absolute h-[5px] rounded-[5px] bg-primary'
+          style={{
+            left: `${(minMax.min - minRange) / ((maxRange - minRange) / 100)}%`,
+            right: `${(maxRange - minMax.max) / ((maxRange - minRange) / 100)}%`,
+          }}
+        />
       </div>
       <div className='relative'>
         <input
           className='c-input c-input-range pointer-events-none absolute top-[-5px] h-[5px] w-full appearance-none bg-transparent'
           type='range'
-          step={STEP}
-          min={MIN_RANGE}
-          max={MAX_RANGE}
-          ref={addSlideImageRef}
+          data-type='min'
+          value={minMax.min}
+          step={step}
+          min={minRange}
+          max={maxRange}
+          onInput={handleRangeChange}
         />
         <input
           className='c-input c-input-range pointer-events-none absolute top-[-5px] h-[5px] w-full appearance-none bg-transparent'
           type='range'
-          step={STEP}
-          min={MIN_RANGE}
-          max={MAX_RANGE}
-          ref={addSlideImageRef}
+          data-type='max'
+          value={minMax.max}
+          step={step}
+          min={minRange}
+          max={maxRange}
+          onInput={handleRangeChange}
         />
       </div>
+
+      {/* Input */}
       <div className='mt-5 flex items-end justify-between text-sm'>
         <div className='flex flex-col items-start gap-1'>
           <span>Min</span>
           <input
-            type='number'
-            value={0}
+            type='text'
+            readOnly
+            data-type='min'
+            value={numberAsCurrency(minMax.min)}
             onChange={handleInputChange}
-            className='c-input w-[110px] rounded border border-slate-300 py-1 px-2 text-center outline-none'
+            className='c-input pointer-events-none w-[110px] select-none rounded border border-slate-300 py-1 px-2 text-center outline-none'
           />
         </div>
         <span className='hidden pb-1 xl:block'>
@@ -88,13 +107,20 @@ export default function PriceRange() {
         <div className='flex flex-col items-start gap-1'>
           <span>Max</span>
           <input
-            type='number'
-            value={500000}
+            type='text'
+            readOnly
+            data-type='max'
+            value={numberAsCurrency(minMax.max)}
             onChange={handleInputChange}
-            className='c-input w-[110px] rounded border border-slate-300 py-1 px-2 text-center outline-none'
+            className='c-input pointer-events-none w-[110px] select-none rounded border border-slate-300 py-1 px-2 text-center outline-none'
           />
         </div>
       </div>
+
+      {/* Button */}
+      <button className='mx-auto mt-5 block w-full rounded bg-primary px-5 py-1 text-white' onClick={handleSubmit}>
+        Lọc giá
+      </button>
     </div>
   )
 }

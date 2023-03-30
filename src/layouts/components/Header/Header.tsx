@@ -10,12 +10,14 @@ export default function Header() {
 
   return (
     <header className='relative z-10'>
-      <div className='relative h-[40px]'>
+      <div className='relative h-[60px]'>
         <Image
-          src={width > 500 ? '/images/banners/banner-top.jpg' : '/images/banners/banner-top-mobile.jpg'}
+          src='/images/banners/banner-top.jpg'
           alt='Samsung official store'
           priority
           fill
+          sizes='100vw'
+          className='object-cover'
         />
       </div>
       <div className='bg-primary py-2 text-xs text-white lg:py-0 lg:text-sm'>

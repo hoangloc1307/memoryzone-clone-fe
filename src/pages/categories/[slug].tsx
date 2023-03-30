@@ -17,7 +17,16 @@ export default function Category() {
   const queryConfig = useQueryConfig()
   const router = useRouter()
   const idCheckbox = useId()
-  const { q = '', view, page, limit, sort_by = 'default' } = queryConfig
+  const {
+    q = '',
+    view = 'grid',
+    page = 1,
+    limit = 8,
+    sort_by = 'default',
+    price_min = 0,
+    price_max = 100_000_000,
+  } = queryConfig
+  console.log(price_min, price_max)
 
   const handleChangeViewStyle = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     const viewData = (event.target as HTMLElement).dataset.view
@@ -99,6 +108,19 @@ export default function Category() {
     )
   }
 
+  const handleSubmitPriceRange = (min: number, max: number) => {
+    router.push(
+      {
+        pathname: '/categories/[slug]',
+        query: { ...queryConfig, price_min: min, price_max: max },
+      },
+      undefined,
+      {
+        scroll: false,
+      }
+    )
+  }
+
   return (
     <>
       <Head>
@@ -109,7 +131,7 @@ export default function Category() {
           <input type='checkbox' hidden id={idCheckbox} className='peer' />
           <label
             htmlFor={idCheckbox}
-            className='group fixed top-1/2 left-0 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-r-full bg-primary pr-1.5 text-white transition-all duration-500 ease-in-out peer-checked:left-[300px] peer-checked:bg-danger lg:hidden'
+            className='group fixed top-1/2 left-0 z-10 flex h-10 w-[340px] -translate-x-[300px] -translate-y-1/2 items-center justify-center rounded-r-full bg-primary pl-[300px] pr-1.5 text-white transition-all duration-500 ease-in-out peer-checked:translate-x-0 peer-checked:bg-danger lg:hidden'
           >
             <svg
               xmlns='http://www.w3.org/2000/svg'
@@ -141,7 +163,7 @@ export default function Category() {
             <div>
               <p className='text-sm font-semibold uppercase'>Khoảng giá</p>
               <div className='mt-3'>
-                <PriceRange />
+                <PriceRange minRange={price_min} maxRange={price_max} onSubmit={handleSubmitPriceRange} />
               </div>
             </div>
             {filterData.map((filter) => (
