@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { navigationData } from '~/assets/datas/navigationData'
+import { path } from '~/constants/path'
 import useViewport from '~/hooks/useViewport'
 import Category from '~/layouts/components/Category'
 import Hamburger from '../Hamburger'
@@ -30,7 +31,7 @@ export default function Header() {
               <p>Mở cửa: 8h đến 21h từ Thứ 2 đến Chủ Nhật</p>
             </div>
             <div className='flex gap-3 sm:gap-5'>
-              <a href='#' className='group flex items-center gap-0.5 py-1 sm:py-2'>
+              <Link href={path.login} className='group flex items-center gap-0.5 py-1 sm:py-2'>
                 <span>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
                     <path
@@ -41,7 +42,7 @@ export default function Header() {
                   </svg>
                 </span>
                 <span className='group-hover:text-warn'>Tài khoản</span>
-              </a>
+              </Link>
               <a href='#' className='group flex items-center gap-0.5 py-1 sm:py-2'>
                 <span>
                   <svg
@@ -88,7 +89,7 @@ export default function Header() {
             </div>
             {/* Logo */}
             <div className='col-span-10 md:col-span-8 lg:col-span-3 lg:justify-self-start'>
-              <Link href='/' className='relative mx-auto block h-[32px] w-[160px] lg:h-[40px] lg:w-[220px]'>
+              <Link href={path.home} className='relative mx-auto block h-[32px] w-[160px] lg:h-[40px] lg:w-[220px]'>
                 <Image src='/images/logo.png' alt='Memoryzone' fill sizes='160px, (min-width: 1024px) 220px' />
               </Link>
             </div>
@@ -135,7 +136,10 @@ export default function Header() {
               </p>
             </div>
             {/* Cart */}
-            <div className='col-span-5 flex items-center gap-2 justify-self-end md:col-span-2 md:col-start-11 md:row-start-1 lg:col-span-2 lg:row-start-auto'>
+            <Link
+              href={path.cart}
+              className='col-span-5 flex items-center gap-2 justify-self-end md:col-span-2 md:col-start-11 md:row-start-1 lg:col-span-2 lg:row-start-auto'
+            >
               <span className='flex h-10 w-10 items-center justify-center rounded-full border-2 border-white p-1'>
                 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
                   <path
@@ -151,7 +155,7 @@ export default function Header() {
                 </span>
                 <span className='text-[10px] text-[#ffdada]'>Giỏ hàng</span>
               </p>
-            </div>
+            </Link>
           </div>
         </div>
         {/* Category */}

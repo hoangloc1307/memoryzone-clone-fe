@@ -32,7 +32,7 @@ export const getStaticProps: GetStaticProps<{ product: Product }> = async ({ par
   }
 }
 
-export default function ProductDetail({ product }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function ProductDetailPage({ product }: InferGetStaticPropsType<typeof getStaticProps>) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const refDescription = useRef<HTMLDivElement>(null)
   const [showDescription, setShowDescription] = useState(false)

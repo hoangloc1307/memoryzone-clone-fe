@@ -3,6 +3,8 @@ import { numberAsCurrency } from '~/utils/utils'
 interface Props {
   minRange: number
   maxRange: number
+  minValue?: number
+  maxValue?: number
   step?: number
   gap?: number
   onSubmit?: (min: number, max: number) => void
@@ -11,11 +13,13 @@ interface Props {
 export default function PriceRange({
   minRange,
   maxRange,
+  minValue = minRange,
+  maxValue = maxRange,
   step = (maxRange - minRange) / 100,
   gap = 0,
   onSubmit,
 }: Props) {
-  const [minMax, setMinMax] = useState<{ min: number; max: number }>({ min: minRange, max: maxRange })
+  const [minMax, setMinMax] = useState<{ min: number; max: number }>({ min: minValue, max: maxValue })
 
   const handleRangeChange = (event: React.FormEvent<HTMLInputElement>) => {
     const value = Number((event.target as HTMLInputElement).value)
@@ -54,7 +58,7 @@ export default function PriceRange({
       </div>
       <div className='relative'>
         <input
-          className='c-input c-input-range pointer-events-none absolute top-[-5px] h-[5px] w-full appearance-none bg-transparent'
+          className='c-input-range pointer-events-none absolute top-[-5px] h-[5px] w-full appearance-none bg-transparent'
           type='range'
           data-type='min'
           value={minMax.min}
@@ -64,7 +68,7 @@ export default function PriceRange({
           onInput={handleRangeChange}
         />
         <input
-          className='c-input c-input-range pointer-events-none absolute top-[-5px] h-[5px] w-full appearance-none bg-transparent'
+          className='c-input-range pointer-events-none absolute top-[-5px] h-[5px] w-full appearance-none bg-transparent'
           type='range'
           data-type='max'
           value={minMax.max}
@@ -85,7 +89,7 @@ export default function PriceRange({
             data-type='min'
             value={numberAsCurrency(minMax.min)}
             onChange={handleInputChange}
-            className='c-input pointer-events-none w-[110px] select-none rounded border border-slate-300 py-1 px-2 text-center outline-none'
+            className='pointer-events-none w-[110px] rounded border border-slate-300 bg-slate-100 py-1 px-2 text-center outline-none'
           />
         </div>
         <span className='hidden pb-1 xl:block'>
@@ -112,7 +116,7 @@ export default function PriceRange({
             data-type='max'
             value={numberAsCurrency(minMax.max)}
             onChange={handleInputChange}
-            className='c-input pointer-events-none w-[110px] select-none rounded border border-slate-300 py-1 px-2 text-center outline-none'
+            className='pointer-events-none w-[110px] rounded border border-slate-300 bg-slate-100 py-1 px-2 text-center outline-none'
           />
         </div>
       </div>

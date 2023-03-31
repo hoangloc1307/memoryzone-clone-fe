@@ -1,5 +1,6 @@
 import { Listbox } from '@headlessui/react'
 import classNames from 'classnames'
+import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useId } from 'react'
@@ -13,20 +14,18 @@ import { SortType } from '~/types/product.type'
 import { qQueryStringToObject } from '~/utils/url'
 import { sortByValueToText, sortProductsBy } from '~/utils/utils'
 
-export default function Category() {
+const MIN_RANGE = 0,
+  MAX_RANGE = 100_000_000
+
+export const getServerSideProps: GetServerSideProps<{ data: {} }> = async () => {
+  return { props: { data: {} } }
+}
+
+export default function CategoryPage() {
   const queryConfig = useQueryConfig()
   const router = useRouter()
   const idCheckbox = useId()
-  const {
-    q = '',
-    view = 'grid',
-    page = 1,
-    limit = 8,
-    sort_by = 'default',
-    price_min = 0,
-    price_max = 100_000_000,
-  } = queryConfig
-  console.log(price_min, price_max)
+  const { q, view, page, limit = 8, sort_by, price_min, price_max } = queryConfig
 
   const handleChangeViewStyle = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     const viewData = (event.target as HTMLElement).dataset.view
@@ -163,7 +162,14 @@ export default function Category() {
             <div>
               <p className='text-sm font-semibold uppercase'>Khoảng giá</p>
               <div className='mt-3'>
-                <PriceRange minRange={price_min} maxRange={price_max} onSubmit={handleSubmitPriceRange} />
+                <PriceRange
+                  minRange={MIN_RANGE}
+                  maxRange={MAX_RANGE}
+                  minValue={price_min}
+                  maxValue={price_max}
+                  gap={((MAX_RANGE - MIN_RANGE) / 100) * 5}
+                  onSubmit={handleSubmitPriceRange}
+                />
               </div>
             </div>
             {filterData.map((filter) => (
@@ -176,7 +182,7 @@ export default function Category() {
                         className='group relative flex cursor-pointer items-center gap-1 text-sm lg:hover:text-primary'
                         data-field={filter.field}
                         data-value={item.value}
-                        data-checked={qQueryStringToObject(q)[filter.field]?.includes(item.value)}
+                        data-checked={qQueryStringToObject(q as string)[filter.field]?.includes(item.value)}
                         onClick={handleFilter}
                       >
                         <span className='pointer-events-none inline-block h-4 w-4 rounded-full bg-slate-200 transition-[background_.15s_ease-in-out] group-data-[checked=true]:bg-primary lg:group-hover:bg-primary/50' />
@@ -278,7 +284,7 @@ export default function Category() {
                 'grid grid-cols-2 gap-3 md:grid-cols-4': view === 'grid',
               })}
             >
-              {sortProductsBy(productsData, sort_by)
+              {sortProductsBy(productsData, sort_by as SortType)
                 .slice((Number(page) - 1) * Number(limit), Number(page) * Number(limit))
                 .map((product) => (
                   <ProductItem

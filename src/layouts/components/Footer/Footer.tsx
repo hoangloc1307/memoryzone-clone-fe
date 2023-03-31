@@ -7,7 +7,7 @@ export default function Footer() {
   const width = useViewport()
 
   return (
-    <footer className='bg-white py-10'>
+    <footer className='mt-20 border border-slate-300 bg-white pt-5 pb-10'>
       {/* Top */}
       <div className='c-container pb-5'>
         <div className='grid grid-cols-12 gap-y-3 divide-y divide-dotted divide-slate-300 md:divide-none'>

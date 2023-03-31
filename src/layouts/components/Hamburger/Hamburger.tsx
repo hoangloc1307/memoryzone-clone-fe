@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { navigationData } from '~/assets/datas/navigationData'
+import { path } from '~/constants/path'
 
 export default function Hamburger() {
   const [show, setShow] = useState(false)
@@ -33,7 +34,7 @@ export default function Hamburger() {
         )}
       >
         <div className='bg-warn'>
-          <Link href='/' className='block h-20 p-3'>
+          <Link href={path.home} className='block h-20 p-3'>
             <div className='relative h-full'>
               <Image src='/images/logo.png' alt='Memoryzone' fill className='object-cover' sizes='276px' />
             </div>

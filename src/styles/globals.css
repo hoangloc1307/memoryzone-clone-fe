@@ -9,24 +9,26 @@
 }
 
 @layer utilities {
+  /* Scroll bar */
   .c-scrollbar::-webkit-scrollbar {
     width: 5px;
   }
-
   .c-scrollbar::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background-color: #0a804a;
   }
-
   .c-scrollbar::-webkit-scrollbar-track {
     border-radius: 10px;
     background-color: #ebebeb;
   }
 
-  .c-input::-webkit-inner-spin-button,
-  .c-input::-webkit-outer-spin-button {
+  /* Input type = number */
+  .c-input-number::-webkit-inner-spin-button,
+  .c-input-number::-webkit-outer-spin-button {
     -webkit-appearance: none;
   }
+
+  /* Input type = range */
   .c-input-range::-webkit-slider-thumb {
     height: 17px;
     width: 17px;
@@ -37,5 +39,8 @@
   }
   .c-input-range:active::-webkit-slider-thumb {
     outline: 4px solid rgb(10 128 74 / 60%);
+  }
+  .c-input-range:hover::-webkit-slider-thumb {
+    cursor: pointer;
   }
 }

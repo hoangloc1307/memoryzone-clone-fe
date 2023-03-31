@@ -10,10 +10,10 @@ export default function useQueryConfig() {
     {
       q: queryParams.q,
       slug: queryParams.slug,
-      page: queryParams.page,
+      page: queryParams.page || 1,
       limit: queryParams.limit,
-      view: queryParams.view,
-      sort_by: queryParams.sort_by,
+      view: queryParams.view || 'grid',
+      sort_by: queryParams.sort_by || 'default',
       price_min: queryParams.price_min,
       price_max: queryParams.price_max,
     },
