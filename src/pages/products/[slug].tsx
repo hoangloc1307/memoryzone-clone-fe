@@ -2,7 +2,6 @@ import { Tab } from '@headlessui/react'
 import classNames from 'classnames'
 import DOMPurify from 'isomorphic-dompurify'
 import map from 'lodash/map'
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
@@ -11,28 +10,10 @@ import { productDetailData, productsData } from '~/assets/datas/productData'
 import { productDetailSlogan } from '~/assets/datas/sloganData'
 import ProductItem from '~/components/ProductItem'
 import RatingStars from '~/components/RatingStars'
-import { Product } from '~/types/product.type'
-import { generateSlug } from '~/utils/url'
 import { numberAsCurrency, shortSpecsToHTML, statusTextFromQuantity } from '~/utils/utils'
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = productsData.map((product) => ({ params: { slug: generateSlug(product.name, product.id) } }))
-
-  return {
-    paths,
-    fallback: false,
-  }
-}
-
-export const getStaticProps: GetStaticProps<{ product: Product }> = async ({ params }) => {
-  return {
-    props: {
-      product: productDetailData,
-    },
-  }
-}
-
-export default function ProductDetailPage({ product }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function ProductDetailPage() {
+  const [product] = useState(productDetailData)
   const [currentIndex, setCurrentIndex] = useState(0)
   const refDescription = useRef<HTMLDivElement>(null)
   const [showDescription, setShowDescription] = useState(false)

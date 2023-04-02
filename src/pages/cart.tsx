@@ -1,97 +1,99 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
 import { cartData } from '~/assets/datas/cartData'
+import QuantityController from '~/components/QuantityController'
 import { generateSlug } from '~/utils/url'
 import { numberAsCurrency } from '~/utils/utils'
 
 export default function CartPage() {
+  const [quantity, setQuantity] = useState(cartData.map((item) => item.quantity))
+
+  const handleQuantityChange = (value: number, index: number) => {
+    const temp = [...quantity]
+    temp[index] = value
+    setQuantity(temp)
+  }
+
   return (
     <>
       <div className='c-container'>
-        <p className='font-bold uppercase text-[#444]'>Giỏ hàng của bạn</p>
+        <p className='text-lg font-bold text-[#444]'>Giỏ hàng của bạn</p>
+        <div className='mt-10 hidden font-semibold text-[#444] lg:flex'>
+          <div className='w-[150px] shrink-0 text-center'>Ảnh sản phẩm</div>
+          <div className='grid flex-grow grid-cols-12'>
+            <div className='col-span-4 text-center'>Tên sản phẩm</div>
+            <div className='col-span-8 grid grid-cols-3'>
+              <div className='text-center'>Đơn giá</div>
+              <div className='text-center'>Số lượng</div>
+              <div className='text-center'>Thành tiền</div>
+            </div>
+          </div>
+          <div className='w-10 shrink-0'></div>
+        </div>
         {/* Items */}
-        <ul className='mt-5 space-y-5 divide-y divide-slate-300'>
-          {cartData.map((item) => (
-            <li key={item.id} className='pt-5 first:pt-0'>
-              <Link
-                href={`/products/${generateSlug(item.name, item.id)}`}
-                className='flex gap-2 text-sm md:items-center'
-              >
-                {/* Image */}
-                <div className='w-[100px] shrink-0'>
-                  <Image
-                    src={`/images/products/${item.image}`}
-                    alt={item.name}
-                    width={100}
-                    height={100}
-                    className='object-contain'
-                  />
-                </div>
-                {/* Name */}
-                <div className='grow items-center justify-between gap-x-10 gap-y-2 md:flex md:px-5'>
-                  <p className='line-clamp-3 md:line-clamp-none'>{item.name}</p>
-                  <p className='mt-2 md:mt-0'>
-                    <span className='mr-1 md:hidden'>Giá:</span>
-                    <span className='text-primary'>
+        <ul className='space-y-5 divide-y divide-slate-300'>
+          {cartData.map((item, index) => (
+            <li key={item.id} className='flex items-center gap-5 pt-5 text-sm first:pt-0 lg:gap-0'>
+              {/* Image */}
+              <Link href={`/products/${generateSlug(item.image, item.id)}`} className='w-[150px] shrink-0'>
+                <Image
+                  src={`/images/products/${item.image}`}
+                  alt={item.name}
+                  width={150}
+                  height={150}
+                  className='object-contain'
+                />
+              </Link>
+              {/* Name ad price */}
+              <div className='flex-grow lg:grid lg:grid-cols-12'>
+                <Link
+                  href={`/products/${generateSlug(item.image, item.id)}`}
+                  className='line-clamp-3 lg:col-span-4 lg:px-3'
+                >
+                  {item.name}
+                </Link>
+                <div className='mt-4 items-center space-y-1.5 lg:col-span-8 lg:mt-0 lg:grid lg:grid-cols-3 lg:space-y-0'>
+                  <p className='space-x-1 lg:space-x-0 lg:text-center'>
+                    <span className='lg:hidden'>Đơn giá:</span>
+                    <span className='font-medium text-primary'>
                       {numberAsCurrency(item.price)}
                       <sup>đ</sup>
                     </span>
                   </p>
-                </div>
-                {/* Hidden on mobile */}
-                <div className='hidden w-1/3 shrink-0 items-center justify-between gap-2 px-5 md:flex lg:px-10 xl:px-16'>
-                  <div className='flex'>
-                    <button className='flex w-[30px] items-center justify-center border border-slate-300'>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        strokeWidth={1.5}
-                        stroke='currentColor'
-                        className='h-5 w-5'
-                      >
-                        <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 12h-15' />
-                      </svg>
-                    </button>
-                    <input
-                      value={item.quantity}
-                      onChange={() => {}}
-                      className='h-[30px] w-10 border border-slate-300 text-center outline-none'
+                  <div className='flex items-center gap-1 lg:justify-center'>
+                    <span className='lg:hidden'>Số lượng: </span>
+                    <QuantityController
+                      value={quantity[index]}
+                      onDecrease={(value) => handleQuantityChange(value, index)}
+                      onIncrease={(value) => handleQuantityChange(value, index)}
+                      onFocusOut={(value) => handleQuantityChange(value, index)}
                     />
-                    <button className='flex w-[30px] items-center justify-center border border-slate-300'>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        strokeWidth={1.5}
-                        stroke='currentColor'
-                        className='h-5 w-5'
-                      >
-                        <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-                      </svg>
-                    </button>
                   </div>
-                  <div className='text-primary'>
-                    {numberAsCurrency(item.quantity * item.price)}
-                    <sup>đ</sup>
-                  </div>
+                  <p className='space-x-1 lg:space-x-0 lg:text-center'>
+                    <span className='lg:hidden'>Thành tiền:</span>
+                    <span className='font-medium text-primary'>
+                      {numberAsCurrency(item.price * quantity[index])}
+                      <sup>đ</sup>
+                    </span>
+                  </p>
                 </div>
-                {/* Button delêt */}
-                <div className='self-center md:shrink-0'>
-                  <button className='w-6 rounded-full p-1 text-danger/50 ring-2 ring-inset ring-danger/50'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='h-4 w-4'
-                    >
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-                    </svg>
-                  </button>
-                </div>
-              </Link>
+              </div>
+              {/* Delete */}
+              <div className='w-10 shrink-0 text-center'>
+                <button className='rounded-full border border-slate-300 p-2 text-slate-500 outline-none'>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth={1.5}
+                    stroke='currentColor'
+                    className='h-4 w-4'
+                  >
+                    <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
+                  </svg>
+                </button>
+              </div>
             </li>
           ))}
         </ul>
@@ -99,19 +101,19 @@ export default function CartPage() {
       </div>
       <div className='mt-10 border-t border-slate-300'>
         <div className='c-container'>
-          <div className='justify-around md:flex'>
-            <div className='mt-5 flex items-end justify-between gap-20 md:justify-start'>
-              <span className='text-sm font-medium uppercase'>Tổng tiền</span>
+          <div className='justify-around'>
+            <div className='mt-5 flex items-end justify-between gap-20 lg:justify-end lg:pr-20'>
+              <span className='text-sm font-medium uppercase lg:text-base'>Tổng tiền</span>
               <span className='text-lg font-medium text-primary'>
-                {numberAsCurrency(53_560_000)}
+                {numberAsCurrency(cartData.reduce((total, item, index) => (total += item.price * quantity[index]), 0))}
                 <sup>đ</sup>
               </span>
             </div>
-            <div className='mt-5 flex flex-col gap-2 text-white md:flex-row md:justify-start'>
-              <button className='rounded bg-primary px-3 py-2 text-sm font-medium uppercase'>
+            <div className='mt-5 flex flex-col justify-end gap-2 text-white lg:flex-row'>
+              <button className='rounded bg-primary/90 px-3 py-2 text-sm font-medium uppercase hover:bg-primary lg:px-5 lg:text-base'>
                 Tiến hành thanh toán
               </button>
-              <button className='rounded bg-[#3d4356] px-3 py-2 text-sm font-medium uppercase'>
+              <button className='rounded bg-[#3d4356]/80 px-3 py-2 text-sm font-medium uppercase hover:bg-[#3d4356] lg:px-5 lg:text-base'>
                 Tiếp tục mua hàng
               </button>
             </div>

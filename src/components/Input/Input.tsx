@@ -2,7 +2,7 @@ import { InputHTMLAttributes, useId, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import type { UseFormRegister, FieldValues, RegisterOptions } from 'react-hook-form/dist/types'
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
+export interface Props extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   register?: UseFormRegister<any>
   registerOption?: RegisterOptions
