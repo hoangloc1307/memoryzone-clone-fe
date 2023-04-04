@@ -1,10 +1,10 @@
+import { yupResolver } from '@hookform/resolvers/yup'
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form/dist/types'
 import Input from '~/components/Input'
-import { authenSchema, AuthenSchema } from '~/utils/rules'
-import { yupResolver } from '@hookform/resolvers/yup'
-import Link from 'next/link'
 import { path } from '~/constants/path'
+import { authenSchema, AuthenSchema } from '~/utils/rules'
 
 type FormType = AuthenSchema
 

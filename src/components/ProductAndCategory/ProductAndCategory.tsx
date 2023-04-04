@@ -1,12 +1,12 @@
+import classNames from 'classnames'
 import { useId, useRef } from 'react'
+import type { Settings } from 'react-slick'
+import Slider from 'react-slick'
+import useViewport from '~/hooks/useViewport'
 import { Banner as BannerType } from '~/types/banner.type'
 import { Product } from '~/types/product.type'
 import Banner from '../Banner'
 import ProductItem from '../ProductItem'
-import Slider from 'react-slick'
-import type { Settings } from 'react-slick'
-import useViewport from '~/hooks/useViewport'
-import classNames from 'classnames'
 
 interface Props {
   data: {

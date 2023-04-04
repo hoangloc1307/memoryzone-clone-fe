@@ -6,10 +6,10 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
 import Slider, { Settings } from 'react-slick'
-import { productDetailData, productsData } from '~/assets/datas/productData'
-import { productDetailSlogan } from '~/assets/datas/sloganData'
 import ProductItem from '~/components/ProductItem'
 import RatingStars from '~/components/RatingStars'
+import { productDetailData, productsData } from '~/datas/productData'
+import { productDetailSlogan } from '~/datas/sloganData'
 import { numberAsCurrency, shortSpecsToHTML, statusTextFromQuantity } from '~/utils/utils'
 
 export default function ProductDetailPage() {

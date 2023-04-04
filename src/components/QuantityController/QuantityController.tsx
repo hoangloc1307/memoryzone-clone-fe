@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Props as InputProps } from '../Input'
+import classNames from 'classnames'
 
 interface Props extends InputProps {
   max?: number
@@ -9,7 +10,8 @@ interface Props extends InputProps {
 }
 
 export default function QuantityController({ max, value, onDecrease, onIncrease, onFocusOut }: Props) {
-  const [localValue, setLocalValue] = useState<number>(Number(value) || 1)
+  const [localValue, setLocalValue] = useState(Number(value) || 1)
+  const interval = useRef<NodeJS.Timer>()
 
   const hanldeInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let value = Number(event.target.value)
@@ -28,26 +30,83 @@ export default function QuantityController({ max, value, onDecrease, onIncrease,
   }
 
   const handleDecrease = () => {
-    let _value = localValue - 1
-    if (_value < 1) {
-      _value = 1
-    }
-    onDecrease && onDecrease(_value)
-    setLocalValue(_value)
+    setLocalValue((prev) => {
+      let _value = prev - 1
+      if (_value < 1) {
+        _value = 1
+      }
+      return _value
+    })
   }
 
   const handleIncrease = () => {
-    let _value = localValue + 1
-    if (max !== undefined && _value > max) {
-      _value = max
+    setLocalValue((prev) => {
+      let _value = prev + 1
+      if (max !== undefined && _value > max) {
+        _value = max
+      }
+      return _value
+    })
+  }
+
+  const handleMouseDown = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.TouchEvent<HTMLButtonElement>
+  ) => {
+    const type = (event.target as HTMLElement).dataset.type
+    interval.current = setInterval(() => {
+      if (type === 'decrease') {
+        handleDecrease()
+      }
+      if (type === 'increase') {
+        handleIncrease()
+      }
+    }, 150)
+  }
+
+  const handleMouseUp = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const type = (event.target as HTMLElement).dataset.type
+    if (interval.current) {
+      if (type === 'decrease') {
+        onDecrease && onDecrease(localValue === 1 ? localValue : localValue - 1)
+      }
+      if (type === 'increase') {
+        onIncrease && onIncrease(localValue === max ? localValue : localValue + 1)
+      }
+      clearInterval(interval.current)
+      interval.current = undefined
     }
-    onIncrease && onIncrease(_value)
-    setLocalValue(_value)
+  }
+
+  const handleMouseLeave = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | React.TouchEvent<HTMLButtonElement>
+  ) => {
+    const type = (event.target as HTMLElement).dataset.type
+    if (interval.current) {
+      if (type === 'decrease') {
+        onDecrease && onDecrease(localValue)
+      }
+      if (type === 'increase') {
+        onIncrease && onIncrease(localValue)
+      }
+      clearInterval(interval.current)
+      interval.current = undefined
+    }
   }
 
   return (
     <div className='inline-flex'>
-      <button className='overflow-hidden rounded-l-lg border px-2 py-1 outline-none' onClick={handleDecrease}>
+      <button
+        data-type='decrease'
+        className={classNames('overflow-hidden rounded-l-lg border border-slate-600 px-1.5 py-1 outline-none', {
+          'cursor-not-allowed bg-slate-100 text-slate-400': localValue === 1,
+        })}
+        onClick={handleDecrease}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={handleMouseLeave}
+        onMouseLeave={handleMouseLeave}
+      >
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'
@@ -61,12 +120,23 @@ export default function QuantityController({ max, value, onDecrease, onIncrease,
       </button>
       <input
         type='number'
-        className='c-input-number w-16 border-y py-1 text-center text-sm outline-none'
+        className='c-input-number w-12 border-y border-slate-600 py-1 text-center text-sm outline-none'
         value={localValue}
         onChange={hanldeInputChange}
         onBlur={handleInputBlur}
       />
-      <button className='overflow-hidden rounded-r-lg border px-2 py-1 outline-none' onClick={handleIncrease}>
+      <button
+        data-type='increase'
+        className={classNames('overflow-hidden rounded-r-lg border border-slate-600 px-1.5 py-1 outline-none', {
+          'cursor-not-allowed bg-slate-100 text-slate-400': localValue === max,
+        })}
+        onClick={handleIncrease}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={handleMouseLeave}
+        onMouseLeave={handleMouseLeave}
+      >
         <svg
           xmlns='http://www.w3.org/2000/svg'
           fill='none'

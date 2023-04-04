@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { cartData } from '~/assets/datas/cartData'
+import { cartData } from '~/datas/cartData'
 import QuantityController from '~/components/QuantityController'
 import { generateSlug } from '~/utils/url'
 import { numberAsCurrency } from '~/utils/utils'
@@ -9,10 +9,12 @@ import { numberAsCurrency } from '~/utils/utils'
 export default function CartPage() {
   const [quantity, setQuantity] = useState(cartData.map((item) => item.quantity))
 
-  const handleQuantityChange = (value: number, index: number) => {
-    const temp = [...quantity]
-    temp[index] = value
-    setQuantity(temp)
+  const handleQuantityChange = (value: number, index: number, enable: boolean) => {
+    if (enable) {
+      const temp = [...quantity]
+      temp[index] = value
+      setQuantity(temp)
+    }
   }
 
   return (
@@ -36,14 +38,11 @@ export default function CartPage() {
           {cartData.map((item, index) => (
             <li key={item.id} className='flex items-center gap-5 pt-5 text-sm first:pt-0 lg:gap-0'>
               {/* Image */}
-              <Link href={`/products/${generateSlug(item.image, item.id)}`} className='w-[150px] shrink-0'>
-                <Image
-                  src={`/images/products/${item.image}`}
-                  alt={item.name}
-                  width={150}
-                  height={150}
-                  className='object-contain'
-                />
+              <Link
+                href={`/products/${generateSlug(item.image, item.id)}`}
+                className='relative aspect-square w-[100px] shrink-0 md:w-[150px]'
+              >
+                <Image src={`/images/products/${item.image}`} alt={item.name} fill className='object-contain' />
               </Link>
               {/* Name ad price */}
               <div className='flex-grow lg:grid lg:grid-cols-12'>
@@ -61,13 +60,13 @@ export default function CartPage() {
                       <sup>đ</sup>
                     </span>
                   </p>
-                  <div className='flex items-center gap-1 lg:justify-center'>
-                    <span className='lg:hidden'>Số lượng: </span>
+                  <div className='lg:text-center'>
                     <QuantityController
                       value={quantity[index]}
-                      onDecrease={(value) => handleQuantityChange(value, index)}
-                      onIncrease={(value) => handleQuantityChange(value, index)}
-                      onFocusOut={(value) => handleQuantityChange(value, index)}
+                      max={100}
+                      onDecrease={(value) => handleQuantityChange(value, index, quantity[index] > 1)}
+                      onIncrease={(value) => handleQuantityChange(value, index, quantity[index] < 100)}
+                      onFocusOut={(value) => handleQuantityChange(value, index, value !== quantity[index])}
                     />
                   </div>
                   <p className='space-x-1 lg:space-x-0 lg:text-center'>

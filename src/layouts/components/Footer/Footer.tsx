@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import Image from 'next/image'
-import { footerNavigationData } from '~/assets/datas/navigationData'
+import { footerNavigationData } from '~/datas/navigationData'
 import useViewport from '~/hooks/useViewport'
 
 export default function Footer() {

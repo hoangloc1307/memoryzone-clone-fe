@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { navigationData } from '~/assets/datas/navigationData'
 import { path } from '~/constants/path'
+import { navigationData } from '~/datas/navigationData'
 import useViewport from '~/hooks/useViewport'
 import Category from '~/layouts/components/Category'
 import Hamburger from '../Hamburger'
@@ -11,16 +11,9 @@ export default function Header() {
 
   return (
     <header className='relative z-10'>
-      <div className='relative h-[60px]'>
-        <Image
-          src='/images/banners/banner-top.jpg'
-          alt='Samsung official store'
-          priority
-          fill
-          sizes='100vw'
-          className='object-cover'
-        />
-      </div>
+      {/* <div className='relative h-auto'> */}
+      <Image src='/images/banners/banner-top.jpg' alt='Samsung official store' priority width={1920} height={0} />
+      {/* </div> */}
       <div className='bg-primary py-2 text-xs text-white lg:py-0 lg:text-sm'>
         <div className='c-container border-b border-white/20 pb-2 lg:pb-0'>
           <div className='flex flex-col items-center justify-between gap-2 md:flex-row'>

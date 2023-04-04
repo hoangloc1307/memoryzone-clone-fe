@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
-import { sliderData } from '~/assets/datas/sliderData'
+import { useEffect, useState } from 'react'
+import { sliderData } from '~/datas/sliderData'
 
 const AUTO_PLAY_TIME = 3000
 

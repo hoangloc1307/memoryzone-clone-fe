@@ -2,9 +2,9 @@ import classNames from 'classnames'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { categoryData, HeaderCategory } from '~/assets/datas/categoryData'
+import Popover from '~/components/Popover'
+import { HeaderCategory, categoryData } from '~/datas/categoryData'
 import useViewport from '~/hooks/useViewport'
-import Popover from '../../../components/Popover'
 
 export default function Category() {
   const width = useViewport()
