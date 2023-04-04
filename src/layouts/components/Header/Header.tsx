@@ -5,6 +5,7 @@ import { navigationData } from '~/datas/navigationData'
 import useViewport from '~/hooks/useViewport'
 import Category from '~/layouts/components/Category'
 import Hamburger from '../Hamburger'
+import SearchBox from '../SearchBox'
 
 export default function Header() {
   const width = useViewport()
@@ -87,29 +88,9 @@ export default function Header() {
               </Link>
             </div>
             {/* Search form */}
-            <form className='relative col-span-12 flex rounded-sm bg-white p-0.5 lg:col-span-4'>
-              <input
-                type='text'
-                className='flex-1 rounded-sm px-2 text-black outline-none'
-                placeholder='Sản phẩm bạn muốn tìm...'
-              />
-              <button className='shrink-0 rounded-sm bg-warn px-6 py-2' type='submit'>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='h-4 w-4'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z'
-                  />
-                </svg>
-              </button>
-            </form>
+            <div className='col-span-12 lg:col-span-4'>
+              <SearchBox />
+            </div>
             {/* Hotline */}
             <div className='col-span-7 flex items-center gap-2 md:hidden lg:col-span-3 lg:flex lg:justify-self-end'>
               <span className='flex h-10 w-10 items-center justify-center rounded-full border-2 border-white p-1'>

@@ -8,4 +8,9 @@ export const authenSchema = object({
     .oneOf([ref('password')], 'Nhập lại mật khẩu không đúng'),
 })
 
+export const searchSchema = object({
+  keyword: string().trim().required(),
+})
+
 export type AuthenSchema = InferType<typeof authenSchema>
+export type SearchSchema = InferType<typeof searchSchema>
