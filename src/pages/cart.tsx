@@ -42,7 +42,13 @@ export default function CartPage() {
                 href={`/products/${generateSlug(item.image, item.id)}`}
                 className='relative aspect-square w-[100px] shrink-0 md:w-[150px]'
               >
-                <Image src={`/images/products/${item.image}`} alt={item.name} fill className='object-contain' />
+                <Image
+                  src={`/images/products/${item.image}`}
+                  alt={item.name}
+                  fill
+                  className='object-contain'
+                  sizes='(max-width: 767px) 100px, 150px'
+                />
               </Link>
               {/* Name ad price */}
               <div className='flex-grow lg:grid lg:grid-cols-12'>

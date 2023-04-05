@@ -34,4 +34,6 @@ export interface ProductListConfig {
   price_min?: number
   price_max?: number
   slug?: string
+  pathname?: string
+  keyword?: string
 }

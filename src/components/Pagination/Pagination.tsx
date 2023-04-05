@@ -66,7 +66,7 @@ export default function Pagination({ queryConfig, totalPage, range = 1 }: Props)
               <Link
                 key={index}
                 href={{
-                  pathname: '/categories/[slug]',
+                  pathname: queryConfig.pathname,
                   query: { ...queryConfig, page: pageNumber },
                 }}
                 className={classNames('w-8 rounded p-1.5 text-center text-sm', {
@@ -88,7 +88,7 @@ export default function Pagination({ queryConfig, totalPage, range = 1 }: Props)
       {currentPage > 1 ? (
         <Link
           href={{
-            pathname: '/categories/[slug]',
+            pathname: queryConfig.pathname,
             query: { ...queryConfig, page: currentPage - 1 },
           }}
           className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'
@@ -124,7 +124,7 @@ export default function Pagination({ queryConfig, totalPage, range = 1 }: Props)
       {currentPage < totalPage ? (
         <Link
           href={{
-            pathname: '/categories/[slug]',
+            pathname: queryConfig.pathname,
             query: { ...queryConfig, page: currentPage + 1 },
           }}
           className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'

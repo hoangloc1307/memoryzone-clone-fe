@@ -1,15 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { isBrowser } from '~/utils/utils'
+import debounce from 'lodash/debounce'
 
 export default function useViewport() {
   const [width, setWidth] = useState(0)
 
-  useEffect(() => {
-    if (isBrowser) {
-      const handleChangeWidth = () => {
+  const handleChangeWidth = useRef(
+    debounce(() => {
+      if (isBrowser) {
         setWidth(window.innerWidth)
       }
+    }, 500)
+  ).current
 
+  useEffect(() => {
+    if (isBrowser) {
       handleChangeWidth()
 
       window.addEventListener('resize', handleChangeWidth)
@@ -18,7 +23,7 @@ export default function useViewport() {
         window.removeEventListener('resize', handleChangeWidth)
       }
     }
-  }, [])
+  }, [handleChangeWidth])
 
   return width
 }

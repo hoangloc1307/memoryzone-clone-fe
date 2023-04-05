@@ -4,21 +4,23 @@ import debounce from 'lodash/debounce'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form/dist/types'
 import Popover from '~/components/Popover'
 import { path } from '~/constants/path'
 import { productsData } from '~/datas/productData'
+import useViewport from '~/hooks/useViewport'
 import { ProductSearchSuggest } from '~/types/product.type'
 import { SearchSchema, searchSchema } from '~/utils/rules'
-import { highlightKeywordInText, numberAsCurrency } from '~/utils/utils'
+import { highlightKeywordInText, isBrowser, numberAsCurrency } from '~/utils/utils'
 
 export default function SearchBox() {
   const router = useRouter()
   const [keyword, setKeyword] = useState('')
   const [searchSuggest, setSearchSuggest] = useState<ProductSearchSuggest[] | []>([])
   const [loading, setLoading] = useState(false)
+  const width = useViewport()
   const { handleSubmit, register } = useForm<SearchSchema>({ resolver: yupResolver(searchSchema) })
   const debounceCallApi = useRef(
     debounce((keyword: string) => {
@@ -40,13 +42,15 @@ export default function SearchBox() {
     }, 800)
   ).current
 
-  useEffect(() => {
-    if (keyword.length === 0) {
-      setSearchSuggest([])
-      setLoading(false)
-    } else {
-      debounceCallApi(keyword)
-      setLoading(true)
+  useLayoutEffect(() => {
+    if (isBrowser) {
+      if (keyword.length === 0) {
+        setSearchSuggest([])
+        setLoading(false)
+      } else {
+        debounceCallApi(keyword)
+        setLoading(true)
+      }
     }
   }, [keyword, debounceCallApi])
 
@@ -71,13 +75,13 @@ export default function SearchBox() {
   return (
     <Popover
       floatingElement={
-        <div className='relative z-20 rounded-sm bg-white text-black shadow-lg'>
-          {searchSuggest.length > 0 && (
+        <div className='relative z-10 rounded-sm bg-white text-black shadow-lg'>
+          {keyword.length > 0 && searchSuggest.length > 0 && (
             <>
               <ul className='space-y-2.5 divide-y divide-slate-300 p-2'>
                 {searchSuggest.slice(0, 4).map((product) => (
                   <li key={product.id} className='group pt-2.5 first:pt-0'>
-                    <a href='#' className='flex items-center gap-2'>
+                    <a href='#' className='flex items-center gap-2 hover:underline'>
                       <div className='relative aspect-square w-[80px] shrink-0'>
                         <Image src={`/images/products/${product.thumbnail}`} alt={product.name} fill sizes='80px' />
                       </div>
@@ -120,8 +124,10 @@ export default function SearchBox() {
         </div>
       }
       offsetOption={{ mainAxis: 4, crossAxis: 0 }}
+      floatingElementWidth='100%'
       showOnHover={false}
       showOnFocus
+      showOnClick={width < 1024}
     >
       <form
         autoComplete='off'

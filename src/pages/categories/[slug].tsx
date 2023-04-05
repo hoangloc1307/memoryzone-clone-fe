@@ -25,7 +25,7 @@ export default function CategoryPage() {
   const queryConfig = useQueryConfig()
   const router = useRouter()
   const idCheckbox = useId()
-  const { q, view, page, limit = 8, sort_by, price_min, price_max } = queryConfig
+  const { q, view = 'grid', page, limit = 8, sort_by = 'default', price_min, price_max } = queryConfig
 
   const handleChangeViewStyle = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     const viewData = (event.target as HTMLElement).dataset.view
@@ -241,9 +241,9 @@ export default function CategoryPage() {
 
               {/* Sort by */}
               <div className='relative ml-5 text-sm'>
-                <Listbox value={queryConfig.sort_by} onChange={handleChangeSortBy}>
+                <Listbox value={sort_by} onChange={handleChangeSortBy}>
                   <Listbox.Button className='group relative h-[34px] w-[180px] rounded border border-slate-400 px-3 py-1.5 text-left leading-4 text-[#444] data-[headlessui-state=open]:rounded-b-none data-[headlessui-state=open]:border-primary'>
-                    {sortByValueToText(queryConfig.sort_by as SortType)}
+                    {sortByValueToText(sort_by as SortType)}
                     <span className='absolute top-1/2 right-3 -translate-y-1/2'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'

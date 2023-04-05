@@ -10,12 +10,14 @@ export default function useQueryConfig() {
     {
       q: queryParams.q,
       slug: queryParams.slug,
+      pathname: queryParams.pathname,
       page: queryParams.page || 1,
       limit: queryParams.limit,
-      view: queryParams.view || 'grid',
-      sort_by: queryParams.sort_by || 'default',
+      view: queryParams.view,
+      sort_by: queryParams.sort_by,
       price_min: queryParams.price_min,
       price_max: queryParams.price_max,
+      keyword: queryParams.keyword,
     },
     isUndefined
   )
