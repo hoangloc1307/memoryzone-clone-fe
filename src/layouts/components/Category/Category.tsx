@@ -148,7 +148,7 @@ export default function Category() {
                 {item.title}
               </Link>
               {item.children && item.children.length > 0 && (
-                <span className='absolute right-2.5 top-1/2 -translate-y-1/2'>
+                <span className='pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2'>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-6 w-6'>
                     <path
                       fillRule='evenodd'
@@ -159,7 +159,7 @@ export default function Category() {
                 </span>
               )}
               {index === currentCategory && item.children && item.children.length > 0 && (
-                <span className='absolute top-0 left-full z-10 border-[20px] border-transparent border-l-primary'></span>
+                <span className='pointer-events-none absolute top-0 left-full z-10 border-[20px] border-transparent border-l-primary'></span>
               )}
             </li>
           ))}

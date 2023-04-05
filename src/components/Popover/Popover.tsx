@@ -1,5 +1,13 @@
-import type { Placement } from '@floating-ui/react'
-import { offset, safePolygon, useFloating, useHover, useInteractions } from '@floating-ui/react'
+import {
+  Placement,
+  offset,
+  safePolygon,
+  useClick,
+  useFloating,
+  useFocus,
+  useHover,
+  useInteractions,
+} from '@floating-ui/react'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { ElementType, ReactNode, useState } from 'react'
@@ -13,6 +21,9 @@ interface Props {
   floatingElementWidth?: number | string
   floatingElementMaxWidth?: number
   offsetOption?: { mainAxis?: number; crossAxis?: number }
+  showOnHover?: boolean
+  showOnFocus?: boolean
+  showOnClick?: boolean
   onMouseEnter?: () => void
 }
 
@@ -25,6 +36,9 @@ export default function Popover({
   offsetOption,
   floatingElementWidth,
   floatingElementMaxWidth,
+  showOnHover = true,
+  showOnFocus = false,
+  showOnClick = false,
   onMouseEnter,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)
@@ -40,9 +54,21 @@ export default function Popover({
     ],
   })
   const hover = useHover(context, {
+    enabled: showOnHover,
     handleClose: safePolygon(),
   })
-  const { getReferenceProps, getFloatingProps } = useInteractions([hover])
+  const focus = useFocus(context, {
+    enabled: showOnFocus,
+    keyboardOnly: false,
+  })
+  const click = useClick(context, {
+    enabled: showOnClick,
+    ignoreMouse: false,
+    toggle: true,
+    event: 'click',
+  })
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([hover, focus, click])
 
   const handleChangeOpen = () => {
     if (isOpen) {
@@ -54,9 +80,9 @@ export default function Popover({
     <>
       <Element
         ref={refs.setReference}
-        {...getReferenceProps()}
         className={className}
-        onClick={handleChangeOpen}
+        onClick={showOnClick || showOnFocus ? undefined : handleChangeOpen}
+        {...getReferenceProps()}
         onMouseEnter={onMouseEnter}
       >
         {children}

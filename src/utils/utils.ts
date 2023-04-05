@@ -62,3 +62,21 @@ export const sortProductsBy = (products: Product[], sortValue: SortType): Produc
   }
   return []
 }
+
+export const highlightKeywordInText = (text: string, keyword: string) => {
+  if (text && keyword) {
+    const regex = new RegExp(keyword, 'gi')
+    const keywordParts = text.match(regex)
+    const textParts = text.split(regex)
+    let result
+    if (keywordParts) {
+      result = (keywordParts as RegExpMatchArray).reduce((result, keyword, index) => {
+        return (result += `${textParts[index]}<span class='text-red-500'>${keyword}</span>`)
+      }, '')
+      result += textParts[textParts.length - 1]
+      return result
+    }
+    return `<span>${text}</span>`
+  }
+  return text
+}

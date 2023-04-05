@@ -8,7 +8,7 @@ import { authenSchema, AuthenSchema } from '~/utils/rules'
 
 type FormType = AuthenSchema
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const {
     register,
     handleSubmit,

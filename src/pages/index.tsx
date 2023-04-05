@@ -27,7 +27,7 @@ interface DataProductWithCategory {
   banners: BannerType[]
 }
 
-export default function Home() {
+export default function HomePage() {
   const [data, setData] = useState<DataProductWithCategory[]>([])
 
   useEffect(() => {

@@ -20,8 +20,8 @@ export default function CartPage() {
   return (
     <>
       <div className='c-container'>
-        <p className='text-lg font-bold text-[#444]'>Giỏ hàng của bạn</p>
-        <div className='mt-10 hidden font-semibold text-[#444] lg:flex'>
+        <p className='mb-10 text-lg font-bold text-[#444]'>Giỏ hàng của bạn</p>
+        <div className='hidden font-semibold text-[#444] lg:flex'>
           <div className='w-[150px] shrink-0 text-center'>Ảnh sản phẩm</div>
           <div className='grid flex-grow grid-cols-12'>
             <div className='col-span-4 text-center'>Tên sản phẩm</div>
@@ -96,8 +96,8 @@ export default function CartPage() {
             </li>
           ))}
         </ul>
-        {/* Total price */}
       </div>
+      {/* Total price */}
       <div className='mt-10 border-t border-slate-300'>
         <div className='c-container'>
           <div className='justify-around'>

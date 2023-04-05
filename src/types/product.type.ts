@@ -21,6 +21,8 @@ export interface Product {
   updatedAt: string
 }
 
+export type ProductSearchSuggest = Pick<Product, 'id' | 'thumbnail' | 'name' | 'priceDiscount' | 'shortSpecs'>
+
 export type SortType = 'default' | 'name:asc' | 'name:desc' | 'price:asc' | 'price:desc' | 'time:asc' | 'time:desc'
 
 export interface ProductListConfig {
