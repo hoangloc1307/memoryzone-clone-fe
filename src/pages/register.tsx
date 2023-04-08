@@ -1,14 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import Link from 'next/link'
+import { ReactElement } from 'react'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form/dist/types'
 import Input from '~/components/Input'
-import { path } from '~/constants/path'
+import path from '~/constants/path'
+import AuthenticationLayout from '~/layouts/AuthenticationLayout'
 import { authenSchema, AuthenSchema } from '~/utils/rules'
 
 type FormType = AuthenSchema
 
-export default function RegisterPage() {
+const RegisterPage = () => {
   const {
     register,
     handleSubmit,
@@ -22,7 +24,7 @@ export default function RegisterPage() {
   return (
     <div className='c-container'>
       <div className='text-gray-800 bg-gray-50 relative flex flex-col justify-center overflow-hidden antialiased'>
-        <div className='relative mx-auto w-72 py-3 text-center sm:w-96'>
+        <div className='relative mx-auto w-72 p-3 text-center sm:w-96'>
           <span className='text-2xl font-semibold text-[#444]'>Đăng ký</span>
           <div className='mt-4 rounded-lg bg-white text-left shadow-md'>
             <div className='h-2 rounded-t-md bg-primary/70' />
@@ -75,3 +77,7 @@ export default function RegisterPage() {
     </div>
   )
 }
+
+RegisterPage.getLayout = (page: ReactElement) => <AuthenticationLayout>{page}</AuthenticationLayout>
+
+export default RegisterPage

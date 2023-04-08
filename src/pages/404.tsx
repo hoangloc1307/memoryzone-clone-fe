@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { path } from '~/constants/path'
+import path from '~/constants/path'
 
 export default function Custom404Page() {
   return (

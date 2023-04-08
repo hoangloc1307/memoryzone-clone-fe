@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { path } from '~/constants/path'
+import path from '~/constants/path'
 import { navigationData } from '~/datas/navigationData'
 import useViewport from '~/hooks/useViewport'
 import Category from '~/layouts/components/Category'

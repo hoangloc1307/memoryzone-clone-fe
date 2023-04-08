@@ -4,16 +4,16 @@ import debounce from 'lodash/debounce'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form/dist/types'
 import Popover from '~/components/Popover'
-import { path } from '~/constants/path'
+import path from '~/constants/path'
 import { productsData } from '~/datas/productData'
 import useViewport from '~/hooks/useViewport'
 import { ProductSearchSuggest } from '~/types/product.type'
 import { SearchSchema, searchSchema } from '~/utils/rules'
-import { highlightKeywordInText, isBrowser, numberAsCurrency } from '~/utils/utils'
+import { highlightKeywordInText, numberAsCurrency } from '~/utils/utils'
 
 export default function SearchBox() {
   const router = useRouter()
@@ -42,26 +42,18 @@ export default function SearchBox() {
     }, 800)
   ).current
 
-  useLayoutEffect(() => {
-    if (isBrowser) {
-      if (keyword.length === 0) {
-        setSearchSuggest([])
-        setLoading(false)
-      } else {
-        debounceCallApi(keyword)
-        setLoading(true)
-      }
+  useEffect(() => {
+    if (keyword.length === 0) {
+      setSearchSuggest([])
+      setLoading(false)
     }
-  }, [keyword, debounceCallApi])
-
-  const highLightKeyword = useMemo(() => {
-    return keyword.trim()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchSuggest])
+  }, [keyword])
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
     setKeyword(value)
+    debounceCallApi(value)
+    setLoading(true)
   }
 
   const handleSearchBoxSubmit: SubmitHandler<SearchSchema> = (data) => {
@@ -89,7 +81,7 @@ export default function SearchBox() {
                         <p
                           className='font-medium line-clamp-3'
                           dangerouslySetInnerHTML={{
-                            __html: DOMPurify.sanitize(highlightKeywordInText(product.name, highLightKeyword)),
+                            __html: DOMPurify.sanitize(highlightKeywordInText(product.name, keyword)),
                           }}
                         />
                         <p className='mt-1 font-medium'>
@@ -119,7 +111,7 @@ export default function SearchBox() {
             </>
           )}
           {keyword.length > 0 && !loading && searchSuggest.length === 0 && (
-            <p className='p-2 text-center'>Không tìm thấy kết quả cho: &apos;{highLightKeyword}&apos;</p>
+            <p className='p-2 text-center'>Không tìm thấy kết quả cho: &apos;{keyword}&apos;</p>
           )}
         </div>
       }

@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { navigationData } from '~/datas/navigationData'
-import { path } from '~/constants/path'
+import path from '~/constants/path'
 
 export default function Hamburger() {
   const [show, setShow] = useState(false)
