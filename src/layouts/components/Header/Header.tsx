@@ -7,9 +7,10 @@ import Category from '~/layouts/components/Category'
 import Cart from '../Cart'
 import Hamburger from '../Hamburger'
 import SearchBox from '../SearchBox'
+import { useSession } from 'next-auth/react'
 
 export default function Header() {
-  const width = useViewport()
+  const { data: session } = useSession()
 
   return (
     <header className='relative z-10'>
@@ -26,7 +27,7 @@ export default function Header() {
               <p>Mở cửa: 8h đến 21h từ Thứ 2 đến Chủ Nhật</p>
             </div>
             <div className='flex gap-3 sm:gap-5'>
-              <Link href={path.login} className='group flex items-center gap-0.5 py-1 sm:py-2'>
+              <Link href={path.account} className='group flex items-center gap-0.5 py-1 sm:py-2'>
                 <span>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
                     <path
@@ -36,7 +37,7 @@ export default function Header() {
                     />
                   </svg>
                 </span>
-                <span className='group-hover:text-warn'>Tài khoản</span>
+                <span className='group-hover:text-warn'>{session?.user?.email || 'Tài khoản'}</span>
               </Link>
               <a href='#' className='group flex items-center gap-0.5 py-1 sm:py-2'>
                 <span>

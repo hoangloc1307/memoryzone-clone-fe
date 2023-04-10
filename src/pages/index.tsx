@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -29,6 +30,8 @@ interface DataProductWithCategory {
 
 const HomePage = () => {
   const [data, setData] = useState<DataProductWithCategory[]>([])
+  const { data: session } = useSession()
+  console.log('session', session)
 
   useEffect(() => {
     setData(productAndCategoryData())

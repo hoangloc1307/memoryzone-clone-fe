@@ -1,79 +1,70 @@
-import NextAuth from 'next-auth'
+import axios from 'axios'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GitHubProvider from 'next-auth/providers/github'
 
-export default NextAuth({
+const authOptions: NextAuthOptions = {
   providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID as string,
+      clientSecret: process.env.GITHUB_SECRET as string,
+    }),
     CredentialsProvider({
-      name: 'credentials',
       credentials: {
         email: {
           label: 'Email',
           type: 'email',
-          placeholder: 'Email',
         },
-        password: { label: 'Password', type: 'password' },
+        password: {
+          label: 'Password',
+          type: 'password',
+        },
       },
-      async authorize(credentials, req) {
-        const payload = {
-          email: credentials?.email,
-          password: credentials?.password,
-        }
-
-        const res = await fetch('http://localhost:3005/api/v1/auth/login', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-
-        const user = await res.json()
-        if (!res.ok) {
-          throw new Error(user.message)
-        }
-        // If no error and we have user data, return it
-        if (res.ok && user) {
-          return user
-        }
-
-        // Return null if user data could not be retrieved
-        return null
+      async authorize(credentials) {
+        return axios
+          .post('http://localhost:3005/api/v1/auth/login', credentials, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .then((res) => {
+            const { id, email, role, access_token, refresh_token } = res.data.data
+            return {
+              id,
+              email,
+              role,
+              accessToken: access_token,
+              refreshToken: refresh_token,
+            }
+          })
+          .catch((err) => {
+            throw new Error(err.response.data.message)
+          })
       },
     }),
   ],
-  secret: process.env.JWT_SECRET,
   pages: {
     signIn: '/login',
   },
   callbacks: {
     async jwt({ token, user, account }) {
-      console.log('token: ', token)
-      console.log('user: ', user)
-      console.log('account: ', account)
-      if (account && user) {
-        return {
-          ...token,
-          //@ts-ignore
-          accessToken: user.data.access_token,
-          //@ts-ignore
-          refreshToken: user.data.access_token,
-        }
+      if (account && account.provider !== 'credentials') {
+        const token = await new Promise<{ access_token: string; refresh_token: string }>((resolve, reject) => {
+          setTimeout(() => {
+            resolve({ access_token: 'testjfdsflsdjfklsdjflsdjf', refresh_token: 'testrefreshjfdsflsdjfklsdjflsdjf' })
+          }, 1000)
+        })
+
+        user.accessToken = token.access_token
+        user.refreshToken = token.refresh_token
       }
-
-      return token
+      return { ...token, ...user }
     },
-
     async session({ session, token }) {
-      //@ts-ignore
-      session.user.accessToken = token.accessToken
-      //@ts-ignore
-      session.user.refreshToken = token.refreshToken
-      //@ts-ignore
-      session.user.accessTokenExpires = token.accessTokenExpires
-
+      session.user = token as any
       return session
     },
   },
-  // Enable debug messages in the console if you are having problems
-  debug: true,
-})
+}
+
+export default NextAuth(authOptions)

@@ -1,18 +1,21 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { ReactElement } from 'react'
+import { useRouter } from 'next/router'
+import { ReactElement, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form/dist/types'
 import Input from '~/components/Input'
 import path from '~/constants/path'
 import AuthenticationLayout from '~/layouts/AuthenticationLayout'
-import { authenSchema, AuthenSchema } from '~/utils/rules'
+import { AuthenSchema, authenSchema } from '~/utils/rules'
 
 type FormType = Pick<AuthenSchema, 'email' | 'password'>
 const loginSchema = authenSchema.pick(['email', 'password'])
 
 const LoginPage = () => {
+  const [loginError, setLoginError] = useState<string | undefined>('')
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -21,15 +24,19 @@ const LoginPage = () => {
 
   const onSubmit: SubmitHandler<FormType> = async (data) => {
     const res = await signIn('credentials', {
-      redirect: false,
       email: data.email,
       password: data.password,
-      callbackUrl: `${window.location.origin}`,
+      redirect: false,
     })
-    if (res?.error) {
-      console.log(res?.error)
+    if (res?.ok) {
+      router.push((router.query.callbackUrl as string) || '/')
+    } else {
+      setLoginError(res?.error)
     }
-    console.log(res)
+  }
+
+  const signInWithGitHub = async () => {
+    const res = await signIn('github', { callbackUrl: (router.query.callbackUrl as string) || '/' })
   }
 
   return (
@@ -58,16 +65,18 @@ const LoginPage = () => {
                   type='password'
                   errorMessage={errors.password?.message}
                 />
-                <div className='flex flex-col items-center justify-between gap-5'>
+                <div className='flex flex-col items-center justify-between'>
+                  <p className='mt-2 text-center text-sm text-red-500 empty:hidden'>{loginError}</p>
                   <button
                     type='submit'
-                    className='mt-5 w-full rounded-md bg-primary/80 py-2 px-6 text-white hover:bg-primary'
+                    className='mt-2 w-full rounded-md bg-primary/80 py-2 px-6 text-white hover:bg-primary'
                   >
                     Đăng nhập
                   </button>
-                  <a href='#' className='text-sm hover:text-primary hover:underline'>
+                  <a href='#' className='mt-5 text-sm hover:text-primary hover:underline'>
                     Quên mật khẩu?
                   </a>
+                  <div onClick={signInWithGitHub}>GitHub</div>
                 </div>
                 <p className='mt-5 text-center text-sm'>
                   Bạn chưa có tài khoản?{' '}

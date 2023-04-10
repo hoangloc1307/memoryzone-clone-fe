@@ -5,6 +5,7 @@ const path = {
   cart: '/cart',
   search: '/search',
   dashboard: '/admin',
+  account: '/account',
 } as const
 
 export default path

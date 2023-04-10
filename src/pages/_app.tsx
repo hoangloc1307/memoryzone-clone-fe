@@ -83,9 +83,5 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         </>
       </MainLayout>
     ))
-  return getLayout(
-    <SessionProvider session={pageProps.session}>
-      <Component {...pageProps} />
-    </SessionProvider>
-  )
+  return <SessionProvider session={pageProps.session}>{getLayout(<Component {...pageProps} />)}</SessionProvider>
 }

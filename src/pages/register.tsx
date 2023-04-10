@@ -17,9 +17,7 @@ const RegisterPage = () => {
     formState: { errors },
   } = useForm<FormType>({ resolver: yupResolver(authenSchema) })
 
-  const onSubmit: SubmitHandler<FormType> = (data) => {
-    console.log(data)
-  }
+  const onSubmit: SubmitHandler<FormType> = (data) => {}
 
   return (
     <div className='c-container'>
