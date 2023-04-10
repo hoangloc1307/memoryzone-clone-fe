@@ -49,14 +49,22 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, account }) {
       if (account && account.provider !== 'credentials') {
-        const token = await new Promise<{ access_token: string; refresh_token: string }>((resolve, reject) => {
-          setTimeout(() => {
-            resolve({ access_token: 'testjfdsflsdjfklsdjflsdjf', refresh_token: 'testrefreshjfdsflsdjfklsdjflsdjf' })
-          }, 1000)
-        })
+        try {
+          const res = await axios.post(
+            'http://localhost:3005/api/v1/auth/get-access-token',
+            { ...user, ...account },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          )
 
-        user.accessToken = token.access_token
-        user.refreshToken = token.refresh_token
+          user.accessToken = res.data.data.access_token
+          user.refreshToken = res.data.data.refresh_token
+        } catch (err: any) {
+          throw new Error(err.response.data.message)
+        }
       }
       return { ...token, ...user }
     },
