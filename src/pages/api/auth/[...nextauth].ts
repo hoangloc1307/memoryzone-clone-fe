@@ -45,9 +45,10 @@ const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: '/login',
+    error: '/login',
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async signIn({ user, account }) {
       if (account && account.provider !== 'credentials') {
         try {
           const res = await axios.post(
@@ -62,10 +63,14 @@ const authOptions: NextAuthOptions = {
 
           user.accessToken = res.data.data.access_token
           user.refreshToken = res.data.data.refresh_token
+          return true
         } catch (err: any) {
           throw new Error(err.response.data.message)
         }
       }
+      return true
+    },
+    async jwt({ token, user }) {
       return { ...token, ...user }
     },
     async session({ session, token }) {

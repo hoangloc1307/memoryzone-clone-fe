@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form/dist/types'
 import Input from '~/components/Input'
@@ -14,8 +14,15 @@ type FormType = Pick<AuthenSchema, 'email' | 'password'>
 const loginSchema = authenSchema.pick(['email', 'password'])
 
 const LoginPage = () => {
-  const [loginError, setLoginError] = useState<string | undefined>('')
   const router = useRouter()
+  const [loginError, setLoginError] = useState<string | undefined>('')
+
+  useEffect(() => {
+    if (router.query.error) {
+      setLoginError(router.query.error as string)
+    }
+  }, [router.query.error])
+
   const {
     register,
     handleSubmit,
@@ -36,7 +43,7 @@ const LoginPage = () => {
   }
 
   const signInWithGitHub = async () => {
-    const res = await signIn('github', { callbackUrl: (router.query.callbackUrl as string) || '/' })
+    signIn('github', { callbackUrl: (router.query.callbackUrl as string) || '/' })
   }
 
   return (
