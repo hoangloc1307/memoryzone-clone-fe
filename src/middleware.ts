@@ -1,17 +1,28 @@
-import { withAuth } from 'next-auth/middleware'
-import { NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
+import { NextRequest, NextResponse } from 'next/server'
+import { protectedPaths, rejectedPaths } from '~/constants/path'
 
-export default withAuth(
-  function middleware(req) {
-    if (req.nextUrl.pathname.startsWith('/admin') && req.nextauth.token?.role !== 'ADMIN') {
-      return NextResponse.redirect(new URL('/', req.url))
+export async function middleware(req: NextRequest) {
+  const pathname = req.nextUrl.pathname
+  const protects = protectedPaths
+  const rejects = rejectedPaths
+  const isPathMatch = [...protects, ...rejects].some((path) => pathname.startsWith(path))
+  if (isPathMatch) {
+    const token = await getToken({ req })
+    if (!token && protects.includes(pathname)) {
+      const url = new URL(`/login`, req.url)
+      url.searchParams.set('callbackUrl', pathname)
+      return NextResponse.redirect(url)
     }
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token,
-    },
+    if ((token && rejects.includes(pathname)) || (pathname.startsWith('/admin') && token?.role !== 'ADMIN')) {
+      const url = new URL(`/`, req.url)
+      return NextResponse.redirect(url)
+    }
   }
-)
 
-export const config = { matcher: ['/admin/:path*', '/account'] }
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ['/admin/:path*', '/me', '/cart', '/login', '/register'],
+}

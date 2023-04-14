@@ -2,12 +2,13 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ReactElement, useEffect, useState } from 'react'
+import NProgress from 'nprogress'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form/dist/types'
 import Input from '~/components/Input'
+import layout from '~/constants/layout'
 import path from '~/constants/path'
-import AuthenticationLayout from '~/layouts/AuthenticationLayout'
 import { AuthenSchema, authenSchema } from '~/utils/rules'
 
 type FormType = Pick<AuthenSchema, 'email' | 'password'>
@@ -30,20 +31,19 @@ const LoginPage = () => {
   } = useForm<FormType>({ resolver: yupResolver(loginSchema) })
 
   const onSubmit: SubmitHandler<FormType> = async (data) => {
+    NProgress.start()
     const res = await signIn('credentials', {
       email: data.email,
       password: data.password,
       redirect: false,
     })
     if (res?.ok) {
+      NProgress.done()
       router.push((router.query.callbackUrl as string) || '/')
     } else {
+      NProgress.done()
       setLoginError(res?.error)
     }
-  }
-
-  const signInWithGitHub = async () => {
-    signIn('github', { callbackUrl: (router.query.callbackUrl as string) || '/' })
   }
 
   return (
@@ -83,7 +83,6 @@ const LoginPage = () => {
                   <a href='#' className='mt-5 text-sm hover:text-primary hover:underline'>
                     Quên mật khẩu?
                   </a>
-                  <div onClick={signInWithGitHub}>GitHub</div>
                 </div>
                 <p className='mt-5 text-center text-sm'>
                   Bạn chưa có tài khoản?{' '}
@@ -100,6 +99,6 @@ const LoginPage = () => {
   )
 }
 
-LoginPage.getLayout = (page: ReactElement) => <AuthenticationLayout>{page}</AuthenticationLayout>
+LoginPage.layout = layout.auth
 
 export default LoginPage

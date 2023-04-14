@@ -1,10 +1,9 @@
-import { ReactElement } from 'react'
-import AdminLayout from '~/layouts/AdminLayout'
+import layout from '~/constants/layout'
 
 const Dashboard = () => {
   return <div>Dashboard</div>
 }
 
-Dashboard.getLayout = (page: ReactElement) => <AdminLayout>{page}</AdminLayout>
+Dashboard.layout = layout.admin
 
 export default Dashboard

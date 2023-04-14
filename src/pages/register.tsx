@@ -1,11 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import Link from 'next/link'
-import { ReactElement } from 'react'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form/dist/types'
 import Input from '~/components/Input'
+import layout from '~/constants/layout'
 import path from '~/constants/path'
-import AuthenticationLayout from '~/layouts/AuthenticationLayout'
 import { authenSchema, AuthenSchema } from '~/utils/rules'
 
 type FormType = AuthenSchema
@@ -76,6 +75,6 @@ const RegisterPage = () => {
   )
 }
 
-RegisterPage.getLayout = (page: ReactElement) => <AuthenticationLayout>{page}</AuthenticationLayout>
+RegisterPage.layout = layout.auth
 
 export default RegisterPage

@@ -14,52 +14,41 @@ export default function Category() {
     <ul
       className={classNames({
         'divide-y divide-dashed text-sm text-link': level === 0,
-        'max-h-0 overflow-hidden transition-all duration-1000 group-data-[active=true]:max-h-[999px] group-data-[active=false]:duration-500':
-          level === 1,
+        'max-h-0 overflow-hidden transition-all duration-500 peer-checked:max-h-[999px]': level === 1,
       })}
     >
       {listCategory &&
         listCategory.length > 0 &&
         listCategory.map((item: HeaderCategory, index: number) => (
-          <li
-            key={index}
-            className='group'
-            onClick={() => {
-              if (level === 0) {
-                if (currentCategory !== index) {
-                  setCurrentCategory(index)
-                } else {
-                  setCurrentCategory(-1)
-                }
-              }
-            }}
-            data-active={index === currentCategory}
-          >
+          <li key={index} className='group'>
             {level === 0 ? (
-              <div className='relative'>
-                <Link
-                  href={item.url}
-                  className='inline-block py-2 font-semibold hover:underline group-hover:text-primary'
-                >
-                  {item.title}
-                </Link>
-                {item.children && item.children.length > 0 && (
-                  <span className='absolute right-0 top-1/2 -translate-y-1/2 font-semibold transition-transform duration-500 group-data-[active=true]:rotate-180'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      viewBox='0 0 24 24'
-                      fill='currentColor'
-                      className='h-4 w-4 group-hover:text-primary'
-                    >
-                      <path
-                        fillRule='evenodd'
-                        d='M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z'
-                        clipRule='evenodd'
-                      />
-                    </svg>
-                  </span>
-                )}
-              </div>
+              <>
+                <input type='checkbox' className='peer' hidden id={`item-${index}`} />
+                <label className='group relative block' htmlFor={`item-${index}`}>
+                  <Link
+                    href={item.url}
+                    className='inline-block py-2 font-semibold hover:underline group-hover:text-primary'
+                  >
+                    {item.title}
+                  </Link>
+                  {item.children && item.children.length > 0 && (
+                    <span className='absolute right-0 top-1/2 -translate-y-1/2 font-semibold transition-transform duration-500 peer-checked:group-first-of-type:rotate-180'>
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        viewBox='0 0 24 24'
+                        fill='currentColor'
+                        className='h-4 w-4 group-hover:text-primary'
+                      >
+                        <path
+                          fillRule='evenodd'
+                          d='M12.53 16.28a.75.75 0 01-1.06 0l-7.5-7.5a.75.75 0 011.06-1.06L12 14.69l6.97-6.97a.75.75 0 111.06 1.06l-7.5 7.5z'
+                          clipRule='evenodd'
+                        />
+                      </svg>
+                    </span>
+                  )}
+                </label>
+              </>
             ) : level === 1 ? (
               <Link href={item.url} className='flex items-center gap-1 py-1 pl-2 hover:text-primary hover:underline'>
                 <span>

@@ -6,14 +6,17 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { ReactElement, ReactNode, useEffect } from 'react'
 import Banner from '~/components/Banner'
+import layout from '~/constants/layout'
 import useViewport from '~/hooks/useViewport'
+import AdminLayout from '~/layouts/AdminLayout'
+import AuthenticationLayout from '~/layouts/AuthenticationLayout'
 import MainLayout from '~/layouts/MainLayout'
 import '~/styles/globals.css'
 import '~/styles/slick-theme.css'
 import '~/styles/slick.css'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode
+  layout?: string
 }
 
 type AppPropsWithLayout = AppProps & {
@@ -44,9 +47,9 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     }
   }, [router])
 
-  const getLayout =
-    Component.getLayout ??
-    ((page) => (
+  const layouts = {
+    [layout.admin]: (page: ReactElement) => <AdminLayout>{page}</AdminLayout>,
+    [layout.main]: (page: ReactElement) => (
       <MainLayout>
         <>
           {page}
@@ -82,6 +85,12 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           )}
         </>
       </MainLayout>
-    ))
+    ),
+    [layout.auth]: (page: ReactElement) => <AuthenticationLayout>{page}</AuthenticationLayout>,
+  }
+
+  // @ts-ignore
+  const getLayout = layouts[Component.layout ?? layout.main]
+
   return <SessionProvider session={pageProps.session}>{getLayout(<Component {...pageProps} />)}</SessionProvider>
 }

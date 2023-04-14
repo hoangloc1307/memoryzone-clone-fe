@@ -11,31 +11,17 @@ const authOptions: NextAuthOptions = {
     }),
     CredentialsProvider({
       credentials: {
-        email: {
-          label: 'Email',
-          type: 'email',
-        },
-        password: {
-          label: 'Password',
-          type: 'password',
-        },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         return axios
-          .post('http://localhost:3005/api/v1/auth/login', credentials, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
+          .post(`${process.env.backEndUrl}/auth/login`, credentials, {
+            headers: { 'Content-Type': 'application/json' },
           })
           .then((res) => {
-            const { id, email, role, access_token, refresh_token } = res.data.data
-            return {
-              id,
-              email,
-              role,
-              accessToken: access_token,
-              refreshToken: refresh_token,
-            }
+            const { id, email, role, accessToken, refreshToken } = res.data.data
+            return { id, email, role, accessToken, refreshToken }
           })
           .catch((err) => {
             throw new Error(err.response.data.message)
@@ -43,26 +29,19 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  pages: {
-    signIn: '/login',
-    error: '/login',
-  },
+  pages: { signIn: '/login', error: '/login' },
   callbacks: {
     async signIn({ user, account }) {
       if (account && account.provider !== 'credentials') {
         try {
           const res = await axios.post(
-            'http://localhost:3005/api/v1/auth/get-access-token',
+            `${process.env.backEndUrl}/auth/get-access-token`,
             { ...user, ...account },
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }
+            { headers: { 'Content-Type': 'application/json' } }
           )
 
-          user.accessToken = res.data.data.access_token
-          user.refreshToken = res.data.data.refresh_token
+          user.accessToken = res.data.data.accessToken
+          user.refreshToken = res.data.data.refreshToken
           return true
         } catch (err: any) {
           throw new Error(err.response.data.message)

@@ -1,13 +1,12 @@
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import path from '~/constants/path'
 import { navigationData } from '~/datas/navigationData'
-import useViewport from '~/hooks/useViewport'
 import Category from '~/layouts/components/Category'
 import Cart from '../Cart'
 import Hamburger from '../Hamburger'
 import SearchBox from '../SearchBox'
-import { useSession } from 'next-auth/react'
 
 export default function Header() {
   const { data: session } = useSession()
@@ -27,7 +26,7 @@ export default function Header() {
               <p>Mở cửa: 8h đến 21h từ Thứ 2 đến Chủ Nhật</p>
             </div>
             <div className='flex gap-3 sm:gap-5'>
-              <Link href={path.account} className='group flex items-center gap-0.5 py-1 sm:py-2'>
+              <Link href={path.me} className='group flex items-center gap-0.5 py-1 sm:py-2'>
                 <span>
                   <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
                     <path
