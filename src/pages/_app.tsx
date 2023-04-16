@@ -1,13 +1,13 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { NextPage } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import type { AppProps } from 'next/app'
 import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { ReactElement, ReactNode, useEffect } from 'react'
-import Banner from '~/components/Banner'
+import { ReactElement, useEffect } from 'react'
 import layout from '~/constants/layout'
-import useViewport from '~/hooks/useViewport'
 import AdminLayout from '~/layouts/AdminLayout'
 import AuthenticationLayout from '~/layouts/AuthenticationLayout'
 import MainLayout from '~/layouts/MainLayout'
@@ -23,8 +23,19 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 0,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 0,
+    },
+  },
+})
+
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const width = useViewport()
   const router = useRouter()
 
   useEffect(() => {
@@ -49,48 +60,19 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   const layouts = {
     [layout.admin]: (page: ReactElement) => <AdminLayout>{page}</AdminLayout>,
-    [layout.main]: (page: ReactElement) => (
-      <MainLayout>
-        <>
-          {page}
-          {width > 1535 && (
-            <>
-              {/* Left sticky banner */}
-              <div className='absolute top-5 h-full' style={{ left: 'calc((100vw - 1280px) / 2 - 120px)' }}>
-                <div className='sticky top-[229px]'>
-                  <Banner
-                    image='/images/banners/sticky_sandisk_0403.png'
-                    url='#'
-                    alt='SanDisk flagship store'
-                    priority
-                    width={120}
-                    height={450}
-                  />
-                </div>
-              </div>
-              {/* Right sticky banner */}
-              <div className='absolute top-5 h-full' style={{ right: 'calc((100vw - 1280px) / 2 - 120px)' }}>
-                <div className='sticky top-[229px]'>
-                  <Banner
-                    image='/images/banners/sticky_samsung_0403.png'
-                    url='#'
-                    alt='SanDisk flagship store'
-                    priority
-                    width={120}
-                    height={450}
-                  />
-                </div>
-              </div>
-            </>
-          )}
-        </>
-      </MainLayout>
-    ),
+    [layout.main]: (page: ReactElement) => <MainLayout>{page}</MainLayout>,
     [layout.auth]: (page: ReactElement) => <AuthenticationLayout>{page}</AuthenticationLayout>,
   }
 
   // @ts-ignore
   const getLayout = layouts[Component.layout ?? layout.main]
 
-  return <SessionProvider session={pageProps.session}>{getLayout(<Component {...pageProps} />)}</SessionProvider>
+  return (
+    <SessionProvider session={pageProps.session} refetchOnWindowFocus={false}>
+      <QueryClientProvider client={queryClient}>
+        {getLayout(<Component {...pageProps} />)}
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </SessionProvider>
+  )
 }

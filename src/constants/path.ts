@@ -2,6 +2,7 @@ const path = {
   home: '/',
   login: '/login',
   register: '/register',
+  logout: '/logout',
   cart: '/cart',
   search: '/search',
   me: '/me',

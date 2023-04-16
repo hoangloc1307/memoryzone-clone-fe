@@ -1,6 +1,27 @@
+import axios, { AxiosError, HttpStatusCode } from 'axios'
 import { Product, SortType } from '~/types/product.type'
+import { ErrorResponse } from '~/types/response.type'
 
 export const isBrowser = typeof window !== 'undefined'
+
+export const isAxiosError = <Error>(error: unknown): error is AxiosError<Error> => {
+  return axios.isAxiosError(error)
+}
+
+export const isAxiosBadRequestError = <BadRequestError>(error: unknown): error is AxiosError<BadRequestError> => {
+  return isAxiosError(error) && error.response?.status === HttpStatusCode.BadRequest
+}
+
+export const isAxiosUnauthorizedError = <UnauthorizedError>(error: unknown): error is AxiosError<UnauthorizedError> => {
+  return isAxiosError(error) && error.response?.status === HttpStatusCode.Unauthorized
+}
+
+export const isAxiosExpiredTokenError = <ExpiredError>(error: unknown): error is AxiosError<ExpiredError> => {
+  return (
+    isAxiosUnauthorizedError<ErrorResponse<{ name: string; message: string }>>(error) &&
+    error.response?.data?.name === 'TOKEN_EXPIRED'
+  )
+}
 
 export const numberAsCurrency = (number: number) => new Intl.NumberFormat('de-DE').format(number)
 

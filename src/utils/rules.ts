@@ -1,6 +1,7 @@
 import { object, string, InferType, ref } from 'yup'
 
 export const authenSchema = object({
+  name: string().required('Họ tên là bắt buộc'),
   email: string().email('Email không đúng định dạng.').required('Email là bắt buộc.'),
   password: string().min(6, 'Mật khẩu phải có độ dài ít nhất 6 kí tự.').required('Mật khẩu là bắt buộc.'),
   confirmPassword: string()

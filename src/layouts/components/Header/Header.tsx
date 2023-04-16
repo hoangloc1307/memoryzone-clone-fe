@@ -1,6 +1,7 @@
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import Popover from '~/components/Popover'
 import path from '~/constants/path'
 import { navigationData } from '~/datas/navigationData'
 import Category from '~/layouts/components/Category'
@@ -26,18 +27,57 @@ export default function Header() {
               <p>Mở cửa: 8h đến 21h từ Thứ 2 đến Chủ Nhật</p>
             </div>
             <div className='flex gap-3 sm:gap-5'>
-              <Link href={path.me} className='group flex items-center gap-0.5 py-1 sm:py-2'>
-                <span>
-                  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
-                    <path
-                      fillRule='evenodd'
-                      d='M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </span>
-                <span className='group-hover:text-warn'>{session?.user?.email || 'Tài khoản'}</span>
-              </Link>
+              {/* Account */}
+              <Popover
+                floatingElement={
+                  <div className='relative flex w-[200px] flex-col gap-2 bg-white py-2 text-[#444]'>
+                    <span className='absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full border-[5px] border-transparent border-b-white'></span>
+                    {!session && (
+                      <>
+                        <Link href={path.login} className='px-2 hover:text-primary hover:underline'>
+                          Đăng nhập
+                        </Link>
+                        <Link href={path.register} className='px-2 hover:text-primary hover:underline'>
+                          Đăng ký
+                        </Link>
+                      </>
+                    )}
+                    {session && (
+                      <>
+                        {session.user.role === 'ADMIN' && (
+                          <Link href={path.admin.dashboard} className='px-2 hover:text-primary hover:underline'>
+                            Quản lý trang web
+                          </Link>
+                        )}
+                        <Link href={path.me} className='px-2 hover:text-primary hover:underline'>
+                          Thông tin của tôi
+                        </Link>
+                        <button
+                          className='px-2 text-left hover:text-primary hover:underline'
+                          onClick={() => signOut({ callbackUrl: window.location.origin })}
+                        >
+                          Đăng xuất
+                        </button>
+                      </>
+                    )}
+                  </div>
+                }
+                placement='bottom'
+              >
+                <div className='group flex cursor-default items-center gap-0.5 py-1 sm:py-2'>
+                  <span>
+                    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
+                      <path
+                        fillRule='evenodd'
+                        d='M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z'
+                        clipRule='evenodd'
+                      />
+                    </svg>
+                  </span>
+                  <span className='group-hover:text-warn'>{session?.user?.email || 'Tài khoản'}</span>
+                </div>
+              </Popover>
+              {/* Hot sale */}
               <a href='#' className='group flex items-center gap-0.5 py-1 sm:py-2'>
                 <span>
                   <svg

@@ -3,7 +3,7 @@ import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GitHubProvider from 'next-auth/providers/github'
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_ID as string,
@@ -29,6 +29,9 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  session: {
+    strategy: 'jwt',
+  },
   pages: { signIn: '/login', error: '/login' },
   callbacks: {
     async signIn({ user, account }) {
@@ -49,10 +52,15 @@ const authOptions: NextAuthOptions = {
       }
       return true
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === 'update') {
+        token.accessToken = session.accessToken
+        token.refreshToken = session.refreshToken
+        return { ...token, ...user }
+      }
       return { ...token, ...user }
     },
-    async session({ session, token }) {
+    async session({ session, token, newSession, user, trigger }) {
       session.user = token as any
       return session
     },

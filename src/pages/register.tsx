@@ -1,22 +1,57 @@
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from '@tanstack/react-query'
+import omit from 'lodash/omit'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { SubmitHandler } from 'react-hook-form/dist/types'
 import Input from '~/components/Input'
 import layout from '~/constants/layout'
 import path from '~/constants/path'
+import useAuthAxios from '~/hooks/useAuthAxios'
 import { authenSchema, AuthenSchema } from '~/utils/rules'
+import NProgress from 'nprogress'
+import { isAxiosBadRequestError } from '~/utils/utils'
+import { ErrorResponse } from '~/types/response.type'
+import { useRouter } from 'next/router'
 
 type FormType = AuthenSchema
 
 const RegisterPage = () => {
+  const router = useRouter()
   const {
     register,
+    setError,
     handleSubmit,
     formState: { errors },
   } = useForm<FormType>({ resolver: yupResolver(authenSchema) })
+  const http = useAuthAxios()
 
-  const onSubmit: SubmitHandler<FormType> = (data) => {}
+  const registerMutation = useMutation({
+    mutationFn: ({ name, email, password }: Omit<FormType, 'confirmPassword'>) =>
+      http.post('/auth/register', { name, email, password }),
+  })
+
+  const onSubmit: SubmitHandler<FormType> = (data) => {
+    NProgress.start()
+    const payload = omit(data, ['confirmPassword'])
+    registerMutation.mutate(payload, {
+      onSuccess() {
+        NProgress.done()
+        router.push(path.login)
+      },
+      onError(error) {
+        NProgress.done()
+        if (isAxiosBadRequestError<ErrorResponse<Omit<FormType, 'confirmPassword'>>>(error)) {
+          const formError = error.response?.data.data
+          if (formError) {
+            for (const [key, value] of Object.entries(formError)) {
+              setError(key as keyof FormType, { message: value })
+            }
+          }
+        }
+      },
+    })
+  }
 
   return (
     <div className='c-container'>
@@ -28,8 +63,16 @@ const RegisterPage = () => {
             <div className='px-8 py-6'>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Input
+                  label='Họ tên'
+                  placeholder='Họ tên'
+                  name='name'
+                  register={register}
+                  errorMessage={errors.name?.message}
+                />
+                <Input
                   label='Email'
                   placeholder='Email'
+                  classNameWrapper='mt-5'
                   name='email'
                   register={register}
                   errorMessage={errors.email?.message}
@@ -55,7 +98,8 @@ const RegisterPage = () => {
                 <div className='flex items-baseline justify-center'>
                   <button
                     type='submit'
-                    className='mt-5 w-full rounded-md bg-primary/80 py-2 px-6 text-white hover:bg-primary'
+                    className='mt-5 w-full rounded-md bg-primary/80 py-2 px-6 text-white hover:bg-primary disabled:cursor-not-allowed disabled:bg-primary/50'
+                    disabled={registerMutation.isLoading}
                   >
                     Đăng ký
                   </button>

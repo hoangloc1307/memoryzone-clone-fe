@@ -5,6 +5,7 @@ declare module 'next-auth' {
     user: User
   }
   interface User {
+    role: 'USER' | 'ADMIN'
     accessToken: string
     refreshToken: string
   }

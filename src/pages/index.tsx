@@ -14,6 +14,7 @@ import { productAndCategoryData } from '~/datas/productAndCategoryData'
 import { productsData } from '~/datas/productData'
 import { hotBrandsData } from '~/datas/sliderData'
 import { homeSlogan } from '~/datas/sloganData'
+import useViewport from '~/hooks/useViewport'
 import { Banner as BannerType } from '~/types/banner.type'
 import { Product } from '~/types/product.type'
 
@@ -29,9 +30,8 @@ interface DataProductWithCategory {
 }
 
 const HomePage = () => {
+  const width = useViewport()
   const [data, setData] = useState<DataProductWithCategory[]>([])
-  const { data: session } = useSession()
-  console.log('session', session)
 
   useEffect(() => {
     setData(productAndCategoryData())
@@ -60,10 +60,12 @@ const HomePage = () => {
         <meta property='og:url' content='https://memoryzone-clone-fe.vercel.app/' />
         <meta property='og:site_name' content='MemoryZone - Professional in memory' />
       </Head>
+
       <h1 className='hidden'>
         MemoryZone - Professional in memory - MemoryZone là một thương hiệu chuyên cung cấp Laptop, PC, thiết bị lưu
         trữ, màn hình và các phụ kiện khác.
       </h1>
+
       <div className='c-container'>
         {/* Slider */}
         <section className='grid grid-cols-12 gap-2'>
@@ -222,6 +224,38 @@ const HomePage = () => {
           </ul>
         </div>
       </section>
+      <>
+        {width > 1535 && (
+          <>
+            {/* Left sticky banner */}
+            <div className='absolute top-5 h-full' style={{ left: 'calc((100vw - 1280px) / 2 - 120px)' }}>
+              <div className='sticky top-[229px]'>
+                <Banner
+                  image='/images/banners/sticky_sandisk_0403.png'
+                  url='#'
+                  alt='SanDisk flagship store'
+                  priority
+                  width={120}
+                  height={450}
+                />
+              </div>
+            </div>
+            {/* Right sticky banner */}
+            <div className='absolute top-5 h-full' style={{ right: 'calc((100vw - 1280px) / 2 - 120px)' }}>
+              <div className='sticky top-[229px]'>
+                <Banner
+                  image='/images/banners/sticky_samsung_0403.png'
+                  url='#'
+                  alt='SanDisk flagship store'
+                  priority
+                  width={120}
+                  height={450}
+                />
+              </div>
+            </div>
+          </>
+        )}
+      </>
     </>
   )
 }

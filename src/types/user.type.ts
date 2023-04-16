@@ -1,7 +1,10 @@
 export interface User {
-  id?: string
-  email?: string
-  role?: 'ADMIN' | 'USER'
-  accessToken?: string
-  refreshToken?: string
+  id: string
+  name: string
+  email: string
+  dayOfBirth: string
+  phone: string
+  address: string
+  avatar: string
+  type: 'CUSTOMER' | 'EMPLOYEE'
 }
