@@ -13,7 +13,7 @@ export default function AdminLayout({ children }: Props) {
       <input type='checkbox' hidden id={checkboxId} className='peer' />
       <label
         htmlFor={checkboxId}
-        className='group fixed bottom-5 right-5 rounded-full bg-primary p-2 text-white shadow lg:hidden'
+        className='group fixed bottom-5 right-5 z-10 rounded-full bg-primary p-2 text-white shadow lg:hidden'
       >
         <svg
           xmlns='http://www.w3.org/2000/svg'
@@ -49,7 +49,7 @@ export default function AdminLayout({ children }: Props) {
           </li>
         </ul>
       </aside>
-      <main className='grow p-2'>{children}</main>
+      <main className='grow overflow-y-auto p-2'>{children}</main>
     </div>
   )
 }

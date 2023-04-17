@@ -29,7 +29,6 @@ export default function useAuthAxios() {
           if (isAxiosUnauthorizedError<ErrorResponse<{ name: string; message: string }>>(error)) {
             const config = error.config as InternalAxiosRequestConfig & { sent: boolean }
             const url = config.url
-            console.log(url)
             if (isAxiosExpiredTokenError(error) && url !== '/auth/refresh-token' && !config.sent) {
               config.sent = true
               const response = await http.patch('/auth/refresh-token', {

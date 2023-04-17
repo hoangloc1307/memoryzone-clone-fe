@@ -10,7 +10,7 @@ export interface Product {
   priceDiscount: number
   view: number
   quantity: number
-  shortInfo: string
+  shortInfo: string[]
   vendor: string
   description: string
   slug: string
