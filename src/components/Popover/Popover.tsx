@@ -1,5 +1,7 @@
 import {
+  FloatingArrow,
   Placement,
+  arrow,
   offset,
   safePolygon,
   useClick,
@@ -10,13 +12,15 @@ import {
 } from '@floating-ui/react'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
-import { ElementType, ReactNode, useState } from 'react'
+import { ElementType, ReactNode, useRef, useState } from 'react'
 
 interface Props {
   children: ReactNode
   as?: ElementType
   placement?: Placement
   className?: string
+  showArrow?: boolean
+  clickToHide?: boolean
   floatingElement?: ReactNode
   floatingElementWidth?: number | string
   floatingElementMaxWidth?: number
@@ -32,6 +36,8 @@ export default function Popover({
   as: Element = 'div',
   placement = 'bottom-start',
   className,
+  showArrow = false,
+  clickToHide = false,
   floatingElement,
   offsetOption,
   floatingElementWidth,
@@ -41,6 +47,7 @@ export default function Popover({
   showOnClick = false,
   onMouseEnter,
 }: Props) {
+  const arrowRef = useRef(null)
   const [isOpen, setIsOpen] = useState(false)
   const { x, y, refs, context, strategy } = useFloating({
     open: isOpen,
@@ -50,6 +57,9 @@ export default function Popover({
       offset({
         mainAxis: offsetOption?.mainAxis || 0,
         crossAxis: offsetOption?.crossAxis || 0,
+      }),
+      arrow({
+        element: arrowRef,
       }),
     ],
   })
@@ -81,7 +91,7 @@ export default function Popover({
       <Element
         ref={refs.setReference}
         className={className}
-        onClick={showOnClick || showOnFocus ? undefined : handleChangeOpen}
+        onClick={showOnClick || showOnFocus ? undefined : clickToHide ? handleChangeOpen : undefined}
         {...getReferenceProps()}
         onMouseEnter={onMouseEnter}
       >
@@ -104,6 +114,7 @@ export default function Popover({
           {...getFloatingProps()}
         >
           {floatingElement || null}
+          {showArrow && <FloatingArrow ref={arrowRef} context={context} className='fill-white' />}
         </div>
       )}
     </>

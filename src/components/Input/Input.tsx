@@ -1,6 +1,7 @@
+import classNames from 'classnames'
 import { InputHTMLAttributes, useId, useState } from 'react'
+import type { RegisterOptions, UseFormRegister } from 'react-hook-form/dist/types'
 import { twMerge } from 'tailwind-merge'
-import type { UseFormRegister, FieldValues, RegisterOptions } from 'react-hook-form/dist/types'
 
 export interface Props extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -34,7 +35,13 @@ export default function Input({
         <input
           id={id}
           className={twMerge(
-            'mt-2 h-5 w-full rounded border border-slate-300 py-5 pl-3 pr-10 text-sm outline-none focus:ring-1 focus:ring-primary',
+            classNames(
+              'mt-2 h-5 w-full rounded border border-slate-300 text-sm outline-none focus:ring-1 focus:ring-primary',
+              {
+                'py-5 pl-3 pr-10': rest.type === 'password',
+                'py-5 px-3': rest.type !== 'password',
+              }
+            ),
             classNameInput
           )}
           {...inputRegister}

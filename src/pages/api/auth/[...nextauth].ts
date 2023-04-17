@@ -20,8 +20,8 @@ export const authOptions: NextAuthOptions = {
             headers: { 'Content-Type': 'application/json' },
           })
           .then((res) => {
-            const { id, email, role, accessToken, refreshToken } = res.data.data
-            return { id, email, role, accessToken, refreshToken }
+            const { id, email, name, avatar, role, accessToken, refreshToken } = res.data.data
+            return { id, email, name, avatar, role, accessToken, refreshToken }
           })
           .catch((err) => {
             throw new Error(err.response.data.message)

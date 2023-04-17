@@ -36,7 +36,7 @@ export default function AdminLayout({ children }: Props) {
           <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
         </svg>
       </label>
-      <aside className='absolute top-0 left-0 h-full w-[250px] -translate-x-full bg-primary p-2 text-white transition-transform peer-checked:translate-x-0 lg:static lg:translate-x-0'>
+      <aside className='absolute top-0 left-0 z-10 h-full w-[250px] -translate-x-full bg-primary p-2 text-white transition-transform peer-checked:translate-x-0 lg:static lg:translate-x-0'>
         <ul>
           <li>
             <Link href={path.admin.dashboard}>Dashboard</Link>
@@ -49,7 +49,7 @@ export default function AdminLayout({ children }: Props) {
           </li>
         </ul>
       </aside>
-      <main className='p-2'>{children}</main>
+      <main className='grow p-2'>{children}</main>
     </div>
   )
 }

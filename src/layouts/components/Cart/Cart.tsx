@@ -111,6 +111,7 @@ export default function Cart() {
           </div>
         </div>
       }
+      showArrow
       offsetOption={{ mainAxis: 8 }}
       placement='bottom-end'
       showOnHover={width >= 1024}

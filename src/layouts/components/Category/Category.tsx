@@ -172,6 +172,7 @@ export default function Category() {
       }
       floatingElementWidth={width < 1024 ? '100%' : undefined}
       onMouseEnter={() => setCurrentCategory(-1)}
+      clickToHide={width < 1024}
     >
       <span>
         <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-6 w-6'>

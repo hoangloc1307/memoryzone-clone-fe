@@ -1,4 +1,35 @@
+interface ProductAttribute {
+  id: number
+  attribute: string
+}
+
 export interface Product {
+  id: number
+  name: string
+  price: number
+  priceDiscount: number
+  view: number
+  quantity: number
+  shortInfo: string
+  vendor: string
+  description: string
+  slug: string
+  createdAt: string
+  updatedAt: string
+  isDraft: boolean
+  isPublish: boolean
+  productTypeId: number
+  productType: {
+    id: number
+    type: string
+    productAttributes: ProductAttribute[]
+  }
+  productAttributes: []
+  images: []
+  categories: []
+}
+
+export interface Product2 {
   id: string
   thumbnail: string
   url: string
@@ -21,7 +52,7 @@ export interface Product {
   updatedAt: string
 }
 
-export type ProductSearchSuggest = Pick<Product, 'id' | 'thumbnail' | 'name' | 'priceDiscount' | 'shortSpecs'>
+export type ProductSearchSuggest = Pick<Product2, 'id' | 'thumbnail' | 'name' | 'priceDiscount' | 'shortSpecs'>
 
 export type SortType = 'default' | 'name:asc' | 'name:desc' | 'price:asc' | 'price:desc' | 'time:asc' | 'time:desc'
 

@@ -8,15 +8,23 @@ import Category from '~/layouts/components/Category'
 import Cart from '../Cart'
 import Hamburger from '../Hamburger'
 import SearchBox from '../SearchBox'
+import { memo, useCallback } from 'react'
+import useAuthAxios from '~/hooks/useAuthAxios'
 
-export default function Header() {
+const Header = () => {
   const { data: session } = useSession()
+  const http = useAuthAxios()
+
+  const handleLogout = useCallback(() => {
+    http
+      .delete('/auth/logout')
+      .then(() => signOut({ callbackUrl: window.location.origin }))
+      .catch(() => undefined)
+  }, [http])
 
   return (
     <header className='relative z-10'>
-      {/* <div className='relative h-auto'> */}
       <Image src='/images/banners/banner-top.jpg' alt='Samsung official store' priority width={1920} height={0} />
-      {/* </div> */}
       <div className='bg-primary py-2 text-xs text-white lg:py-0 lg:text-sm'>
         <div className='c-container border-b border-white/20 pb-2 lg:pb-0'>
           <div className='flex flex-col items-center justify-between gap-2 md:flex-row'>
@@ -30,8 +38,7 @@ export default function Header() {
               {/* Account */}
               <Popover
                 floatingElement={
-                  <div className='relative flex w-[200px] flex-col gap-2 bg-white py-2 text-[#444]'>
-                    <span className='absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full border-[5px] border-transparent border-b-white'></span>
+                  <div className='flex w-[200px] flex-col gap-2 rounded bg-white py-2 text-[#444] shadow'>
                     {!session && (
                       <>
                         <Link href={path.login} className='px-2 hover:text-primary hover:underline'>
@@ -52,10 +59,7 @@ export default function Header() {
                         <Link href={path.me} className='px-2 hover:text-primary hover:underline'>
                           Thông tin của tôi
                         </Link>
-                        <button
-                          className='px-2 text-left hover:text-primary hover:underline'
-                          onClick={() => signOut({ callbackUrl: window.location.origin })}
-                        >
+                        <button className='px-2 text-left hover:text-primary hover:underline' onClick={handleLogout}>
                           Đăng xuất
                         </button>
                       </>
@@ -63,8 +67,9 @@ export default function Header() {
                   </div>
                 }
                 placement='bottom'
+                showArrow
               >
-                <div className='group flex cursor-default items-center gap-0.5 py-1 sm:py-2'>
+                <div className='flex cursor-default items-center gap-0.5 py-1 sm:py-2'>
                   <span>
                     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
                       <path
@@ -74,7 +79,7 @@ export default function Header() {
                       />
                     </svg>
                   </span>
-                  <span className='group-hover:text-warn'>{session?.user?.email || 'Tài khoản'}</span>
+                  <span>{session?.user?.name || 'Tài khoản'}</span>
                 </div>
               </Popover>
               {/* Hot sale */}
@@ -179,3 +184,5 @@ export default function Header() {
     </header>
   )
 }
+
+export default memo(Header)
