@@ -36,10 +36,10 @@ export default function Input({
           id={id}
           className={twMerge(
             classNames(
-              'mt-2 h-5 w-full rounded border border-slate-300 text-sm outline-none focus:ring-1 focus:ring-primary',
+              'mt-2 h-10 w-full rounded border border-slate-300 text-sm outline-none focus:ring-1 focus:ring-primary',
               {
-                'py-5 pl-3 pr-10': rest.type === 'password',
-                'py-5 px-3': rest.type !== 'password',
+                'pl-3 pr-10': rest.type === 'password',
+                'px-3': rest.type !== 'password',
               }
             ),
             classNameInput

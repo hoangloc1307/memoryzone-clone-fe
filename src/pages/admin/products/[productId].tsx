@@ -1,49 +1,62 @@
+import { Combobox, Listbox } from '@headlessui/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Editor } from '@tinymce/tinymce-react'
+import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
-import { useRef } from 'react'
+import { useMemo } from 'react'
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
-import { Editor as TinyMCEEditor } from 'tinymce'
+import { toast } from 'react-toastify'
 import Input from '~/components/Input'
+import InputList from '~/components/InputList'
 import InputNumber from '~/components/InputNumber'
 import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
-import { Product } from '~/types/product.type'
+import { Product, ProductType } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
 
 const AdminProductDetailPage = () => {
   const router = useRouter()
   const productId = router.query.productId
   const http = useAuthAxios()
-  const editorRef = useRef<TinyMCEEditor | null>(null)
-  const { handleSubmit, register, control } = useForm<Product>()
-  const {
-    control: controlSI,
-    register: registerSI,
-    setValue: setValueSI,
-    handleSubmit: handleSubmitSI,
-  } = useForm<{ shortInfo: { id: number; value: string }[] }>()
-  const { fields } = useFieldArray({
-    control: controlSI,
+  const { handleSubmit, register, setValue, control } = useForm<Product>()
+  const { fields, append, remove } = useFieldArray({
+    control: control,
     name: 'shortInfo',
   })
 
+  // Get product detail
   const { data: productDetailData } = useQuery({
     queryKey: ['product', productId],
-    queryFn: () => {
-      return http.get<SuccessResponse<Product>>(`/products/${productId}`)
-    },
+    queryFn: () => http.get<SuccessResponse<Product>>(`/products/${productId}`),
     onSuccess(data) {
       const shortInfo = data.data.data.shortInfo
-      const values = shortInfo.reduce((result: { id: number; value: string }[], current, index) => {
-        return [...result, { id: index + 1, value: current }]
-      }, [])
-      setValueSI('shortInfo', values)
+      setValue('shortInfo', shortInfo)
     },
     enabled: !!productId,
   })
   const product = productDetailData?.data.data
+
+  // Get product types
+  const { data: productTypesData } = useQuery({
+    queryKey: ['productTypes'],
+    queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
+  })
+  const productTypes = useMemo(
+    () =>
+      productTypesData?.data.data.reduce(
+        (result: { [key: string]: number }, current) => ({ ...result, [current.id]: current.type }),
+        {}
+      ),
+    [productTypesData]
+  )
+
+  // Get product vendors
+  const { data: productVendorsData } = useQuery({
+    queryKey: ['productVendors'],
+    queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
+  })
+  const productVendors = productVendorsData?.data.data
 
   const productMutation = useMutation({
     mutationFn: (data: Product) => {
@@ -51,28 +64,27 @@ const AdminProductDetailPage = () => {
     },
   })
 
-  const onSubmit: SubmitHandler<Product | { shortInfo: { id: number; value: string }[] }> = (data) => {
+  const onSubmit: SubmitHandler<Product> = (data) => {
     // NProgress.start()
 
-    // Convert string to number
-    // if (data.price) {
-    //   data.price = Number(data.price.toString().replaceAll('.', ''))
-    // }
-    // if (data.priceDiscount) {
-    //   data.priceDiscount = Number(data.priceDiscount.toString().replaceAll('.', ''))
-    // }
-    // if (data.quantity) {
-    //   data.quantity = Number(data.quantity.toString().replaceAll('.', ''))
-    // }
-
-    // // Update at
-    // data.updatedAt = new Date().toISOString()
+    data.price = Number(data.price.toString().replaceAll('.', ''))
+    data.priceDiscount = Number(data.priceDiscount.toString().replaceAll('.', ''))
+    data.quantity = Number(data.quantity.toString().replaceAll('.', ''))
+    data.updatedAt = new Date().toISOString()
+    data.shortInfo = data.shortInfo.reduce((result: { value: string }[], current) => {
+      if (current.value) {
+        return [...result, { value: current.value }]
+      }
+      return [...result]
+    }, [])
 
     // productMutation.mutate(data, {
-    //   onSuccess() {
+    //   onSuccess(data) {
+    //     console.log(data)
     //     NProgress.done()
+    //     toast.success(data.data.message)
     //   },
-    //   onError() {
+    //   onError(error) {
     //     NProgress.done()
     //   },
     // })
@@ -82,16 +94,9 @@ const AdminProductDetailPage = () => {
   return (
     <>
       {product && (
-        <form className='block text-sm' onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            {fields.map((field, index) => (
-              <input
-                key={field.id} // important to include key with field's id
-                {...registerSI(`shortInfo.${index}.value`)}
-              />
-            ))}
-          </div>
+        <form className='block text-sm' onSubmit={handleSubmit(onSubmit)} spellCheck='false'>
           <p className='font-medium italic text-gray'>ID: {product.id}</p>
+          {/* Name */}
           <Input
             label='Tên'
             placeholder='Tên sản phẩm'
@@ -100,82 +105,162 @@ const AdminProductDetailPage = () => {
             register={register}
             classNameWrapper='mt-5'
           />
-          <div className='mt-5 flex flex-wrap justify-between gap-5'>
+          <div className='mt-5 grid grid-cols-2 gap-5 md:grid-cols-3'>
+            {/* Price */}
             <InputNumber
               label='Giá'
               name='price'
               defaultValue={product.price}
               register={register}
-              classNameWrapper='flex-grow'
+              classNameWrapper='lg:col-start-1'
             />
+            {/* Price discount */}
             <InputNumber
               label='Giá khuyến mãi'
               name='priceDiscount'
               defaultValue={product.priceDiscount}
               register={register}
-              classNameWrapper='flex-grow'
+              classNameWrapper='lg:col-start-1'
             />
+            {/* Quantity */}
             <InputNumber
               label='Số lượng'
               name='quantity'
               defaultValue={product.quantity}
               register={register}
-              classNameWrapper='flex-grow'
+              classNameWrapper='lg:col-start-1'
             />
+            {/* Vendor */}
             <Input
               label='Thương hiệu'
               name='vendor'
               defaultValue={product.vendor}
               register={register}
-              classNameWrapper='flex-grow'
+              classNameWrapper='lg:col-start-1'
+            />
+            {/* Product type */}
+            {productTypes && (
+              <div className='lg:col-start-1'>
+                <label className='mb-2 block text-sm font-semibold empty:hidden'>Loại sản phẩm</label>
+                <Controller
+                  control={control}
+                  name='productTypeId'
+                  render={({ field }) => (
+                    <Listbox defaultValue={product.productTypeId} onChange={field.onChange}>
+                      <div className='group relative'>
+                        <Listbox.Button className='relative h-10 w-full rounded border border-slate-300 px-3 text-sm outline-none group-focus-within:ring-1 group-focus-within:ring-primary'>
+                          {({ value }) => (
+                            <>
+                              <span className='block text-left'>
+                                {productTypes[(value || product.productTypeId) as keyof {}]}
+                              </span>
+                              <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
+                                <svg
+                                  xmlns='http://www.w3.org/2000/svg'
+                                  fill='none'
+                                  viewBox='0 0 24 24'
+                                  strokeWidth={1.5}
+                                  stroke='currentColor'
+                                  className='text-gray-400 h-5 w-5'
+                                >
+                                  <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9'
+                                  />
+                                </svg>
+                              </span>
+                            </>
+                          )}
+                        </Listbox.Button>
+                        <Listbox.Options className='c-scrollbar absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded bg-white py-1 text-sm shadow ring-1 ring-black/5 focus:outline-none'>
+                          {Object.keys(productTypes).map((item) => (
+                            <Listbox.Option
+                              key={item}
+                              value={Number(item)}
+                              className={({ active }) =>
+                                classNames('relative cursor-default select-none py-2 px-3', {
+                                  'bg-primary/10 text-primary': active,
+                                  'text-gray-900': !active,
+                                })
+                              }
+                            >
+                              {productTypes[item as keyof {}]}
+                            </Listbox.Option>
+                          ))}
+                        </Listbox.Options>
+                      </div>
+                    </Listbox>
+                  )}
+                />
+              </div>
+            )}
+            {/* Short info */}
+            <InputList
+              register={register}
+              displayValue='value'
+              fields={fields}
+              name='shortInfo'
+              label='Mô tả ngắn'
+              classNameWrapper='col-span-2 md:col-span-3 lg:col-span-2 lg:col-start-2 lg:row-span-6 lg:row-start-1'
+              onRemove={(index: number) => remove(index)}
+              onAppend={() => append({ value: '' })}
             />
           </div>
+          {/* Description */}
           <div className='mt-5'>
             <Controller
               name='description'
               control={control}
               defaultValue={product.description}
               render={({ field }) => (
-                <Editor
-                  apiKey={process.env.TINYMCE_KEY}
-                  onInit={(evt, editor) => (editorRef.current = editor)}
-                  initialValue={product.description}
-                  onEditorChange={field.onChange}
-                  init={{
-                    height: 500,
-                    plugins: [
-                      'advlist',
-                      'autolink',
-                      'lists',
-                      'link',
-                      'image',
-                      'charmap',
-                      'preview',
-                      'anchor',
-                      'searchreplace',
-                      'visualblocks',
-                      'code',
-                      'fullscreen',
-                      'insertdatetime',
-                      'media',
-                      'table',
-                      'code',
-                      'help',
-                      'wordcount',
-                    ],
-                    toolbar:
-                      'undo redo | blocks | ' +
-                      'bold italic forecolor | alignleft aligncenter ' +
-                      'alignright alignjustify | bullist numlist outdent indent | ' +
-                      'removeformat | help',
-                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-                  }}
-                />
+                <>
+                  <label className='mb-2 block text-sm font-semibold empty:hidden'>Mô tả sản phẩm</label>
+                  <Editor
+                    apiKey={process.env.TINYMCE_KEY}
+                    initialValue={product.description}
+                    onEditorChange={field.onChange}
+                    init={{
+                      height: 500,
+                      nowrap: false,
+                      plugins: [
+                        'advlist',
+                        'autolink',
+                        'lists',
+                        'link',
+                        'image',
+                        'charmap',
+                        'preview',
+                        'anchor',
+                        'searchreplace',
+                        'visualblocks',
+                        'code',
+                        'fullscreen',
+                        'insertdatetime',
+                        'media',
+                        'table',
+                        'code',
+                        'help',
+                        'wordcount',
+                      ],
+                      toolbar:
+                        'undo redo | blocks | ' +
+                        'bold italic forecolor | alignleft aligncenter ' +
+                        'alignright alignjustify | bullist numlist outdent indent | ' +
+                        'removeformat | help',
+                    }}
+                  />
+                </>
               )}
             />
           </div>
 
-          <button>submit</button>
+          <button
+            type='submit'
+            className='mt-10 w-full rounded bg-primary py-2 px-4 text-sm font-medium uppercase text-white'
+          >
+            Cập nhật sản phẩm
+          </button>
         </form>
       )}
     </>

@@ -3,6 +3,11 @@ interface ProductAttribute {
   attribute: string
 }
 
+export interface ProductType {
+  id: number
+  type: string
+}
+
 export interface Product {
   id: number
   name: string
@@ -10,7 +15,7 @@ export interface Product {
   priceDiscount: number
   view: number
   quantity: number
-  shortInfo: string[]
+  shortInfo: { value: string }[]
   vendor: string
   description: string
   slug: string

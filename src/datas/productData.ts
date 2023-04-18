@@ -1,6 +1,6 @@
-import { Product } from '~/types/product.type'
+import { Product2 } from '~/types/product.type'
 
-export const productsData: Product[] = [
+export const productsData: Product2[] = [
   {
     id: 'cdaf1efb-18f9-4e3b-a90d-d603ede56a51',
     thumbnail: 'tai-nghe-gaming-msi-headset-h991-03.jpg',
@@ -1036,7 +1036,7 @@ export const productsData: Product[] = [
   },
 ]
 
-export const productDetailData: Product = {
+export const productDetailData: Product2 = {
   id: 'b678a40c-5987-476b-9b13-c05ea9973bad',
   thumbnail: 'laptop-gaming-asus-rog-flow-x16-gv601vv-nl016w.jpg',
   url: '#',

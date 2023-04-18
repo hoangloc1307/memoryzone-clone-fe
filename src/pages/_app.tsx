@@ -7,6 +7,8 @@ import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { ReactElement, useEffect } from 'react'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.min.css'
 import layout from '~/constants/layout'
 import AdminLayout from '~/layouts/AdminLayout'
 import AuthenticationLayout from '~/layouts/AuthenticationLayout'
@@ -73,6 +75,7 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         {getLayout(<Component {...pageProps} />)}
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
+      <ToastContainer />
     </SessionProvider>
   )
 }
