@@ -8,6 +8,7 @@ import { useMemo } from 'react'
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import Input from '~/components/Input'
+import InputAutocomplete from '~/components/InputAutocomplete'
 import InputList from '~/components/InputList'
 import InputNumber from '~/components/InputNumber'
 import layout from '~/constants/layout'
@@ -19,7 +20,10 @@ const AdminProductDetailPage = () => {
   const router = useRouter()
   const productId = router.query.productId
   const http = useAuthAxios()
-  const { handleSubmit, register, setValue, control } = useForm<Product>()
+
+  // Form
+  const { handleSubmit, register, setValue, watch, control } = useForm<Product>()
+  const valueVendor = watch('vendor')
   const { fields, append, remove } = useFieldArray({
     control: control,
     name: 'shortInfo',
@@ -44,10 +48,9 @@ const AdminProductDetailPage = () => {
   })
   const productTypes = useMemo(
     () =>
-      productTypesData?.data.data.reduce(
-        (result: { [key: string]: number }, current) => ({ ...result, [current.id]: current.type }),
-        {}
-      ),
+      productTypesData?.data.data.reduce((result: { [key: string]: number }, current) => {
+        return { ...result, [current.id]: current.type }
+      }, {}),
     [productTypesData]
   )
 
@@ -57,6 +60,15 @@ const AdminProductDetailPage = () => {
     queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
   })
   const productVendors = productVendorsData?.data.data
+  const suggestList = useMemo(
+    () =>
+      productVendors?.filter((item) => {
+        return (
+          item.toLowerCase().includes(valueVendor?.toLowerCase()) && item.toLowerCase() !== valueVendor?.toLowerCase()
+        )
+      }),
+    [productVendors, valueVendor]
+  )
 
   const productMutation = useMutation({
     mutationFn: (data: Product) => {
@@ -131,12 +143,19 @@ const AdminProductDetailPage = () => {
               classNameWrapper='lg:col-start-1'
             />
             {/* Vendor */}
-            <Input
+            <InputAutocomplete
               label='Thương hiệu'
               name='vendor'
               defaultValue={product.vendor}
               register={register}
-              classNameWrapper='lg:col-start-1'
+              suggestList={suggestList || []}
+              classNameWrapper='lg:col-start-1 relative z-10'
+              onChange={(value: string) => {
+                setValue('vendor', value)
+              }}
+              onClickSuggest={(value: string) => {
+                setValue('vendor', value)
+              }}
             />
             {/* Product type */}
             {productTypes && (

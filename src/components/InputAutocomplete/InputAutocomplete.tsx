@@ -1,36 +1,75 @@
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import type { RegisterOptions, UseFormRegister } from 'react-hook-form/dist/types'
 import { twMerge } from 'tailwind-merge'
+import Popover from '../Popover'
 
 export interface Props {
   label?: string
   name: string
   suggestList: string[]
+  defaultValue?: string
   register?: UseFormRegister<any>
   registerOption?: RegisterOptions
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
-  onChange: () => void
+  onChange: (value: string) => void
+  onClickSuggest: (value: string) => void
 }
 
 export default function Input({
   label,
   name,
   suggestList,
+  defaultValue,
   register,
   registerOption,
   errorMessage,
   classNameWrapper,
   classNameInput,
   onChange,
+  onClickSuggest,
 }: Props) {
   const id = useId()
   const inputRegister = register && name ? register(name, registerOption) : null
+  const [localValue, setLocalValue] = useState(defaultValue ?? '')
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+    setLocalValue(value)
+    onChange && onChange(value)
+  }
+
+  const handleItemClick = (item: string) => () => {
+    setLocalValue(item)
+    onClickSuggest && onClickSuggest(item)
+  }
 
   return (
     <div className={classNameWrapper}>
-      <div className='relative'>
+      <Popover
+        floatingElement={
+          <>
+            {suggestList.length > 0 && (
+              <div className='c-scrollbar z-20 max-h-24 w-full overflow-auto rounded bg-white py-2 shadow ring-1 ring-black/5'>
+                {suggestList.map((item) => (
+                  <p
+                    key={item}
+                    className='bg-white px-3 py-2 hover:bg-primary/10 hover:text-primary'
+                    onClick={handleItemClick(item)}
+                  >
+                    {item}
+                  </p>
+                ))}
+              </div>
+            )}
+          </>
+        }
+        showOnHover={false}
+        showOnFocus
+        floatingElementWidth={'100%'}
+        offsetOption={{ mainAxis: 4 }}
+      >
         <label className='block text-sm font-semibold empty:hidden' htmlFor={id}>
           {label}
         </label>
@@ -41,10 +80,11 @@ export default function Input({
             classNameInput
           )}
           {...inputRegister}
-          onChange={onChange}
+          value={localValue}
+          onChange={handleChange}
         />
-        {suggestList.length > 0 && <div className='absolute top-full left-0 z-10 h-12 w-full bg-primary'></div>}
-      </div>
+      </Popover>
+
       <p className='mt-2 text-xs text-red-500 empty:hidden'>{errorMessage}</p>
     </div>
   )
