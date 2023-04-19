@@ -1,4 +1,4 @@
-import type { FieldArrayWithId, UseFormRegister, UseFieldArrayRemove } from 'react-hook-form'
+import type { FieldArrayWithId, UseFormRegister } from 'react-hook-form'
 import { twMerge } from 'tailwind-merge'
 
 export interface Props {
@@ -41,6 +41,7 @@ export default function InputList({
               'h-10 w-full rounded border border-slate-300 pl-3 pr-[52px] text-sm outline-none focus:ring-1 focus:ring-primary',
               classNameInput
             )}
+            autoComplete='off'
           />
           <button
             className='absolute top-1/2 right-0 -translate-y-1/2 border-l border-l-slate-300 p-2 hover:text-danger'

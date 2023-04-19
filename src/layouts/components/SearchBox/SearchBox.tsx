@@ -133,6 +133,7 @@ export default function SearchBox() {
           className='flex-1 rounded-sm px-3 text-black outline-none'
           placeholder='Sản phẩm bạn muốn tìm...'
           {...register('keyword')}
+          autoComplete='off'
           onChange={handleInputChange}
         />
         <button disabled={loading} className='shrink-0 rounded-sm bg-warn/80 px-6 py-2 hover:bg-warn' type='submit'>

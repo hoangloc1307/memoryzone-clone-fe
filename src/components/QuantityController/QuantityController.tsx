@@ -122,6 +122,7 @@ export default function QuantityController({ max, value, onDecrease, onIncrease,
         type='number'
         className='c-input-number w-12 border-y border-slate-600 py-1 text-center text-sm outline-none'
         value={localValue}
+        autoComplete='off'
         onChange={hanldeInputChange}
         onBlur={handleInputBlur}
       />

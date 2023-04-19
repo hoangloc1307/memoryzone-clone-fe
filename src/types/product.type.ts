@@ -1,4 +1,4 @@
-interface ProductAttribute {
+export interface ProductAttribute {
   id: number
   attribute: string
 }
@@ -6,6 +6,11 @@ interface ProductAttribute {
 export interface ProductType {
   id: number
   type: string
+}
+
+export interface ProductAttributeValue {
+  productAttributeId: number
+  value: string
 }
 
 export interface Product {
@@ -23,13 +28,11 @@ export interface Product {
   updatedAt: string
   isDraft: boolean
   isPublish: boolean
-  productTypeId: number
-  productType: {
-    id: number
-    type: string
+  productTypeId?: number
+  productType?: ProductType & {
     productAttributes: ProductAttribute[]
   }
-  productAttributes: []
+  productAttributes: ProductAttributeValue[]
   images: []
   categories: []
 }

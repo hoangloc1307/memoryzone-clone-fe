@@ -65,6 +65,7 @@ export default function PriceRange({
           step={step}
           min={minRange}
           max={maxRange}
+          autoComplete='off'
           onInput={handleRangeChange}
         />
         <input
@@ -75,6 +76,7 @@ export default function PriceRange({
           step={step}
           min={minRange}
           max={maxRange}
+          autoComplete='off'
           onInput={handleRangeChange}
         />
       </div>
@@ -88,8 +90,9 @@ export default function PriceRange({
             readOnly
             data-type='min'
             value={numberAsCurrency(minMax.min)}
-            onChange={handleInputChange}
+            autoComplete='off'
             className='pointer-events-none w-[110px] rounded border border-slate-300 bg-slate-100 py-1 px-2 text-center outline-none'
+            onChange={handleInputChange}
           />
         </div>
         <span className='hidden pb-1 xl:block'>
@@ -115,8 +118,9 @@ export default function PriceRange({
             readOnly
             data-type='max'
             value={numberAsCurrency(minMax.max)}
-            onChange={handleInputChange}
+            autoComplete='off'
             className='pointer-events-none w-[110px] rounded border border-slate-300 bg-slate-100 py-1 px-2 text-center outline-none'
+            onChange={handleInputChange}
           />
         </div>
       </div>

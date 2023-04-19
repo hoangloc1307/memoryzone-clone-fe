@@ -57,6 +57,7 @@ export default function InputNumber({
         </label>
         <input
           id={id}
+          autoComplete='off'
           className={twMerge(
             'mt-2 h-10 w-full rounded border border-slate-300 px-3 text-sm outline-none focus:ring-1 focus:ring-primary',
             classNameInput

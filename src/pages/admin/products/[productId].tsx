@@ -4,16 +4,17 @@ import { Editor } from '@tinymce/tinymce-react'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import Input from '~/components/Input'
 import InputAutocomplete from '~/components/InputAutocomplete'
 import InputList from '~/components/InputList'
 import InputNumber from '~/components/InputNumber'
+import InputProductAttributeValue from '~/components/InputProductAttributeValue'
 import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
-import { Product, ProductType } from '~/types/product.type'
+import { Product, ProductAttribute, ProductAttributeValue, ProductType } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
 
 const AdminProductDetailPage = () => {
@@ -24,9 +25,14 @@ const AdminProductDetailPage = () => {
   // Form
   const { handleSubmit, register, setValue, watch, control } = useForm<Product>()
   const valueVendor = watch('vendor')
-  const { fields, append, remove } = useFieldArray({
+  const valueProductTypeId = watch('productType.id')
+  const shortInfoFieldArray = useFieldArray({
     control: control,
     name: 'shortInfo',
+  })
+  const productAttributesFieldArray = useFieldArray({
+    control: control,
+    name: 'productAttributes',
   })
 
   // Get product detail
@@ -34,8 +40,20 @@ const AdminProductDetailPage = () => {
     queryKey: ['product', productId],
     queryFn: () => http.get<SuccessResponse<Product>>(`/products/${productId}`),
     onSuccess(data) {
-      const shortInfo = data.data.data.shortInfo
+      const response = data.data.data
+      const shortInfo = response.shortInfo
       setValue('shortInfo', shortInfo)
+      let attributes
+      if (response.productType) {
+        attributes = response.productType.productAttributes.reduce((result: ProductAttributeValue[], current) => {
+          const findItem = response.productAttributes.find((item) => item.productAttributeId == current.id)
+          if (findItem) {
+            return [...result, { productAttributeId: current.id, value: findItem.value, attribute: current.attribute }]
+          }
+          return [...result, { productAttributeId: current.id, value: '', attribute: current.attribute }]
+        }, [])
+        setValue('productAttributes', attributes)
+      }
     },
     enabled: !!productId,
   })
@@ -45,6 +63,7 @@ const AdminProductDetailPage = () => {
   const { data: productTypesData } = useQuery({
     queryKey: ['productTypes'],
     queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
+    enabled: product?.productType === null,
   })
   const productTypes = useMemo(
     () =>
@@ -53,6 +72,23 @@ const AdminProductDetailPage = () => {
       }, {}),
     [productTypesData]
   )
+
+  // Get product attribute
+  const { data: productAttributesData } = useQuery({
+    queryKey: ['productAttributes', valueProductTypeId],
+    queryFn: () => http.get<SuccessResponse<ProductAttribute[]>>(`/products/attributes/${valueProductTypeId}`),
+    enabled: product?.productType === null && !!valueProductTypeId,
+    staleTime: Infinity,
+  })
+
+  useEffect(() => {
+    if (productAttributesData) {
+      const values = productAttributesData.data.data.reduce((result: ProductAttributeValue[], current) => {
+        return [...result, { productAttributeId: current.id, value: '', attribute: current.attribute }]
+      }, [])
+      setValue('productAttributes', values)
+    }
+  }, [productAttributesData, setValue])
 
   // Get product vendors
   const { data: productVendorsData } = useQuery({
@@ -77,8 +113,9 @@ const AdminProductDetailPage = () => {
   })
 
   const onSubmit: SubmitHandler<Product> = (data) => {
-    // NProgress.start()
+    NProgress.start()
 
+    // Handle data before send to server
     data.price = Number(data.price.toString().replaceAll('.', ''))
     data.priceDiscount = Number(data.priceDiscount.toString().replaceAll('.', ''))
     data.quantity = Number(data.quantity.toString().replaceAll('.', ''))
@@ -89,17 +126,25 @@ const AdminProductDetailPage = () => {
       }
       return [...result]
     }, [])
+    data.productTypeId = (data.productType as ProductType)?.id
+    delete data.productType
+    data.productAttributes = data.productAttributes.reduce((result: ProductAttributeValue[], current) => {
+      if (current.value) {
+        return [...result, { productAttributeId: current.productAttributeId, value: current.value }]
+      }
+      return [...result]
+    }, [])
 
-    // productMutation.mutate(data, {
-    //   onSuccess(data) {
-    //     console.log(data)
-    //     NProgress.done()
-    //     toast.success(data.data.message)
-    //   },
-    //   onError(error) {
-    //     NProgress.done()
-    //   },
-    // })
+    productMutation.mutate(data, {
+      onSuccess(data) {
+        console.log(data)
+        NProgress.done()
+        toast.success(data.data.message)
+      },
+      onError(error) {
+        NProgress.done()
+      },
+    })
     console.log(data)
   }
 
@@ -117,31 +162,34 @@ const AdminProductDetailPage = () => {
             register={register}
             classNameWrapper='mt-5'
           />
-          <div className='mt-5 grid grid-cols-2 gap-5 md:grid-cols-3'>
+          <div className='mt-5 grid grid-cols-12 gap-5'>
             {/* Price */}
             <InputNumber
               label='Giá'
               name='price'
               defaultValue={product.price}
               register={register}
-              classNameWrapper='lg:col-start-1'
+              classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
             />
+
             {/* Price discount */}
             <InputNumber
               label='Giá khuyến mãi'
               name='priceDiscount'
               defaultValue={product.priceDiscount}
               register={register}
-              classNameWrapper='lg:col-start-1'
+              classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
             />
+
             {/* Quantity */}
             <InputNumber
               label='Số lượng'
               name='quantity'
               defaultValue={product.quantity}
               register={register}
-              classNameWrapper='lg:col-start-1'
+              classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
             />
+
             {/* Vendor */}
             <InputAutocomplete
               label='Thương hiệu'
@@ -149,7 +197,7 @@ const AdminProductDetailPage = () => {
               defaultValue={product.vendor}
               register={register}
               suggestList={suggestList || []}
-              classNameWrapper='lg:col-start-1 relative z-10'
+              classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-10'
               onChange={(value: string) => {
                 setValue('vendor', value)
               }}
@@ -157,73 +205,95 @@ const AdminProductDetailPage = () => {
                 setValue('vendor', value)
               }}
             />
+
             {/* Product type */}
-            {productTypes && (
-              <div className='lg:col-start-1'>
-                <label className='mb-2 block text-sm font-semibold empty:hidden'>Loại sản phẩm</label>
-                <Controller
-                  control={control}
-                  name='productTypeId'
-                  render={({ field }) => (
-                    <Listbox defaultValue={product.productTypeId} onChange={field.onChange}>
-                      <div className='group relative'>
-                        <Listbox.Button className='relative h-10 w-full rounded border border-slate-300 px-3 text-sm outline-none group-focus-within:ring-1 group-focus-within:ring-primary'>
-                          {({ value }) => (
-                            <>
-                              <span className='block text-left'>
-                                {productTypes[(value || product.productTypeId) as keyof {}]}
-                              </span>
-                              <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-                                <svg
-                                  xmlns='http://www.w3.org/2000/svg'
-                                  fill='none'
-                                  viewBox='0 0 24 24'
-                                  strokeWidth={1.5}
-                                  stroke='currentColor'
-                                  className='text-gray-400 h-5 w-5'
-                                >
-                                  <path
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9'
-                                  />
-                                </svg>
-                              </span>
-                            </>
-                          )}
-                        </Listbox.Button>
-                        <Listbox.Options className='c-scrollbar absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded bg-white py-1 text-sm shadow ring-1 ring-black/5 focus:outline-none'>
-                          {Object.keys(productTypes).map((item) => (
-                            <Listbox.Option
-                              key={item}
-                              value={Number(item)}
-                              className={({ active }) =>
-                                classNames('relative cursor-default select-none py-2 px-3', {
-                                  'bg-primary/10 text-primary': active,
-                                  'text-gray-900': !active,
-                                })
-                              }
-                            >
-                              {productTypes[item as keyof {}]}
-                            </Listbox.Option>
-                          ))}
-                        </Listbox.Options>
-                      </div>
-                    </Listbox>
-                  )}
+            <div className='col-span-12 md:col-span-6 lg:col-span-4 lg:col-start-1'>
+              {productTypes && (
+                <>
+                  <label className='mb-2 block text-sm font-semibold empty:hidden'>Loại sản phẩm</label>
+                  <Controller
+                    control={control}
+                    name='productType.id'
+                    render={({ field }) => (
+                      <Listbox defaultValue={product.productType?.id} onChange={field.onChange}>
+                        <div className='group relative'>
+                          <Listbox.Button className='relative h-10 w-full rounded border border-slate-300 px-3 text-sm outline-none group-focus-within:ring-1 group-focus-within:ring-primary'>
+                            {({ value }) => (
+                              <>
+                                <span className='block text-left'>
+                                  {productTypes[(value || product.productType?.id) as keyof {}]}
+                                </span>
+                                <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
+                                  <svg
+                                    xmlns='http://www.w3.org/2000/svg'
+                                    fill='none'
+                                    viewBox='0 0 24 24'
+                                    strokeWidth={1.5}
+                                    stroke='currentColor'
+                                    className='text-gray-400 h-5 w-5'
+                                  >
+                                    <path
+                                      strokeLinecap='round'
+                                      strokeLinejoin='round'
+                                      d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9'
+                                    />
+                                  </svg>
+                                </span>
+                              </>
+                            )}
+                          </Listbox.Button>
+                          <Listbox.Options className='c-scrollbar absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded bg-white py-1 text-sm shadow ring-1 ring-black/5 focus:outline-none'>
+                            {Object.keys(productTypes).map((item) => (
+                              <Listbox.Option
+                                key={item}
+                                value={Number(item)}
+                                className={({ active }) =>
+                                  classNames('relative cursor-default select-none py-2 px-3', {
+                                    'bg-primary/10 text-primary': active,
+                                    'text-gray-900': !active,
+                                  })
+                                }
+                              >
+                                {productTypes[item as keyof {}]}
+                              </Listbox.Option>
+                            ))}
+                          </Listbox.Options>
+                        </div>
+                      </Listbox>
+                    )}
+                  />
+                </>
+              )}
+              {!productTypes && (
+                <Input
+                  label='Loại sản phẩm'
+                  defaultValue={product.productType?.type}
+                  readOnly
+                  classNameInput='cursor-not-allowed'
                 />
-              </div>
-            )}
+              )}
+            </div>
+
+            {/* Product attribute */}
+            <div className='col-span-12 lg:col-span-12'>
+              <InputProductAttributeValue
+                register={register}
+                label='Thuộc tính sản phẩm'
+                name='productAttributes'
+                fields={productAttributesFieldArray.fields}
+              />
+            </div>
+
             {/* Short info */}
             <InputList
               register={register}
               displayValue='value'
-              fields={fields}
+              fields={shortInfoFieldArray.fields}
               name='shortInfo'
               label='Mô tả ngắn'
-              classNameWrapper='col-span-2 md:col-span-3 lg:col-span-2 lg:col-start-2 lg:row-span-6 lg:row-start-1'
-              onRemove={(index: number) => remove(index)}
-              onAppend={() => append({ value: '' })}
+              classNameWrapper='col-span-12 lg:col-span-8 lg:col-start-5 lg:row-span-6 lg:row-start-1'
+              onRemove={(index: number) => shortInfoFieldArray.remove(index)}
+              onAppend={() => shortInfoFieldArray.append({ value: '' })}
             />
           </div>
           {/* Description */}

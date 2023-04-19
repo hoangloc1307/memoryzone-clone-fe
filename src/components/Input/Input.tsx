@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { InputHTMLAttributes, useId, useState } from 'react'
+import { InputHTMLAttributes, memo, useId, useState } from 'react'
 import type { RegisterOptions, UseFormRegister } from 'react-hook-form/dist/types'
 import { twMerge } from 'tailwind-merge'
 
@@ -12,7 +12,7 @@ export interface Props extends InputHTMLAttributes<HTMLInputElement> {
   classNameInput?: string
 }
 
-export default function Input({
+const Input = ({
   label,
   name,
   register,
@@ -21,7 +21,7 @@ export default function Input({
   classNameWrapper,
   classNameInput,
   ...rest
-}: Props) {
+}: Props) => {
   const id = useId()
   const [visible, setVisible] = useState(false)
   const inputRegister = register && name ? register(name, registerOption) : null
@@ -34,6 +34,7 @@ export default function Input({
         </label>
         <input
           id={id}
+          autoComplete='off'
           className={twMerge(
             classNames(
               'mt-2 h-10 w-full rounded border border-slate-300 text-sm outline-none focus:ring-1 focus:ring-primary',
@@ -96,3 +97,5 @@ export default function Input({
     </div>
   )
 }
+
+export default memo(Input)
