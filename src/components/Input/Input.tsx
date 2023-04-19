@@ -15,6 +15,7 @@ export interface Props extends InputHTMLAttributes<HTMLInputElement> {
 const Input = ({
   label,
   name,
+  required,
   register,
   registerOption,
   errorMessage,
@@ -29,9 +30,12 @@ const Input = ({
   return (
     <div className={classNameWrapper}>
       <div className='relative'>
-        <label className='block text-sm font-semibold empty:hidden' htmlFor={id}>
+        {/* Label */}
+        <label className='block select-none text-sm font-semibold empty:hidden' htmlFor={id}>
           {label}
+          {required && <span className='ml-0.5 text-red-500'>*</span>}
         </label>
+        {/* Input */}
         <input
           id={id}
           autoComplete='off'
@@ -49,6 +53,8 @@ const Input = ({
           {...rest}
           type={rest.type === 'password' ? (visible ? 'text' : 'password') : rest.type}
         />
+
+        {/* Hidden password button */}
         {rest.type === 'password' && visible && (
           <span
             className='absolute top-[28px] right-0 cursor-pointer p-2.5 text-[#444]'
@@ -71,6 +77,8 @@ const Input = ({
             </svg>
           </span>
         )}
+
+        {/* Show password button */}
         {rest.type === 'password' && !visible && (
           <span
             className='absolute top-[28px] right-0 cursor-pointer p-2.5 text-[#444]'
@@ -93,7 +101,9 @@ const Input = ({
           </span>
         )}
       </div>
-      <p className='mt-2 text-xs text-red-500 empty:hidden'>{errorMessage}</p>
+
+      {/* Error message */}
+      <p className='mt-2 select-none text-xs italic text-red-500 empty:hidden'>{errorMessage}</p>
     </div>
   )
 }

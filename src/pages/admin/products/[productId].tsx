@@ -4,7 +4,7 @@ import { Editor } from '@tinymce/tinymce-react'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import Input from '~/components/Input'
@@ -43,9 +43,8 @@ const AdminProductDetailPage = () => {
       const response = data.data.data
       const shortInfo = response.shortInfo
       setValue('shortInfo', shortInfo)
-      let attributes
       if (response.productType) {
-        attributes = response.productType.productAttributes.reduce((result: ProductAttributeValue[], current) => {
+        const attributes = response.productType.productAttributes.reduce((result: ProductAttributeValue[], current) => {
           const findItem = response.productAttributes.find((item) => item.productAttributeId == current.id)
           if (findItem) {
             return [...result, { productAttributeId: current.id, value: findItem.value, attribute: current.attribute }]
@@ -65,13 +64,12 @@ const AdminProductDetailPage = () => {
     queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
     enabled: product?.productType === null,
   })
-  const productTypes = useMemo(
-    () =>
-      productTypesData?.data.data.reduce((result: { [key: string]: number }, current) => {
-        return { ...result, [current.id]: current.type }
-      }, {}),
-    [productTypesData]
-  )
+  const productTypes = productTypesData?.data.data
+  // const productTypes = useMemo(() => {
+  //   return productTypesData?.data.data.reduce((result: { [key: string]: string }, current) => {
+  //     return { ...result, [current.id]: current.type }
+  //   }, {})
+  // }, [productTypesData])
 
   // Get product attribute
   const { data: productAttributesData } = useQuery({
@@ -96,57 +94,59 @@ const AdminProductDetailPage = () => {
     queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
   })
   const productVendors = productVendorsData?.data.data
-  const suggestList = useMemo(
-    () =>
-      productVendors?.filter((item) => {
-        return (
-          item.toLowerCase().includes(valueVendor?.toLowerCase()) && item.toLowerCase() !== valueVendor?.toLowerCase()
-        )
-      }),
-    [productVendors, valueVendor]
-  )
+  const suggestList = useMemo(() => {
+    return productVendors?.filter((item) => {
+      return item.toLowerCase().includes(valueVendor?.toLowerCase())
+    })
+  }, [productVendors, valueVendor])
 
   const productMutation = useMutation({
     mutationFn: (data: Product) => {
       return http.patch<SuccessResponse<Product>>(`/products/${productId}`, data)
     },
   })
-
   const onSubmit: SubmitHandler<Product> = (data) => {
-    NProgress.start()
+    // NProgress.start()
 
-    // Handle data before send to server
-    data.price = Number(data.price.toString().replaceAll('.', ''))
-    data.priceDiscount = Number(data.priceDiscount.toString().replaceAll('.', ''))
-    data.quantity = Number(data.quantity.toString().replaceAll('.', ''))
-    data.updatedAt = new Date().toISOString()
-    data.shortInfo = data.shortInfo.reduce((result: { value: string }[], current) => {
-      if (current.value) {
-        return [...result, { value: current.value }]
-      }
-      return [...result]
-    }, [])
-    data.productTypeId = (data.productType as ProductType)?.id
-    delete data.productType
-    data.productAttributes = data.productAttributes.reduce((result: ProductAttributeValue[], current) => {
-      if (current.value) {
-        return [...result, { productAttributeId: current.productAttributeId, value: current.value }]
-      }
-      return [...result]
-    }, [])
+    // // Handle data before send to server
+    // data.price = Number(data.price.toString().replaceAll('.', ''))
+    // data.priceDiscount = Number(data.priceDiscount.toString().replaceAll('.', ''))
+    // data.quantity = Number(data.quantity.toString().replaceAll('.', ''))
+    // data.updatedAt = new Date().toISOString()
+    // data.shortInfo = data.shortInfo.reduce((result: { value: string }[], current) => {
+    //   if (current.value) {
+    //     return [...result, { value: current.value }]
+    //   }
+    //   return [...result]
+    // }, [])
+    // data.productTypeId = (data.productType as ProductType)?.id
+    // delete data.productType
+    // data.productAttributes = data.productAttributes.reduce((result: ProductAttributeValue[], current) => {
+    //   if (current.value) {
+    //     return [...result, { productAttributeId: current.productAttributeId, value: current.value }]
+    //   }
+    //   return [...result]
+    // }, [])
 
-    productMutation.mutate(data, {
-      onSuccess(data) {
-        console.log(data)
-        NProgress.done()
-        toast.success(data.data.message)
-      },
-      onError(error) {
-        NProgress.done()
-      },
-    })
+    // productMutation.mutate(data, {
+    //   onSuccess(data) {
+    //     console.log(data)
+    //     NProgress.done()
+    //     toast.success(data.data.message)
+    //   },
+    //   onError(error) {
+    //     NProgress.done()
+    //   },
+    // })
     console.log(data)
   }
+
+  const handleChangeVendor = useCallback(
+    (value: string) => {
+      setValue('vendor', value)
+    },
+    [setValue]
+  )
 
   return (
     <>
@@ -164,46 +164,60 @@ const AdminProductDetailPage = () => {
           />
           <div className='mt-5 grid grid-cols-12 gap-5'>
             {/* Price */}
-            <InputNumber
-              label='Giá'
+            <Controller
               name='price'
-              defaultValue={product.price}
-              register={register}
-              classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  label='Giá'
+                  defaultValue={product.price}
+                  classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+                  onChange={field.onChange}
+                />
+              )}
             />
 
             {/* Price discount */}
-            <InputNumber
-              label='Giá khuyến mãi'
+            <Controller
               name='priceDiscount'
-              defaultValue={product.priceDiscount}
-              register={register}
-              classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  label='Giá khuyến mãi'
+                  defaultValue={product.priceDiscount}
+                  classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+                  onChange={field.onChange}
+                />
+              )}
             />
 
             {/* Quantity */}
-            <InputNumber
-              label='Số lượng'
+            <Controller
               name='quantity'
-              defaultValue={product.quantity}
-              register={register}
-              classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  label='Số lượng'
+                  defaultValue={product.quantity}
+                  classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+                  onChange={field.onChange}
+                />
+              )}
             />
 
             {/* Vendor */}
-            <InputAutocomplete
-              label='Thương hiệu'
+            <Controller
               name='vendor'
-              defaultValue={product.vendor}
-              register={register}
-              suggestList={suggestList || []}
-              classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-10'
-              onChange={(value: string) => {
-                setValue('vendor', value)
-              }}
-              onClickSuggest={(value: string) => {
-                setValue('vendor', value)
-              }}
+              control={control}
+              render={({ field }) => (
+                <InputAutocomplete
+                  label='Thương hiệu'
+                  defaultValue={product.vendor}
+                  suggestList={suggestList || []}
+                  classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-10'
+                  onChange={handleChangeVendor}
+                />
+              )}
             />
 
             {/* Product type */}
@@ -218,35 +232,36 @@ const AdminProductDetailPage = () => {
                       <Listbox defaultValue={product.productType?.id} onChange={field.onChange}>
                         <div className='group relative'>
                           <Listbox.Button className='relative h-10 w-full rounded border border-slate-300 px-3 text-sm outline-none group-focus-within:ring-1 group-focus-within:ring-primary'>
-                            {({ value }) => (
-                              <>
-                                <span className='block text-left'>
-                                  {productTypes[(value || product.productType?.id) as keyof {}]}
-                                </span>
-                                <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-                                  <svg
-                                    xmlns='http://www.w3.org/2000/svg'
-                                    fill='none'
-                                    viewBox='0 0 24 24'
-                                    strokeWidth={1.5}
-                                    stroke='currentColor'
-                                    className='text-gray-400 h-5 w-5'
-                                  >
-                                    <path
-                                      strokeLinecap='round'
-                                      strokeLinejoin='round'
-                                      d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9'
-                                    />
-                                  </svg>
-                                </span>
-                              </>
-                            )}
+                            {({ value }) => {
+                              const findItem = productTypes.find((item) => item.id === value)
+                              return (
+                                <>
+                                  <span className='block text-left'>{findItem?.type}</span>
+                                  <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
+                                    <svg
+                                      xmlns='http://www.w3.org/2000/svg'
+                                      fill='none'
+                                      viewBox='0 0 24 24'
+                                      strokeWidth={1.5}
+                                      stroke='currentColor'
+                                      className='text-gray-400 h-5 w-5'
+                                    >
+                                      <path
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                        d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9'
+                                      />
+                                    </svg>
+                                  </span>
+                                </>
+                              )
+                            }}
                           </Listbox.Button>
                           <Listbox.Options className='c-scrollbar absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded bg-white py-1 text-sm shadow ring-1 ring-black/5 focus:outline-none'>
-                            {Object.keys(productTypes).map((item) => (
+                            {productTypes.map((item) => (
                               <Listbox.Option
-                                key={item}
-                                value={Number(item)}
+                                key={item.id}
+                                value={item.id}
                                 className={({ active }) =>
                                   classNames('relative cursor-default select-none py-2 px-3', {
                                     'bg-primary/10 text-primary': active,
@@ -254,7 +269,7 @@ const AdminProductDetailPage = () => {
                                   })
                                 }
                               >
-                                {productTypes[item as keyof {}]}
+                                {item.type}
                               </Listbox.Option>
                             ))}
                           </Listbox.Options>

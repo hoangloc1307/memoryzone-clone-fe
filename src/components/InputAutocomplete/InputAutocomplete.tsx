@@ -1,37 +1,29 @@
-import { useId, useState } from 'react'
-import type { RegisterOptions, UseFormRegister } from 'react-hook-form/dist/types'
+import { memo, useId, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import Popover from '../Popover'
 
 export interface Props {
   label?: string
-  name: string
   suggestList: string[]
   defaultValue?: string
-  register?: UseFormRegister<any>
-  registerOption?: RegisterOptions
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
-  onChange: (value: string) => void
-  onClickSuggest: (value: string) => void
+  onChange?: (value: string) => void
+  onClickSuggest?: (value: string) => void
 }
 
-export default function InputAutocomplete({
+const InputAutocomplete = ({
   label,
-  name,
   suggestList,
   defaultValue,
-  register,
-  registerOption,
   errorMessage,
   classNameWrapper,
   classNameInput,
   onChange,
-  onClickSuggest,
-}: Props) {
+}: Props) => {
   const id = useId()
-  const inputRegister = register && name ? register(name, registerOption) : null
+  const inputRef = useRef<HTMLInputElement>(null)
   const [localValue, setLocalValue] = useState(defaultValue ?? '')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +34,8 @@ export default function InputAutocomplete({
 
   const handleItemClick = (item: string) => () => {
     setLocalValue(item)
-    onClickSuggest && onClickSuggest(item)
+    inputRef.current?.focus()
+    onChange && onChange(item)
   }
 
   return (
@@ -70,23 +63,29 @@ export default function InputAutocomplete({
         floatingElementWidth={'100%'}
         offsetOption={{ mainAxis: 4 }}
       >
+        {/* Label */}
         <label className='block text-sm font-semibold empty:hidden' htmlFor={id}>
           {label}
         </label>
+
+        {/* Input */}
         <input
           id={id}
+          ref={inputRef}
           autoComplete='off'
           className={twMerge(
             'mt-2 h-10 w-full rounded border border-slate-300 px-3 text-sm outline-none focus:ring-1 focus:ring-primary',
             classNameInput
           )}
-          {...inputRegister}
           value={localValue}
           onChange={handleChange}
         />
       </Popover>
 
-      <p className='mt-2 text-xs text-red-500 empty:hidden'>{errorMessage}</p>
+      {/* Error message */}
+      <p className='mt-2 text-xs italic text-red-500 empty:hidden'>{errorMessage}</p>
     </div>
   )
 }
+
+export default memo(InputAutocomplete)

@@ -1,42 +1,27 @@
-import { useId, useState } from 'react'
-import type { RegisterOptions, UseFormRegister } from 'react-hook-form/dist/types'
+import { memo, useId, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import { numberAsCurrency } from '~/utils/utils'
 
 export interface Props {
   label?: string
-  name: string
-  placeholder?: string
   defaultValue?: number
-  register?: UseFormRegister<any>
-  registerOption?: RegisterOptions
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
+  onChange?: (value: number) => void
 }
 
-export default function InputNumber({
-  label,
-  name,
-  placeholder,
-  defaultValue,
-  register,
-  registerOption,
-  errorMessage,
-  classNameWrapper,
-  classNameInput,
-}: Props) {
+const InputNumber = ({ label, defaultValue, errorMessage, classNameWrapper, classNameInput, onChange }: Props) => {
   const id = useId()
-  const inputRegister = register && name ? register(name, registerOption) : null
   const [localValue, setLocalValue] = useState(defaultValue || 0)
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value.replaceAll('.', '')
+    let value = event.target.value.replaceAll('.', '')
     if (value === '') {
-      setLocalValue(0)
-    } else {
-      setLocalValue(Number(value))
+      value = '0'
     }
+    setLocalValue(Number(value))
+    onChange && onChange(Number(value))
   }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -52,9 +37,12 @@ export default function InputNumber({
   return (
     <div className={classNameWrapper}>
       <div className='relative'>
+        {/* Label */}
         <label className='block text-sm font-semibold empty:hidden' htmlFor={id}>
           {label}
         </label>
+
+        {/* Input */}
         <input
           id={id}
           autoComplete='off'
@@ -62,14 +50,16 @@ export default function InputNumber({
             'mt-2 h-10 w-full rounded border border-slate-300 px-3 text-sm outline-none focus:ring-1 focus:ring-primary',
             classNameInput
           )}
-          placeholder={placeholder}
-          {...inputRegister}
           value={numberAsCurrency(Number(localValue))}
           onKeyDown={handleKeyDown}
           onChange={handleChange}
         />
       </div>
-      <p className='mt-2 text-xs text-red-500 empty:hidden'>{errorMessage}</p>
+
+      {/* Error message */}
+      <p className='mt-2 text-xs italic text-red-500 empty:hidden'>{errorMessage}</p>
     </div>
   )
 }
+
+export default memo(InputNumber)
