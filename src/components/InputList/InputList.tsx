@@ -7,14 +7,16 @@ export interface Props {
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
+  onChange?: (value: string[]) => void
 }
 
-const InputList = ({ label, defaultValue, errorMessage, classNameWrapper, classNameInput }: Props) => {
-  const [localValue, setLocalValue] = useState<string[]>(defaultValue || [])
+const InputList = ({ label, defaultValue, errorMessage, classNameWrapper, classNameInput, onChange }: Props) => {
+  const [localValue, setLocalValue] = useState<string[]>(defaultValue && defaultValue.length > 0 ? defaultValue : [''])
 
   const handleRemove = (index: number) => () => {
     const value = localValue.filter((_, i) => index !== i)
     setLocalValue(value)
+    onChange && onChange(value)
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -25,13 +27,23 @@ const InputList = ({ label, defaultValue, errorMessage, classNameWrapper, classN
       return item
     })
     setLocalValue(value)
+    onChange && onChange(value)
+  }
+
+  const handleAdd = () => {
+    const value = [...localValue, '']
+    setLocalValue(value)
+    onChange && onChange(value)
   }
 
   return (
     <div className={classNameWrapper}>
+      {/* Label */}
       <label className='block text-sm font-semibold empty:hidden'>{label}</label>
+
       {localValue.map((item, index) => (
         <div key={index} className='relative mt-2'>
+          {/* Input */}
           <input
             className={twMerge(
               'h-10 w-full rounded border border-slate-300 pl-3 pr-[52px] text-sm outline-none focus:ring-1 focus:ring-primary',
@@ -61,10 +73,12 @@ const InputList = ({ label, defaultValue, errorMessage, classNameWrapper, classN
           </button>
         </div>
       ))}
-      {/* <button
+
+      {/* Add button */}
+      <button
         type='button'
         className='mt-2 ml-auto mr-0 flex items-center gap-2 rounded bg-primary py-1 px-3 text-white'
-        onClick={onAppend}
+        onClick={handleAdd}
       >
         <span>
           <svg
@@ -79,7 +93,9 @@ const InputList = ({ label, defaultValue, errorMessage, classNameWrapper, classN
           </svg>
         </span>
         <span>Thêm</span>
-      </button> */}
+      </button>
+
+      {/* Error message */}
       <p className='mt-2 text-xs text-red-500 empty:hidden'>{errorMessage}</p>
     </div>
   )

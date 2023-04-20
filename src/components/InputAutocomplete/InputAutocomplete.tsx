@@ -44,7 +44,7 @@ const InputAutocomplete = ({
         floatingElement={
           <>
             {suggestList.length > 0 && (
-              <div className='c-scrollbar z-20 max-h-24 w-full overflow-auto rounded bg-white py-2 shadow ring-1 ring-black/5'>
+              <div className='c-scrollbar z-20 max-h-40 w-full overflow-auto rounded bg-white py-2 shadow ring-1 ring-black/5'>
                 {suggestList.map((item) => (
                   <p
                     key={item}

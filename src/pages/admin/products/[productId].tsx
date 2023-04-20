@@ -12,10 +12,15 @@ import InputAutocomplete from '~/components/InputAutocomplete'
 import InputList from '~/components/InputList'
 import InputNumber from '~/components/InputNumber'
 import InputProductAttributeValue from '~/components/InputProductAttributeValue'
+import InputSelect from '~/components/InputSelect'
 import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
 import { Product, ProductAttribute, ProductAttributeValue, ProductType } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
+
+type FormType = Omit<Product, 'view' | 'createdAt' | 'updatedAt' | 'productType'> & {
+  productTypeId: number
+}
 
 const AdminProductDetailPage = () => {
   const router = useRouter()
@@ -23,37 +28,14 @@ const AdminProductDetailPage = () => {
   const http = useAuthAxios()
 
   // Form
-  const { handleSubmit, register, setValue, watch, control } = useForm<Product>()
+  const { handleSubmit, register, setValue, watch, control } = useForm<FormType>()
   const valueVendor = watch('vendor')
-  const valueProductTypeId = watch('productType.id')
-  const shortInfoFieldArray = useFieldArray({
-    control: control,
-    name: 'shortInfo',
-  })
-  const productAttributesFieldArray = useFieldArray({
-    control: control,
-    name: 'productAttributes',
-  })
+  const valueProductTypeId = watch('productTypeId')
 
   // Get product detail
   const { data: productDetailData } = useQuery({
     queryKey: ['product', productId],
     queryFn: () => http.get<SuccessResponse<Product>>(`/products/${productId}`),
-    onSuccess(data) {
-      const response = data.data.data
-      const shortInfo = response.shortInfo
-      setValue('shortInfo', shortInfo)
-      if (response.productType) {
-        const attributes = response.productType.productAttributes.reduce((result: ProductAttributeValue[], current) => {
-          const findItem = response.productAttributes.find((item) => item.productAttributeId == current.id)
-          if (findItem) {
-            return [...result, { productAttributeId: current.id, value: findItem.value, attribute: current.attribute }]
-          }
-          return [...result, { productAttributeId: current.id, value: '', attribute: current.attribute }]
-        }, [])
-        setValue('productAttributes', attributes)
-      }
-    },
     enabled: !!productId,
   })
   const product = productDetailData?.data.data
@@ -65,11 +47,6 @@ const AdminProductDetailPage = () => {
     enabled: product?.productType === null,
   })
   const productTypes = productTypesData?.data.data
-  // const productTypes = useMemo(() => {
-  //   return productTypesData?.data.data.reduce((result: { [key: string]: string }, current) => {
-  //     return { ...result, [current.id]: current.type }
-  //   }, {})
-  // }, [productTypesData])
 
   // Get product attribute
   const { data: productAttributesData } = useQuery({
@@ -78,15 +55,7 @@ const AdminProductDetailPage = () => {
     enabled: product?.productType === null && !!valueProductTypeId,
     staleTime: Infinity,
   })
-
-  useEffect(() => {
-    if (productAttributesData) {
-      const values = productAttributesData.data.data.reduce((result: ProductAttributeValue[], current) => {
-        return [...result, { productAttributeId: current.id, value: '', attribute: current.attribute }]
-      }, [])
-      setValue('productAttributes', values)
-    }
-  }, [productAttributesData, setValue])
+  const productAttributes = productAttributesData?.data.data
 
   // Get product vendors
   const { data: productVendorsData } = useQuery({
@@ -105,7 +74,7 @@ const AdminProductDetailPage = () => {
       return http.patch<SuccessResponse<Product>>(`/products/${productId}`, data)
     },
   })
-  const onSubmit: SubmitHandler<Product> = (data) => {
+  const onSubmit: SubmitHandler<FormType> = (data) => {
     // NProgress.start()
 
     // // Handle data before send to server
@@ -214,90 +183,43 @@ const AdminProductDetailPage = () => {
                   label='Thương hiệu'
                   defaultValue={product.vendor}
                   suggestList={suggestList || []}
-                  classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-10'
+                  classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-20'
                   onChange={handleChangeVendor}
                 />
               )}
             />
-
             {/* Product type */}
-            <div className='col-span-12 md:col-span-6 lg:col-span-4 lg:col-start-1'>
-              {productTypes && (
-                <>
-                  <label className='mb-2 block text-sm font-semibold empty:hidden'>Loại sản phẩm</label>
-                  <Controller
-                    control={control}
-                    name='productType.id'
-                    render={({ field }) => (
-                      <Listbox defaultValue={product.productType?.id} onChange={field.onChange}>
-                        <div className='group relative'>
-                          <Listbox.Button className='relative h-10 w-full rounded border border-slate-300 px-3 text-sm outline-none group-focus-within:ring-1 group-focus-within:ring-primary'>
-                            {({ value }) => {
-                              const findItem = productTypes.find((item) => item.id === value)
-                              return (
-                                <>
-                                  <span className='block text-left'>{findItem?.type}</span>
-                                  <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-                                    <svg
-                                      xmlns='http://www.w3.org/2000/svg'
-                                      fill='none'
-                                      viewBox='0 0 24 24'
-                                      strokeWidth={1.5}
-                                      stroke='currentColor'
-                                      className='text-gray-400 h-5 w-5'
-                                    >
-                                      <path
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                        d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9'
-                                      />
-                                    </svg>
-                                  </span>
-                                </>
-                              )
-                            }}
-                          </Listbox.Button>
-                          <Listbox.Options className='c-scrollbar absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded bg-white py-1 text-sm shadow ring-1 ring-black/5 focus:outline-none'>
-                            {productTypes.map((item) => (
-                              <Listbox.Option
-                                key={item.id}
-                                value={item.id}
-                                className={({ active }) =>
-                                  classNames('relative cursor-default select-none py-2 px-3', {
-                                    'bg-primary/10 text-primary': active,
-                                    'text-gray-900': !active,
-                                  })
-                                }
-                              >
-                                {item.type}
-                              </Listbox.Option>
-                            ))}
-                          </Listbox.Options>
-                        </div>
-                      </Listbox>
-                    )}
-                  />
-                </>
-              )}
-              {!productTypes && (
-                <Input
+            <Controller
+              control={control}
+              name='productTypeId'
+              render={({ field }) => (
+                <InputSelect
                   label='Loại sản phẩm'
-                  defaultValue={product.productType?.type}
-                  readOnly
-                  classNameInput='cursor-not-allowed'
+                  defaultValue={{ id: product.productType?.id, type: product.productType?.type }}
+                  options={productTypes ?? []}
+                  propertyDisplay='type'
+                  propertyValue='id'
+                  disabled={product.productType !== null}
+                  classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-10'
+                  onChange={field.onChange}
                 />
               )}
-            </div>
+            />
 
             {/* Product attribute */}
-            <div className='col-span-12 lg:col-span-12'>
-              <InputProductAttributeValue
-                register={register}
-                label='Thuộc tính sản phẩm'
-                name='productAttributes'
-                fields={productAttributesFieldArray.fields}
-              />
-            </div>
+            <Controller
+              control={control}
+              name='productAttributes'
+              render={({ field }) => (
+                <InputProductAttributeValue
+                  label='Thuộc tính sản phẩm'
+                  classNameWrapper='col-span-12 lg:col-span-12'
+                  attributes={product.productType?.productAttributes ?? productAttributes ?? []}
+                  defaultValue={product.productAttributes}
+                  onChange={field.onChange}
+                />
+              )}
+            />
 
             {/* Short info */}
             <Controller
@@ -306,8 +228,9 @@ const AdminProductDetailPage = () => {
               render={({ field }) => (
                 <InputList
                   label='Mô tả ngắn'
-                  defaultValue={['test', 'test2']}
+                  defaultValue={product.shortInfo}
                   classNameWrapper='col-span-12 lg:col-span-8 lg:col-start-5 lg:row-span-6 lg:row-start-1'
+                  onChange={field.onChange}
                 />
               )}
             />

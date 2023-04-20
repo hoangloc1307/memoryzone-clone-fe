@@ -20,7 +20,7 @@ export interface Product {
   priceDiscount: number
   view: number
   quantity: number
-  shortInfo: { value: string }[]
+  shortInfo: string[]
   vendor: string
   description: string
   slug: string
@@ -28,7 +28,6 @@ export interface Product {
   updatedAt: string
   isDraft: boolean
   isPublish: boolean
-  productTypeId?: number
   productType?: ProductType & {
     productAttributes: ProductAttribute[]
   }
