@@ -300,15 +300,16 @@ const AdminProductDetailPage = () => {
             </div>
 
             {/* Short info */}
-            <InputList
-              register={register}
-              displayValue='value'
-              fields={shortInfoFieldArray.fields}
+            <Controller
               name='shortInfo'
-              label='Mô tả ngắn'
-              classNameWrapper='col-span-12 lg:col-span-8 lg:col-start-5 lg:row-span-6 lg:row-start-1'
-              onRemove={(index: number) => shortInfoFieldArray.remove(index)}
-              onAppend={() => shortInfoFieldArray.append({ value: '' })}
+              control={control}
+              render={({ field }) => (
+                <InputList
+                  label='Mô tả ngắn'
+                  defaultValue={['test', 'test2']}
+                  classNameWrapper='col-span-12 lg:col-span-8 lg:col-start-5 lg:row-span-6 lg:row-start-1'
+                />
+              )}
             />
           </div>
           {/* Description */}

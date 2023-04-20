@@ -1,48 +1,48 @@
-import type { FieldArrayWithId, UseFormRegister } from 'react-hook-form'
+import React, { memo, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export interface Props {
   label?: string
-  name: string
-  fields: FieldArrayWithId[]
-  displayValue: string
-  register: UseFormRegister<any>
+  defaultValue?: string[]
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
-  onRemove: (index: number) => void
-  onAppend: () => void
 }
 
-export default function InputList({
-  label,
-  name,
-  fields,
-  displayValue,
-  register,
-  errorMessage,
-  classNameWrapper,
-  classNameInput,
-  onRemove,
-  onAppend,
-}: Props) {
+const InputList = ({ label, defaultValue, errorMessage, classNameWrapper, classNameInput }: Props) => {
+  const [localValue, setLocalValue] = useState<string[]>(defaultValue || [])
+
   const handleRemove = (index: number) => () => {
-    onRemove(index)
+    const value = localValue.filter((_, i) => index !== i)
+    setLocalValue(value)
+  }
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const value = localValue.map((item, i) => {
+      if (index === i) {
+        return event.target.value
+      }
+      return item
+    })
+    setLocalValue(value)
   }
 
   return (
     <div className={classNameWrapper}>
       <label className='block text-sm font-semibold empty:hidden'>{label}</label>
-      {fields.map((field, index) => (
-        <div key={field.id} className='relative mt-2'>
+      {localValue.map((item, index) => (
+        <div key={index} className='relative mt-2'>
           <input
-            {...register(`${name}.${index}.${displayValue}`)}
             className={twMerge(
               'h-10 w-full rounded border border-slate-300 pl-3 pr-[52px] text-sm outline-none focus:ring-1 focus:ring-primary',
               classNameInput
             )}
             autoComplete='off'
+            value={item}
+            onChange={(event) => handleChange(event, index)}
           />
+
+          {/* Delete button */}
           <button
             className='absolute top-1/2 right-0 -translate-y-1/2 border-l border-l-slate-300 p-2 hover:text-danger'
             onClick={handleRemove(index)}
@@ -61,7 +61,7 @@ export default function InputList({
           </button>
         </div>
       ))}
-      <button
+      {/* <button
         type='button'
         className='mt-2 ml-auto mr-0 flex items-center gap-2 rounded bg-primary py-1 px-3 text-white'
         onClick={onAppend}
@@ -79,8 +79,10 @@ export default function InputList({
           </svg>
         </span>
         <span>Thêm</span>
-      </button>
+      </button> */}
       <p className='mt-2 text-xs text-red-500 empty:hidden'>{errorMessage}</p>
     </div>
   )
 }
+
+export default memo(InputList)
