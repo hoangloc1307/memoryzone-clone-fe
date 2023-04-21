@@ -49,7 +49,7 @@ const InputProductAttributeValue = ({ label, attributes, defaultValue, className
     <div className={classNameWrapper}>
       <label className='block text-sm font-semibold empty:hidden'>{label}</label>
       {attributes.length > 0 && (
-        <div className='mt-2 grid grid-cols-2 gap-5'>
+        <div className='mt-2 grid grid-cols-2 gap-5 md:grid-cols-3 xl:grid-cols-4'>
           {attributes.map((item) => {
             const matchItem = localValue.find((i) => i.productAttributeId === item.id)
             return (
