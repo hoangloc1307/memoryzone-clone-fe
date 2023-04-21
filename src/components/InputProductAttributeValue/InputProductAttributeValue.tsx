@@ -11,9 +11,11 @@ interface Props {
 
 const InputProductAttributeValue = ({ label, attributes, defaultValue, classNameWrapper, onChange }: Props) => {
   const [localValue, setLocalValue] = useState<ProductAttributeValue[]>(defaultValue)
+  const [changeValue, setChangeValue] = useState<ProductAttributeValue[]>([])
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
     let value
+    let cValue
     const findItem = localValue.find((i) => i.productAttributeId === id)
     if (findItem) {
       value = localValue.map((item) => {
@@ -22,11 +24,25 @@ const InputProductAttributeValue = ({ label, attributes, defaultValue, className
         }
         return item
       })
+
+      const findChangeItem = changeValue.find((i) => i.productAttributeId === id)
+      if (findChangeItem) {
+        cValue = changeValue.map((item) => {
+          if (item.productAttributeId === id) {
+            return { ...item, value: event.target.value }
+          }
+          return item
+        })
+      } else {
+        cValue = [...changeValue, { productAttributeId: id, value: event.target.value }]
+      }
     } else {
       value = [...localValue, { productAttributeId: id, value: event.target.value }]
+      cValue = [...changeValue, { productAttributeId: id, value: event.target.value }]
     }
     setLocalValue(value)
-    onChange && onChange(value)
+    setChangeValue(cValue)
+    onChange && onChange(cValue)
   }
 
   return (

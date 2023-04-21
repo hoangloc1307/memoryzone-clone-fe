@@ -23,7 +23,7 @@ export interface Product {
   shortInfo: string[]
   vendor: string
   description: string
-  slug: string
+  slug?: string
   createdAt: string
   updatedAt: string
   isDraft: boolean

@@ -1,31 +1,39 @@
 import classNames from 'classnames'
-import { InputHTMLAttributes, memo, useId, useState } from 'react'
-import type { RegisterOptions, UseFormRegister } from 'react-hook-form/dist/types'
+import { memo, useId, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
-export interface Props extends InputHTMLAttributes<HTMLInputElement> {
+export interface Props {
   label?: string
-  register?: UseFormRegister<any>
-  registerOption?: RegisterOptions
+  required?: boolean
+  type?: HTMLInputElement['type']
+  placeholder?: string
+  defaultValue?: string
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
+  onChange?: (value: string) => void
 }
 
 const Input = ({
   label,
-  name,
   required,
-  register,
-  registerOption,
+  placeholder,
   errorMessage,
   classNameWrapper,
   classNameInput,
-  ...rest
+  defaultValue,
+  type = 'text',
+  onChange,
 }: Props) => {
   const id = useId()
   const [visible, setVisible] = useState(false)
-  const inputRegister = register && name ? register(name, registerOption) : null
+  const [localValue, setLocalValue] = useState<string>(defaultValue ?? '')
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value
+    setLocalValue(value)
+    onChange && onChange(value)
+  }
 
   return (
     <div className={classNameWrapper}>
@@ -43,19 +51,20 @@ const Input = ({
             classNames(
               'mt-2 h-10 w-full rounded border border-slate-300 text-sm outline-none focus:ring-1 focus:ring-primary',
               {
-                'pl-3 pr-10': rest.type === 'password',
-                'px-3': rest.type !== 'password',
+                'pl-3 pr-10': type === 'password',
+                'px-3': type !== 'password',
               }
             ),
             classNameInput
           )}
-          {...inputRegister}
-          {...rest}
-          type={rest.type === 'password' ? (visible ? 'text' : 'password') : rest.type}
+          value={localValue}
+          onChange={handleChange}
+          type={type === 'password' ? (visible ? 'text' : 'password') : type}
+          placeholder={placeholder}
         />
 
         {/* Hidden password button */}
-        {rest.type === 'password' && visible && (
+        {type === 'password' && visible && (
           <span
             className='absolute top-[28px] right-0 cursor-pointer p-2.5 text-[#444]'
             onClick={() => setVisible(false)}
@@ -79,7 +88,7 @@ const Input = ({
         )}
 
         {/* Show password button */}
-        {rest.type === 'password' && !visible && (
+        {type === 'password' && !visible && (
           <span
             className='absolute top-[28px] right-0 cursor-pointer p-2.5 text-[#444]'
             onClick={() => setVisible(true)}

@@ -72,7 +72,7 @@ const InputSelect = ({
               ref={inputRef}
               className={twMerge(
                 classNames(
-                  'flex h-10 w-full items-center rounded border border-slate-300 px-3 text-sm outline-none focus:ring-1 focus:ring-primary',
+                  'flex h-10 w-full select-none items-center rounded border border-slate-300 px-3 text-sm outline-none focus:ring-1 focus:ring-primary',
                   {
                     'cursor-pointer': !disabled,
                     'cursor-not-allowed': disabled,

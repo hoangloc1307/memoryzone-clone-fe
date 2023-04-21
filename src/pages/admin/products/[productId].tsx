@@ -1,17 +1,15 @@
-import { Combobox, Listbox } from '@headlessui/react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Editor } from '@tinymce/tinymce-react'
-import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
-import { useCallback, useEffect, useMemo } from 'react'
-import { Controller, SubmitHandler, useFieldArray, useForm } from 'react-hook-form'
+import { useCallback, useMemo } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import Input from '~/components/Input'
 import InputAutocomplete from '~/components/InputAutocomplete'
 import InputList from '~/components/InputList'
 import InputNumber from '~/components/InputNumber'
 import InputProductAttributeValue from '~/components/InputProductAttributeValue'
+import InputRichText from '~/components/InputRichText'
 import InputSelect from '~/components/InputSelect'
 import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
@@ -63,6 +61,7 @@ const AdminProductDetailPage = () => {
     queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
   })
   const productVendors = productVendorsData?.data.data
+
   const suggestList = useMemo(() => {
     return productVendors?.filter((item) => {
       return item.toLowerCase().includes(valueVendor?.toLowerCase())
@@ -70,32 +69,22 @@ const AdminProductDetailPage = () => {
   }, [productVendors, valueVendor])
 
   const productMutation = useMutation({
-    mutationFn: (data: Product) => {
+    mutationFn: (data: FormType) => {
       return http.patch<SuccessResponse<Product>>(`/products/${productId}`, data)
     },
   })
+
   const onSubmit: SubmitHandler<FormType> = (data) => {
     // NProgress.start()
 
-    // // Handle data before send to server
-    // data.price = Number(data.price.toString().replaceAll('.', ''))
-    // data.priceDiscount = Number(data.priceDiscount.toString().replaceAll('.', ''))
-    // data.quantity = Number(data.quantity.toString().replaceAll('.', ''))
-    // data.updatedAt = new Date().toISOString()
-    // data.shortInfo = data.shortInfo.reduce((result: { value: string }[], current) => {
-    //   if (current.value) {
-    //     return [...result, { value: current.value }]
-    //   }
-    //   return [...result]
-    // }, [])
-    // data.productTypeId = (data.productType as ProductType)?.id
-    // delete data.productType
-    // data.productAttributes = data.productAttributes.reduce((result: ProductAttributeValue[], current) => {
-    //   if (current.value) {
-    //     return [...result, { productAttributeId: current.productAttributeId, value: current.value }]
-    //   }
-    //   return [...result]
-    // }, [])
+    // Handle data before send to server
+    data.shortInfo = data.shortInfo?.reduce((result: string[], current) => {
+      return current ? [...result, current] : [...result]
+    }, [])
+    data.productAttributes = data.productAttributes?.reduce((result: ProductAttributeValue[], current) => {
+      return current.value.trim() ? [...result, current] : [...result]
+    }, [])
+    data.slug = data.slug || undefined
 
     // productMutation.mutate(data, {
     //   onSuccess(data) {
@@ -107,6 +96,7 @@ const AdminProductDetailPage = () => {
     //     NProgress.done()
     //   },
     // })
+
     console.log(data)
   }
 
@@ -123,14 +113,20 @@ const AdminProductDetailPage = () => {
         <form className='block text-sm' onSubmit={handleSubmit(onSubmit)} spellCheck='false'>
           <p className='font-medium italic text-gray'>ID: {product.id}</p>
           {/* Name */}
-          <Input
-            label='Tên'
-            placeholder='Tên sản phẩm'
+          <Controller
+            control={control}
             name='name'
-            defaultValue={product.name}
-            register={register}
-            classNameWrapper='mt-5'
+            render={({ field }) => (
+              <Input
+                label='Tên'
+                placeholder='Tên sản phẩm'
+                defaultValue={product.name}
+                classNameWrapper='mt-5'
+                onChange={field.onChange}
+              />
+            )}
           />
+
           <div className='mt-5 grid grid-cols-12 gap-5'>
             {/* Price */}
             <Controller
@@ -188,6 +184,7 @@ const AdminProductDetailPage = () => {
                 />
               )}
             />
+
             {/* Product type */}
             <Controller
               control={control}
@@ -236,52 +233,32 @@ const AdminProductDetailPage = () => {
             />
           </div>
           {/* Description */}
-          <div className='mt-5'>
-            <Controller
-              name='description'
-              control={control}
-              defaultValue={product.description}
-              render={({ field }) => (
-                <>
-                  <label className='mb-2 block text-sm font-semibold empty:hidden'>Mô tả sản phẩm</label>
-                  <Editor
-                    apiKey={process.env.TINYMCE_KEY}
-                    initialValue={product.description}
-                    onEditorChange={field.onChange}
-                    init={{
-                      height: 500,
-                      nowrap: false,
-                      plugins: [
-                        'advlist',
-                        'autolink',
-                        'lists',
-                        'link',
-                        'image',
-                        'charmap',
-                        'preview',
-                        'anchor',
-                        'searchreplace',
-                        'visualblocks',
-                        'code',
-                        'fullscreen',
-                        'insertdatetime',
-                        'media',
-                        'table',
-                        'code',
-                        'help',
-                        'wordcount',
-                      ],
-                      toolbar:
-                        'undo redo | blocks | ' +
-                        'bold italic forecolor | alignleft aligncenter ' +
-                        'alignright alignjustify | bullist numlist outdent indent | ' +
-                        'removeformat | help',
-                    }}
-                  />
-                </>
-              )}
-            />
-          </div>
+          <Controller
+            name='description'
+            control={control}
+            render={({ field }) => (
+              <InputRichText
+                label='Mô tả sản phẩm'
+                defaultValue={product.description}
+                classNameWrapper='mt-5'
+                onChange={field.onChange}
+              />
+            )}
+          />
+
+          {/* Slug */}
+          <Controller
+            control={control}
+            name='slug'
+            render={({ field }) => (
+              <Input
+                label='URL tuỳ chỉnh'
+                defaultValue={product.slug}
+                classNameWrapper='mt-5'
+                onChange={field.onChange}
+              />
+            )}
+          />
 
           <button
             type='submit'
