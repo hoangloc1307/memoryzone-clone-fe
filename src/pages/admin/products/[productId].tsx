@@ -6,6 +6,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import Input from '~/components/Input'
 import InputAutocomplete from '~/components/InputAutocomplete'
+import InputFile from '~/components/InputFile'
 import InputList from '~/components/InputList'
 import InputNumber from '~/components/InputNumber'
 import InputProductAttributeValue from '~/components/InputProductAttributeValue'
@@ -85,6 +86,16 @@ const AdminProductDetailPage = () => {
       return current.value.trim() ? [...result, current] : [...result]
     }, [])
     data.slug = data.slug || undefined
+
+    // const form = new FormData()
+    // form.append('productImages[]', data.images)
+
+    http
+      .postForm('/products/images', {
+        productImages: data.images,
+      })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err))
 
     // productMutation.mutate(data, {
     //   onSuccess(data) {
@@ -257,6 +268,15 @@ const AdminProductDetailPage = () => {
                 classNameWrapper='mt-5'
                 onChange={field.onChange}
               />
+            )}
+          />
+
+          {/* Images */}
+          <Controller
+            control={control}
+            name='images'
+            render={({ field }) => (
+              <InputFile label='Hình ảnh sản phẩm' classNameWrapper='mt-5' onChange={field.onChange} />
             )}
           />
 

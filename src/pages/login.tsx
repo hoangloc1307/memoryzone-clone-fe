@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
 import { useEffect, useState } from 'react'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import Input from '~/components/Input'
 import layout from '~/constants/layout'
 import path from '~/constants/path'
@@ -18,9 +18,9 @@ const LoginPage = () => {
   const router = useRouter()
   const [loginError, setLoginError] = useState<string | undefined>('')
   const {
-    register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<FormType>({ resolver: yupResolver(loginSchema) })
 
   useEffect(() => {
@@ -62,23 +62,33 @@ const LoginPage = () => {
               <div className='h-2 rounded-t-md bg-primary/70' />
               <div className='px-8 py-6'>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                  <Input
-                    label='Email'
-                    placeholder='Email'
+                  <Controller
+                    control={control}
                     name='email'
-                    register={register}
-                    required
-                    errorMessage={errors.email?.message}
+                    render={({ field }) => (
+                      <Input
+                        label='Email'
+                        placeholder='Email'
+                        required
+                        errorMessage={errors.email?.message}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
-                  <Input
-                    label='Mật khẩu'
-                    placeholder='Mật khẩu'
-                    classNameWrapper='mt-5'
-                    register={register}
+                  <Controller
+                    control={control}
                     name='password'
-                    type='password'
-                    required
-                    errorMessage={errors.password?.message}
+                    render={({ field }) => (
+                      <Input
+                        label='Mật khẩu'
+                        placeholder='Mật khẩu'
+                        classNameWrapper='mt-5'
+                        type='password'
+                        required
+                        errorMessage={errors.password?.message}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
                   <div className='flex flex-col items-center justify-between'>
                     <p className='mt-2 text-center text-sm italic text-red-500 empty:hidden'>{loginError}</p>
