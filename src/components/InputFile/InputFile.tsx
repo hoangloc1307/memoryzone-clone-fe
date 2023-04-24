@@ -1,15 +1,25 @@
-import { memo, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
+import { ProductImage } from '~/types/product.type'
 
 interface Props {
   label?: string
-  defaultValue?: string[]
+  value?: File[]
+  defaultValue?: ProductImage[]
   classNameWrapper?: string
   onChange?: (files: File[]) => void
+  onDelete?: (imageId: number, deleteHash: string) => void
 }
 
-const InputFile = ({ label, defaultValue, classNameWrapper, onChange }: Props) => {
+const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onDelete }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [files, setFiles] = useState<File[]>([])
+  const defaultImages = defaultValue ?? []
+
+  useEffect(() => {
+    if (value) {
+      setFiles(value)
+    }
+  }, [value])
 
   const handleAdd = () => {
     inputRef.current?.click()
@@ -28,37 +38,79 @@ const InputFile = ({ label, defaultValue, classNameWrapper, onChange }: Props) =
     onChange && onChange(images)
   }
 
+  const handleDeleteDefaultImage = (imageId: number, deleteHash: string) => () => {
+    onDelete && onDelete(imageId, deleteHash)
+  }
+
   return (
     <div className={classNameWrapper}>
       {/* Label */}
       <label className='block text-sm font-semibold empty:hidden'>{label}</label>
 
       {/* Images */}
-      <div className='mt-2 flex flex-wrap gap-2'>
+      <div className='mt-2 flex flex-wrap gap-5'>
+        {defaultImages.length > 0 &&
+          defaultImages.map((image) => (
+            <div key={image.id} className='w-[160px]'>
+              <div className='group relative h-[120px] w-full overflow-hidden rounded shadow'>
+                {
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={image.link} alt={image.alt} className='h-full w-full object-contain' />
+                }
+                {/* Delete button */}
+                <button
+                  className='pointer-events-none absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 text-white opacity-0 group-hover:pointer-events-auto group-hover:opacity-100'
+                  type='button'
+                  onClick={handleDeleteDefaultImage(image.id, image.deleteHash)}
+                >
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth={1.5}
+                    stroke='currentColor'
+                    className='pointer-events-none h-10 w-10'
+                  >
+                    <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
+                  </svg>
+                </button>
+              </div>
+              <p className='mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-left [direction:rtl]'>
+                {image.name}
+              </p>
+            </div>
+          ))}
+
+        {/* Files */}
         {files.length > 0 &&
           files.map((file, index) => (
-            <div key={index} className='group relative h-[100px] w-[100px] rounded border border-slate-300 p-1'>
-              {
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={URL.createObjectURL(file)} alt={file.name} className='aspect-square w-full object-contain' />
-              }
-              {/* Delete button */}
-              <button
-                className='pointer-events-none absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 text-white opacity-0 group-hover:pointer-events-auto group-hover:opacity-100'
-                type='button'
-                onClick={handleDelete(index)}
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='pointer-events-none h-10 w-10'
+            <div key={index} className='w-[160px]'>
+              <div className='group relative h-[120px] w-full overflow-hidden rounded shadow'>
+                {
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={URL.createObjectURL(file)} alt={file.name} className='h-full w-full object-contain' />
+                }
+                {/* Delete button */}
+                <button
+                  className='pointer-events-none absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 text-white opacity-0 group-hover:pointer-events-auto group-hover:opacity-100'
+                  type='button'
+                  onClick={handleDelete(index)}
                 >
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-                </svg>
-              </button>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    strokeWidth={1.5}
+                    stroke='currentColor'
+                    className='pointer-events-none h-10 w-10'
+                  >
+                    <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
+                  </svg>
+                </button>
+              </div>
+              <p className='mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-left [direction:rtl]'>
+                {file.name}
+              </p>
             </div>
           ))}
 
@@ -66,7 +118,7 @@ const InputFile = ({ label, defaultValue, classNameWrapper, onChange }: Props) =
         <input type='file' hidden ref={inputRef} multiple onChange={handleChange} />
         <button
           type='button'
-          className='flex h-[100px] w-[100px] flex-col items-center justify-center gap-2 rounded border border-slate-300'
+          className='flex h-[120px] w-[160px] flex-col items-center justify-center gap-2 rounded border border-slate-300'
           onClick={handleAdd}
         >
           <span>

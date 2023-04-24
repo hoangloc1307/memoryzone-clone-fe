@@ -13,6 +13,17 @@ export interface ProductAttributeValue {
   value: string
 }
 
+export interface ProductImage {
+  id: number
+  alt: string
+  deleteHash: string
+  name: string
+  link: string
+  order: number
+  type: string
+  productId: number
+}
+
 export interface Product {
   id: number
   name: string
@@ -32,7 +43,7 @@ export interface Product {
     productAttributes: ProductAttribute[]
   }
   productAttributes: ProductAttributeValue[]
-  images: []
+  images: ProductImage[]
   categories: []
 }
 

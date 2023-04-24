@@ -14,11 +14,12 @@ import InputRichText from '~/components/InputRichText'
 import InputSelect from '~/components/InputSelect'
 import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
-import { Product, ProductAttribute, ProductAttributeValue, ProductType } from '~/types/product.type'
+import { Product, ProductAttribute, ProductAttributeValue, ProductImage, ProductType } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
 
 type FormType = Omit<Product, 'view' | 'createdAt' | 'updatedAt' | 'productType'> & {
   productTypeId: number
+  images: File[]
 }
 
 const AdminProductDetailPage = () => {
@@ -32,36 +33,36 @@ const AdminProductDetailPage = () => {
   const valueProductTypeId = watch('productTypeId')
 
   // Get product detail
-  const { data: productDetailData } = useQuery({
+  const productDetailQuery = useQuery({
     queryKey: ['product', productId],
     queryFn: () => http.get<SuccessResponse<Product>>(`/products/${productId}`),
     enabled: !!productId,
   })
-  const product = productDetailData?.data.data
+  const product = productDetailQuery.data?.data.data
 
   // Get product types
-  const { data: productTypesData } = useQuery({
+  const productTypesQuery = useQuery({
     queryKey: ['productTypes'],
     queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
     enabled: product?.productType === null,
   })
-  const productTypes = productTypesData?.data.data
+  const productTypes = productTypesQuery.data?.data.data
 
   // Get product attribute
-  const { data: productAttributesData } = useQuery({
+  const productAttributesQuery = useQuery({
     queryKey: ['productAttributes', valueProductTypeId],
     queryFn: () => http.get<SuccessResponse<ProductAttribute[]>>(`/products/attributes/${valueProductTypeId}`),
     enabled: product?.productType === null && !!valueProductTypeId,
     staleTime: Infinity,
   })
-  const productAttributes = productAttributesData?.data.data
+  const productAttributes = productAttributesQuery.data?.data.data
 
   // Get product vendors
-  const { data: productVendorsData } = useQuery({
+  const productVendorsQuery = useQuery({
     queryKey: ['productVendors'],
     queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
   })
-  const productVendors = productVendorsData?.data.data
+  const productVendors = productVendorsQuery.data?.data.data
 
   const suggestList = useMemo(() => {
     return productVendors?.filter((item) => {
@@ -69,14 +70,23 @@ const AdminProductDetailPage = () => {
     })
   }, [productVendors, valueVendor])
 
+  // Product mutation
   const productMutation = useMutation({
     mutationFn: (data: FormType) => {
-      return http.patch<SuccessResponse<Product>>(`/products/${productId}`, data)
+      return http.patchForm<SuccessResponse<Product>>(`/products/${productId}`, data)
     },
   })
 
+  // Image mutation
+  const imageMutation = useMutation({
+    mutationFn: (data: {}) => {
+      return http.patch<SuccessResponse<ProductImage>>('/products/images', data)
+    },
+  })
+
+  // Submit form
   const onSubmit: SubmitHandler<FormType> = (data) => {
-    // NProgress.start()
+    NProgress.start()
 
     // Handle data before send to server
     data.shortInfo = data.shortInfo?.reduce((result: string[], current) => {
@@ -87,28 +97,17 @@ const AdminProductDetailPage = () => {
     }, [])
     data.slug = data.slug || undefined
 
-    // const form = new FormData()
-    // form.append('productImages[]', data.images)
-
-    http
-      .postForm('/products/images', {
-        productImages: data.images,
-      })
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err))
-
-    // productMutation.mutate(data, {
-    //   onSuccess(data) {
-    //     console.log(data)
-    //     NProgress.done()
-    //     toast.success(data.data.message)
-    //   },
-    //   onError(error) {
-    //     NProgress.done()
-    //   },
-    // })
-
-    console.log(data)
+    productMutation.mutate(data, {
+      onSuccess(data) {
+        productDetailQuery.refetch()
+        setValue('images', [])
+        toast.success(data.data.message)
+      },
+      onError(error) {},
+      onSettled() {
+        NProgress.done()
+      },
+    })
   }
 
   const handleChangeVendor = useCallback(
@@ -118,11 +117,30 @@ const AdminProductDetailPage = () => {
     [setValue]
   )
 
+  const handleDeleteImage = (imageId: number, deleteHash: string) => {
+    NProgress.start()
+
+    imageMutation.mutate(
+      { imageId, deleteHash },
+      {
+        onSuccess(data) {
+          productDetailQuery.refetch()
+          toast.success(data.data.message)
+        },
+        onError(error) {},
+        onSettled() {
+          NProgress.done()
+        },
+      }
+    )
+  }
+
   return (
     <>
       {product && (
         <form className='block text-sm' onSubmit={handleSubmit(onSubmit)} spellCheck='false'>
           <p className='font-medium italic text-gray'>ID: {product.id}</p>
+
           {/* Name */}
           <Controller
             control={control}
@@ -243,6 +261,7 @@ const AdminProductDetailPage = () => {
               )}
             />
           </div>
+
           {/* Description */}
           <Controller
             name='description'
@@ -276,10 +295,18 @@ const AdminProductDetailPage = () => {
             control={control}
             name='images'
             render={({ field }) => (
-              <InputFile label='Hình ảnh sản phẩm' classNameWrapper='mt-5' onChange={field.onChange} />
+              <InputFile
+                label='Hình ảnh sản phẩm'
+                classNameWrapper='mt-5'
+                defaultValue={product.images}
+                value={field.value}
+                onChange={field.onChange}
+                onDelete={handleDeleteImage}
+              />
             )}
           />
 
+          {/* Submit button */}
           <button
             type='submit'
             className='mt-10 w-full rounded bg-primary py-2 px-4 text-sm font-medium uppercase text-white'
