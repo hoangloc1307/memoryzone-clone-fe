@@ -1,9 +1,10 @@
+import Image from 'next/image'
 import { memo, useEffect, useRef, useState } from 'react'
 import { ProductImage } from '~/types/product.type'
 
 interface Props {
   label?: string
-  value?: File[]
+  value?: (File & { preview: string })[]
   defaultValue?: ProductImage[]
   classNameWrapper?: string
   onChange?: (files: File[]) => void
@@ -12,7 +13,7 @@ interface Props {
 
 const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onDelete }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<(File & { preview: string })[]>([])
   const defaultImages = defaultValue ?? []
 
   useEffect(() => {
@@ -27,13 +28,28 @@ const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onD
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const images = event.target.files
-    const values = [...files, ...Array.from(images as FileList)]
+
+    files.forEach((file) => {
+      URL.revokeObjectURL(file.preview)
+    })
+
+    const imagesWithPreview = Array.from(images as FileList).map((file: any) => {
+      file.preview = URL.createObjectURL(file)
+      return file
+    })
+    const values = [...files, ...imagesWithPreview]
     setFiles(values)
     onChange && onChange(values)
   }
 
   const handleDelete = (index: number) => () => {
-    const images = files.filter((_, i) => index !== i)
+    const images = files.filter((_, i) => {
+      if (index === i) {
+        URL.revokeObjectURL(files[index].preview)
+        return false
+      }
+      return true
+    })
     setFiles(images)
     onChange && onChange(images)
   }
@@ -55,7 +71,13 @@ const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onD
               <div className='group relative h-[120px] w-full overflow-hidden rounded shadow'>
                 {
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={image.link} alt={image.alt} className='h-full w-full object-contain' />
+                  <Image
+                    src={image.link}
+                    alt={image.alt}
+                    width={160}
+                    height={120}
+                    className='h-full w-full object-contain'
+                  />
                 }
                 {/* Delete button */}
                 <button
@@ -88,7 +110,7 @@ const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onD
               <div className='group relative h-[120px] w-full overflow-hidden rounded shadow'>
                 {
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={URL.createObjectURL(file)} alt={file.name} className='h-full w-full object-contain' />
+                  <img src={file.preview} alt={file.name} className='h-full w-full object-contain' />
                 }
                 {/* Delete button */}
                 <button

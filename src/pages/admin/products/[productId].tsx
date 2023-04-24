@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import Input from '~/components/Input'
@@ -19,7 +19,7 @@ import { SuccessResponse } from '~/types/response.type'
 
 type FormType = Omit<Product, 'view' | 'createdAt' | 'updatedAt' | 'productType'> & {
   productTypeId: number
-  images: File[]
+  images: (File & { preview: string })[]
 }
 
 const AdminProductDetailPage = () => {
@@ -86,8 +86,6 @@ const AdminProductDetailPage = () => {
 
   // Submit form
   const onSubmit: SubmitHandler<FormType> = (data) => {
-    NProgress.start()
-
     // Handle data before send to server
     data.shortInfo = data.shortInfo?.reduce((result: string[], current) => {
       return current ? [...result, current] : [...result]
@@ -97,29 +95,37 @@ const AdminProductDetailPage = () => {
     }, [])
     data.slug = data.slug || undefined
 
-    productMutation.mutate(data, {
-      onSuccess(data) {
-        productDetailQuery.refetch()
-        setValue('images', [])
-        toast.success(data.data.message)
-      },
-      onError(error) {},
-      onSettled() {
-        NProgress.done()
-      },
+    const isSomeDataChange = Object.values(data).some((value) => {
+      if ((value instanceof Array && value.length > 0) || (!(value instanceof Array) && value)) {
+        return true
+      }
+      return false
     })
+
+    if (isSomeDataChange) {
+      NProgress.start()
+      productMutation.mutate(data, {
+        onSuccess(data) {
+          productDetailQuery.refetch()
+          setValue('images', [])
+          toast.success(data.data.message)
+        },
+        onError(error) {},
+        onSettled() {
+          NProgress.done()
+        },
+      })
+    } else {
+      toast.info('Dữ liệu chưa có sự thay đổi')
+    }
   }
 
-  const handleChangeVendor = useCallback(
-    (value: string) => {
-      setValue('vendor', value)
-    },
-    [setValue]
-  )
+  const handleChangeVendor = (value: string) => {
+    setValue('vendor', value)
+  }
 
   const handleDeleteImage = (imageId: number, deleteHash: string) => {
     NProgress.start()
-
     imageMutation.mutate(
       { imageId, deleteHash },
       {
@@ -310,6 +316,7 @@ const AdminProductDetailPage = () => {
           <button
             type='submit'
             className='mt-10 w-full rounded bg-primary py-2 px-4 text-sm font-medium uppercase text-white'
+            disabled={productMutation.isLoading}
           >
             Cập nhật sản phẩm
           </button>
