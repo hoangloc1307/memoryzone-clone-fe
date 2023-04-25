@@ -17,9 +17,36 @@ import useAuthAxios from '~/hooks/useAuthAxios'
 import { Product, ProductAttribute, ProductAttributeValue, ProductImage, ProductType } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
 
-type FormType = Omit<Product, 'view' | 'createdAt' | 'updatedAt' | 'productType'> & {
-  productTypeId: number
-  images: (File & { preview: string })[]
+interface FormType {
+  name?: string
+  price?: number
+  priceDiscount?: number
+  quantity?: number
+  vendor?: string
+  typeId?: number
+  shortInfo?: string[]
+  slug?: string
+  description?: string
+  isDraft?: boolean
+  isPublish?: boolean
+  images?: (File & { preview: string })[]
+  attributes?: { attributeId: number; value: string }[]
+}
+
+const defaultFormValue: FormType = {
+  name: undefined,
+  price: undefined,
+  priceDiscount: undefined,
+  quantity: undefined,
+  vendor: undefined,
+  typeId: undefined,
+  shortInfo: undefined,
+  slug: undefined,
+  description: undefined,
+  isDraft: undefined,
+  isPublish: undefined,
+  images: undefined,
+  attributes: undefined,
 }
 
 const AdminProductDetailPage = () => {
@@ -28,47 +55,50 @@ const AdminProductDetailPage = () => {
   const http = useAuthAxios()
 
   // Form
-  const { handleSubmit, register, setValue, watch, control } = useForm<FormType>()
-  const valueVendor = watch('vendor')
-  const valueProductTypeId = watch('productTypeId')
+  const { handleSubmit, setValue, watch, control } = useForm<FormType>({
+    defaultValues: defaultFormValue,
+  })
+  const vendorInputValue = watch('vendor')
+  const typeIdInputValue = watch('typeId')
 
   // Get product detail
-  const productDetailQuery = useQuery({
+  const productQuery = useQuery({
     queryKey: ['product', productId],
     queryFn: () => http.get<SuccessResponse<Product>>(`/products/${productId}`),
     enabled: !!productId,
   })
-  const product = productDetailQuery.data?.data.data
+  const product = productQuery.data?.data.data
 
   // Get product types
-  const productTypesQuery = useQuery({
-    queryKey: ['productTypes'],
+  const typesQuery = useQuery({
+    queryKey: ['types'],
     queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
     enabled: product?.productType === null,
   })
-  const productTypes = productTypesQuery.data?.data.data
-
-  // Get product attribute
-  const productAttributesQuery = useQuery({
-    queryKey: ['productAttributes', valueProductTypeId],
-    queryFn: () => http.get<SuccessResponse<ProductAttribute[]>>(`/products/attributes/${valueProductTypeId}`),
-    enabled: product?.productType === null && !!valueProductTypeId,
-    staleTime: Infinity,
-  })
-  const productAttributes = productAttributesQuery.data?.data.data
+  const types = typesQuery.data?.data.data
 
   // Get product vendors
-  const productVendorsQuery = useQuery({
-    queryKey: ['productVendors'],
+  const vendorsQuery = useQuery({
+    queryKey: ['vendors'],
     queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
   })
-  const productVendors = productVendorsQuery.data?.data.data
+  const vendors = vendorsQuery.data?.data.data
 
-  const suggestList = useMemo(() => {
-    return productVendors?.filter((item) => {
-      return item.toLowerCase().includes(valueVendor?.toLowerCase())
+  // Vendor suggest list
+  const vendorSuggestList = useMemo(() => {
+    return vendors?.filter((vendor) => {
+      return vendor.toLowerCase().includes((vendorInputValue || '').toLowerCase())
     })
-  }, [productVendors, valueVendor])
+  }, [vendors, vendorInputValue])
+
+  // Get product attribute
+  const attributesQuery = useQuery({
+    queryKey: ['attributes', typeIdInputValue],
+    queryFn: () => http.get<SuccessResponse<ProductAttribute[]>>(`/products/attributes/${typeIdInputValue}`),
+    enabled: product?.productType === null && !!typeIdInputValue,
+    staleTime: Infinity,
+  })
+  const attributes = attributesQuery.data?.data.data
 
   // Product mutation
   const productMutation = useMutation({
@@ -87,41 +117,38 @@ const AdminProductDetailPage = () => {
   // Submit form
   const onSubmit: SubmitHandler<FormType> = (data) => {
     // Handle data before send to server
-    data.shortInfo = data.shortInfo?.reduce((result: string[], current) => {
-      return current ? [...result, current] : [...result]
-    }, [])
-    data.productAttributes = data.productAttributes?.reduce((result: ProductAttributeValue[], current) => {
-      return current.value.trim() ? [...result, current] : [...result]
-    }, [])
-    data.slug = data.slug || undefined
+    // data.shortInfo = data.shortInfo?.reduce((result: string[], current) => {
+    //   return current ? [...result, current] : [...result]
+    // }, [])
+    // data.productAttributes = data.productAttributes?.reduce((result: ProductAttributeValue[], current) => {
+    //   return current.value.trim() ? [...result, current] : [...result]
+    // }, [])
+    // data.slug = data.slug || undefined
 
-    const isSomeDataChange = Object.values(data).some((value) => {
-      if ((value instanceof Array && value.length > 0) || (!(value instanceof Array) && value)) {
-        return true
-      }
-      return false
-    })
+    // const isSomeDataChange = Object.values(data).some((value) => {
+    //   if ((value instanceof Array && value.length > 0) || (!(value instanceof Array) && value)) {
+    //     return true
+    //   }
+    //   return false
+    // })
 
-    if (isSomeDataChange) {
-      NProgress.start()
-      productMutation.mutate(data, {
-        onSuccess(data) {
-          productDetailQuery.refetch()
-          setValue('images', [])
-          toast.success(data.data.message)
-        },
-        onError(error) {},
-        onSettled() {
-          NProgress.done()
-        },
-      })
-    } else {
-      toast.info('Dữ liệu chưa có sự thay đổi')
-    }
-  }
-
-  const handleChangeVendor = (value: string) => {
-    setValue('vendor', value)
+    // if (isSomeDataChange) {
+    //   NProgress.start()
+    //   productMutation.mutate(data, {
+    //     onSuccess(data) {
+    //       productDetailQuery.refetch()
+    //       setValue('images', [])
+    //       toast.success(data.data.message)
+    //     },
+    //     onError(error) {},
+    //     onSettled() {
+    //       NProgress.done()
+    //     },
+    //   })
+    // } else {
+    //   toast.info('Dữ liệu chưa có sự thay đổi')
+    // }
+    console.log(data)
   }
 
   const handleDeleteImage = (imageId: number, deleteHash: string) => {
@@ -130,10 +157,12 @@ const AdminProductDetailPage = () => {
       { imageId, deleteHash },
       {
         onSuccess(data) {
-          productDetailQuery.refetch()
+          productQuery.refetch()
           toast.success(data.data.message)
         },
-        onError(error) {},
+        onError(error) {
+          console.log(error)
+        },
         onSettled() {
           NProgress.done()
         },
@@ -213,9 +242,11 @@ const AdminProductDetailPage = () => {
                 <InputAutocomplete
                   label='Thương hiệu'
                   defaultValue={product.vendor}
-                  suggestList={suggestList || []}
+                  suggestList={vendorSuggestList || []}
                   classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-20'
-                  onChange={handleChangeVendor}
+                  onChange={(value: string) => {
+                    setValue('vendor', value)
+                  }}
                 />
               )}
             />
@@ -223,12 +254,12 @@ const AdminProductDetailPage = () => {
             {/* Product type */}
             <Controller
               control={control}
-              name='productTypeId'
+              name='typeId'
               render={({ field }) => (
                 <InputSelect
                   label='Loại sản phẩm'
                   defaultValue={{ id: product.productType?.id, type: product.productType?.type }}
-                  options={productTypes ?? []}
+                  options={types ?? []}
                   propertyDisplay='type'
                   propertyValue='id'
                   disabled={product.productType !== null}
@@ -241,12 +272,12 @@ const AdminProductDetailPage = () => {
             {/* Product attribute */}
             <Controller
               control={control}
-              name='productAttributes'
+              name='attributes'
               render={({ field }) => (
                 <InputProductAttributeValue
                   label='Thuộc tính sản phẩm'
                   classNameWrapper='col-span-12 lg:col-span-12'
-                  attributes={product.productType?.productAttributes ?? productAttributes ?? []}
+                  attributes={product.productType?.productAttributes ?? attributes ?? []}
                   defaultValue={product.productAttributes}
                   onChange={field.onChange}
                 />

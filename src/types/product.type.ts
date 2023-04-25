@@ -20,8 +20,6 @@ export interface ProductImage {
   name: string
   link: string
   order: number
-  type: string
-  productId: number
 }
 
 export interface Product {
@@ -29,14 +27,11 @@ export interface Product {
   name: string
   price: number
   priceDiscount: number
-  view: number
   quantity: number
-  shortInfo: string[]
   vendor: string
+  shortInfo: string[]
   description: string
-  slug?: string
-  createdAt: string
-  updatedAt: string
+  slug: string
   isDraft: boolean
   isPublish: boolean
   productType?: ProductType & {
@@ -44,7 +39,6 @@ export interface Product {
   }
   productAttributes: ProductAttributeValue[]
   images: ProductImage[]
-  categories: []
 }
 
 export interface Product2 {
