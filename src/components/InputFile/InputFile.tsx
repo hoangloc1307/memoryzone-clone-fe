@@ -97,7 +97,10 @@ const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onD
                   </svg>
                 </button>
               </div>
-              <p className='mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-left [direction:rtl]'>
+              <p
+                className='mt-1 cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-left [direction:rtl]'
+                title={image.name}
+              >
                 {image.name}
               </p>
             </div>
@@ -130,7 +133,10 @@ const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onD
                   </svg>
                 </button>
               </div>
-              <p className='mt-1 overflow-hidden text-ellipsis whitespace-nowrap text-left [direction:rtl]'>
+              <p
+                className='mt-1 cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-left [direction:rtl]'
+                title={file.name}
+              >
                 {file.name}
               </p>
             </div>

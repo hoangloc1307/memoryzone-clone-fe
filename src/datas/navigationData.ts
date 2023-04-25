@@ -1,3 +1,5 @@
+import path from '~/constants/path'
+
 export const navigationData = ['Thanh toán', 'Trả góp', 'Liên hệ', 'Chăm sóc khách hàng', 'Thư viện', 'Tuyển dụng']
 
 export const footerNavigationData = [
@@ -79,5 +81,40 @@ export const footerNavigationData = [
         url: '#',
       },
     ],
+  },
+]
+
+export interface AdminNavigation {
+  title: string
+  link: string
+  children: AdminNavigation[]
+}
+
+export const adminNavigation = [
+  {
+    title: 'Dashboard',
+    link: path.admin.dashboard,
+    children: [],
+  },
+  {
+    title: 'Sản phẩm',
+    link: path.admin.products,
+    children: [
+      {
+        title: 'Tất cả sản phẩm',
+        link: path.admin.products,
+        children: [],
+      },
+      {
+        title: 'Thuộc tính sản phẩm',
+        link: path.admin.productAttributes,
+        children: [],
+      },
+    ],
+  },
+  {
+    title: 'Trang web',
+    link: path.home,
+    children: [],
   },
 ]

@@ -9,6 +9,7 @@ const path = {
   admin: {
     dashboard: '/admin',
     products: '/admin/products',
+    productAttributes: '/admin/products/attributes',
   },
 } as const
 
