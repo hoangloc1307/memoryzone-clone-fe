@@ -43,7 +43,9 @@ const AdminProductsPage = () => {
                     />
                   </td>
                   <td className='px-2 py-1 text-sm'>
-                    <span className='font-medium text-primary'>[{product.productType?.type || 'UNKNOWN'}]</span>
+                    <span className='rounded border border-primary bg-primary/20 px-1 py-0.5 text-primary empty:hidden'>
+                      {product.productType?.type}
+                    </span>
                     <span>{` ${product.name}`}</span>
                   </td>
                   <td className='px-2 py-1 text-right text-sm'>

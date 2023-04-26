@@ -10,6 +10,7 @@ const path = {
     dashboard: '/admin',
     products: '/admin/products',
     productAttributes: '/admin/products/attributes',
+    productCategories: '/admin/products/categories',
   },
 } as const
 

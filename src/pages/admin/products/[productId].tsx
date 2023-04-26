@@ -63,7 +63,7 @@ const AdminProductDetailPage = () => {
 
   // Get product detail
   const productQuery = useQuery({
-    queryKey: ['product', productId],
+    queryKey: ['products', productId],
     queryFn: () => http.get<SuccessResponse<Product>>(`/products/${productId}`),
     enabled: !!productId,
   })
