@@ -22,6 +22,13 @@ export interface ProductImage {
   order: number
 }
 
+export interface Category {
+  id: number
+  name: string
+  parentId: number
+  children?: Category[]
+}
+
 export interface Product {
   id: number
   name: string

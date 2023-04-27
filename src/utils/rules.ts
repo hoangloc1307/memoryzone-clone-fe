@@ -1,4 +1,4 @@
-import { object, string, InferType, ref } from 'yup'
+import { object, string, InferType, ref, number } from 'yup'
 
 export const authenSchema = object({
   name: string().required('Họ tên là bắt buộc'),
@@ -11,6 +11,10 @@ export const authenSchema = object({
 
 export const searchSchema = object({
   keyword: string().trim().required(),
+})
+
+export const categorySchema = object({
+  name: string().trim().required('Tên danh mục là bắt buộc'),
 })
 
 export type AuthenSchema = InferType<typeof authenSchema>

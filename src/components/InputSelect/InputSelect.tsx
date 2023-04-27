@@ -10,10 +10,12 @@ interface Props {
   disabled?: boolean
   propertyDisplay: string
   propertyValue: string
+  required?: boolean
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
   onChange?: (value: string | number) => void
+  render?: (item: any, onClick: (item: {}) => () => void, index: number) => React.ReactNode
 }
 
 const InputSelect = ({
@@ -26,7 +28,9 @@ const InputSelect = ({
   classNameWrapper,
   propertyDisplay,
   propertyValue,
+  required,
   onChange,
+  render,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [localValue, setLocalValue] = useState<{}>(defaultValue ?? {})
@@ -44,15 +48,19 @@ const InputSelect = ({
           <>
             {options && options.length > 0 && (
               <div className='c-scrollbar z-20 max-h-40 w-full overflow-auto rounded bg-white py-2 shadow ring-1 ring-black/5'>
-                {options.map((item, index) => (
-                  <p
-                    key={index}
-                    className='bg-white px-3 py-2 hover:bg-primary/10 hover:text-primary'
-                    onClick={handleItemClick(item)}
-                  >
-                    {item[propertyDisplay as keyof {}]}
-                  </p>
-                ))}
+                {options.map((item, index) => {
+                  return render ? (
+                    render(item, handleItemClick, index)
+                  ) : (
+                    <p
+                      key={index}
+                      className='bg-white px-3 py-2 hover:bg-primary/10 hover:text-primary'
+                      onClick={handleItemClick(item)}
+                    >
+                      {item[propertyDisplay as keyof {}]}
+                    </p>
+                  )
+                })}
               </div>
             )}
           </>
@@ -64,7 +72,10 @@ const InputSelect = ({
       >
         <div className={disabled ? 'cursor-not-allowed' : ''}>
           {/* Label */}
-          <label className='block text-sm font-semibold empty:hidden'>{label}</label>
+          <label className='block text-sm font-semibold empty:hidden'>
+            {label}
+            {required && <span className='ml-0.5 text-red-500'>*</span>}
+          </label>
 
           {/* Input */}
           <div className='relative mt-2'>

@@ -64,7 +64,7 @@ export default function AdminLayout({ children }: Props) {
         {renderMenu(adminNavigation, 0)}
       </aside>
       {/* Main */}
-      <main className='grow overflow-y-auto lg:p-5'>{children}</main>
+      <main className='grow overflow-y-auto py-5 lg:p-5'>{children}</main>
     </div>
   )
 }

@@ -17,7 +17,7 @@ const AdminProductsPage = () => {
   const products = productsQuery.data?.data.data
 
   return (
-    <div>
+    <>
       {!products && <p>Loading...</p>}
       {products && (
         <table className='w-full border-collapse border border-slate-300'>
@@ -93,7 +93,7 @@ const AdminProductsPage = () => {
           </tbody>
         </table>
       )}
-    </div>
+    </>
   )
 }
 
