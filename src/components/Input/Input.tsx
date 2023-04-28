@@ -57,7 +57,7 @@ const Input = ({
             ),
             classNameInput
           )}
-          value={localValue}
+          value={defaultValue ?? localValue}
           onChange={handleChange}
           type={type === 'password' ? (visible ? 'text' : 'password') : type}
           placeholder={placeholder}

@@ -6,7 +6,7 @@ import Popover from '../Popover'
 interface Props {
   label?: string
   defaultValue?: {}
-  options: {}[]
+  options: any[]
   disabled?: boolean
   propertyDisplay: string
   propertyValue: string
@@ -15,7 +15,7 @@ interface Props {
   classNameWrapper?: string
   classNameInput?: string
   onChange?: (value: string | number) => void
-  render?: (item: any, onClick: (item: {}) => () => void, index: number) => React.ReactNode
+  render?: (options: {}[], onClick: (item: {}) => () => void) => React.ReactNode
 }
 
 const InputSelect = ({
@@ -34,7 +34,6 @@ const InputSelect = ({
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [localValue, setLocalValue] = useState<{}>(defaultValue ?? {})
-
   const handleItemClick = (item: {}) => () => {
     setLocalValue(item)
     inputRef.current?.click()
@@ -48,19 +47,19 @@ const InputSelect = ({
           <>
             {options && options.length > 0 && (
               <div className='c-scrollbar z-20 max-h-40 w-full overflow-auto rounded bg-white py-2 shadow ring-1 ring-black/5'>
-                {options.map((item, index) => {
-                  return render ? (
-                    render(item, handleItemClick, index)
-                  ) : (
-                    <p
-                      key={index}
-                      className='bg-white px-3 py-2 hover:bg-primary/10 hover:text-primary'
-                      onClick={handleItemClick(item)}
-                    >
-                      {item[propertyDisplay as keyof {}]}
-                    </p>
-                  )
-                })}
+                {render
+                  ? render(options, handleItemClick)
+                  : options.map((item, index) => {
+                      return (
+                        <p
+                          key={index}
+                          className='bg-white px-3 py-2 hover:bg-primary/10 hover:text-primary'
+                          onClick={handleItemClick(item)}
+                        >
+                          {item[propertyDisplay as keyof {}]}
+                        </p>
+                      )
+                    })}
               </div>
             )}
           </>
@@ -92,7 +91,7 @@ const InputSelect = ({
                 classNameInput
               )}
             >
-              {localValue[propertyDisplay as keyof {}] ?? 'Chọn'}
+              {defaultValue?.[propertyDisplay as keyof {}] ?? localValue[propertyDisplay as keyof {}] ?? 'Chọn'}
             </span>
             <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
               <svg
