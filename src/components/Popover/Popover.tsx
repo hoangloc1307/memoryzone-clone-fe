@@ -5,8 +5,8 @@ import {
   offset,
   safePolygon,
   useClick,
+  useDismiss,
   useFloating,
-  useFocus,
   useHover,
   useInteractions,
 } from '@floating-ui/react'
@@ -26,7 +26,6 @@ interface Props {
   floatingElementMaxWidth?: number
   offsetOption?: { mainAxis?: number; crossAxis?: number }
   showOnHover?: boolean
-  showOnFocus?: boolean
   showOnClick?: boolean
   onMouseEnter?: () => void
 }
@@ -43,7 +42,6 @@ export default function Popover({
   floatingElementWidth,
   floatingElementMaxWidth,
   showOnHover = true,
-  showOnFocus = false,
   showOnClick = false,
   onMouseEnter,
 }: Props) {
@@ -67,18 +65,15 @@ export default function Popover({
     enabled: showOnHover,
     handleClose: safePolygon(),
   })
-  const focus = useFocus(context, {
-    enabled: showOnFocus,
-    keyboardOnly: false,
-  })
   const click = useClick(context, {
     enabled: showOnClick,
     ignoreMouse: false,
     toggle: true,
     event: 'click',
   })
+  const dismiss = useDismiss(context)
 
-  const { getReferenceProps, getFloatingProps } = useInteractions([hover, focus, click])
+  const { getReferenceProps, getFloatingProps } = useInteractions([hover, click, dismiss])
 
   const handleChangeOpen = () => {
     if (isOpen) {
@@ -91,7 +86,7 @@ export default function Popover({
       <Element
         ref={refs.setReference}
         className={className}
-        onClick={showOnClick || showOnFocus ? undefined : clickToHide ? handleChangeOpen : undefined}
+        onClick={showOnClick ? undefined : clickToHide ? handleChangeOpen : undefined}
         {...getReferenceProps()}
         onMouseEnter={onMouseEnter}
       >

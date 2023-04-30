@@ -14,15 +14,18 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { categorySchema } from '~/utils/rules'
 import { isAxiosBadRequestError } from '~/utils/utils'
 import Dialog from '~/components/Dialog'
+import InputNumber from '~/components/InputNumber'
 
 interface FormType {
   id?: number
   name: string
+  order: number
   parentId: number
 }
 
 const defaultValues: FormType = {
   name: '',
+  order: 0,
   parentId: 0,
 }
 
@@ -46,7 +49,6 @@ const AdminCategoriesPage = () => {
     queryFn: () => http.get<SuccessResponse<Category[]>>('/category'),
   })
   const categories = categoryQuery.data?.data.data
-  const test = JSON.parse(JSON.stringify(categories || []))
 
   // Add category
   const addCategoryMutation = useMutation({
@@ -65,7 +67,7 @@ const AdminCategoriesPage = () => {
 
   const handleTreeItemClick = (item: Category) => () => {
     setMode('MODIFY')
-    reset({ id: item.id, name: item.name, parentId: item.parentId })
+    reset({ id: item.id, name: item.name, parentId: item.parentId, order: item.order })
   }
 
   const handleDeleteCategory = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, item: Category) => {
@@ -117,11 +119,7 @@ const AdminCategoriesPage = () => {
           {children.map((item) => (
             <li key={item.id}>
               {map.get(item.id) && <input type='checkbox' className='peer' id={`children-of-${item.id}`} hidden />}
-              <div
-                className={classNames('group relative flex select-none items-center gap-1', {
-                  'cursor-pointer': map.get(item.id),
-                })}
-              >
+              <div className='group relative flex select-none items-center gap-1'>
                 <span className={classNames('absolute top-1/2 left-0 h-0.5 w-5 -translate-y-1/2 bg-slate-600')} />
                 {map.get(item.id) && (
                   <label
@@ -155,18 +153,19 @@ const AdminCategoriesPage = () => {
                   </label>
                 )}
                 <div
-                  className={classNames(
-                    'relative w-full cursor-pointer py-1 pl-1 hover:bg-primary/10 group-hover:bg-primary/10',
-                    {
-                      'ml-10': map.get(item.id),
-                      'ml-[20px]': !map.get(item.id),
-                    }
-                  )}
+                  className={classNames('relative w-full py-1 pl-1 hover:bg-primary/10 group-hover:bg-primary/10', {
+                    'ml-10': map.get(item.id),
+                    'ml-[20px]': !map.get(item.id),
+                  })}
                   onClick={handleTreeItemClick(item)}
                 >
                   {item.name}
                 </div>
-                <Dialog onConfirm={(event) => handleDeleteCategory(event, item)}>
+                <Dialog
+                  onConfirm={(event) => handleDeleteCategory(event, item)}
+                  heading='Xác nhận xoá'
+                  content={`Bạn chắc chắn muốn xoá danh mục '${item.name}'`}
+                >
                   <span className='absolute right-1 top-1/2 hidden -translate-y-1/2 cursor-pointer p-1 hover:text-danger group-hover:block'>
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
@@ -281,9 +280,14 @@ const AdminCategoriesPage = () => {
     }
   }
 
+  const onReset = () => {
+    reset(defaultValues)
+    setMode('ADD')
+  }
+
   return (
     <div className='grid h-full gap-5 sm:grid-cols-2'>
-      <div className='h-full rounded border border-slate-300 p-2'>{renderCategoryTree(test || [])}</div>
+      <div className='h-full rounded border border-slate-300 p-2'>{renderCategoryTree(categories || [])}</div>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Name */}
         <Controller
@@ -314,20 +318,31 @@ const AdminCategoriesPage = () => {
               propertyDisplay='name'
               propertyValue='id'
               label='Danh mục cha'
-              classNameWrapper='relative mt-5'
+              classNameWrapper='relative mt-5 z-10'
               onChange={field.onChange}
               render={handleRenderCategorySelect}
             />
           )}
         />
 
+        {/* Order */}
+        <Controller
+          control={control}
+          name='order'
+          render={({ field }) => (
+            <InputNumber label='Thứ tự' classNameWrapper='mt-5' defaultValue={field.value} onChange={field.onChange} />
+          )}
+        />
+
         {/* Submit */}
-        <button
-          className='mt-5 w-full rounded bg-primary py-2 px-4 text-sm font-medium uppercase text-white'
-          type='submit'
-        >
-          {mode === 'ADD' ? 'Thêm danh mục' : 'Cập nhật danh mục'}
-        </button>
+        <div className='mt-5 grid grid-cols-2 gap-5 text-sm font-medium uppercase text-white'>
+          <button className='w-full rounded bg-primary py-2 px-4' type='submit'>
+            {mode === 'ADD' ? 'Thêm danh mục' : 'Cập nhật danh mục'}
+          </button>
+          <button className='w-full rounded bg-danger py-2 px-4' type='reset' onClick={onReset}>
+            {mode === 'ADD' ? 'Đặt lại' : 'Huỷ'}
+          </button>
+        </div>
       </form>
     </div>
   )

@@ -118,8 +118,7 @@ export default function SearchBox() {
       offsetOption={{ mainAxis: 4, crossAxis: 0 }}
       floatingElementWidth='100%'
       showOnHover={false}
-      showOnFocus
-      showOnClick={width < 1024}
+      showOnClick
     >
       <form
         autoComplete='off'

@@ -42,20 +42,32 @@ export default function Dialog({ idPortal = 'id-dialog', heading, content, child
       </div>
       <FloatingPortal id={idPortal}>
         {isOpen && (
-          <FloatingOverlay className='Dialog-overlay z-50 grid place-items-center bg-black/20' lockScroll>
+          <FloatingOverlay className='z-50 grid place-items-center bg-black/20' lockScroll>
             <FloatingFocusManager context={context}>
-              <div className='Dialog rounded bg-white p-4' ref={refs.setFloating} {...getFloatingProps()}>
-                <h3>{heading ?? 'Heading'}</h3>
-                <p>{content ?? 'Content'}</p>
-                <button
-                  onClick={(e) => {
-                    onConfirm && onConfirm(e)
-                    setIsOpen(false)
-                  }}
-                >
-                  Confirm
-                </button>
-                <button onClick={() => setIsOpen(false)}>Cancel</button>
+              <div
+                className='max-w-[300px] rounded bg-white p-4 shadow-xl'
+                ref={refs.setFloating}
+                {...getFloatingProps()}
+              >
+                <h3 className='font-medium'>{heading ?? 'Heading'}</h3>
+                <p className='mt-2 text-sm'>{content ?? 'Content'}</p>
+                <div className='mt-5 flex justify-around gap-3'>
+                  <button
+                    onClick={(e) => {
+                      onConfirm && onConfirm(e)
+                      setIsOpen(false)
+                    }}
+                    className='rounded border border-primary px-2 py-1 text-primary hover:bg-primary hover:text-white'
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className='rounded border border-danger px-2 py-1 text-danger hover:bg-danger hover:text-white'
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </FloatingFocusManager>
           </FloatingOverlay>

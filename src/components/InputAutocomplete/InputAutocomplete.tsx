@@ -59,7 +59,7 @@ const InputAutocomplete = ({
           </>
         }
         showOnHover={false}
-        showOnFocus
+        showOnClick
         floatingElementWidth={'100%'}
         offsetOption={{ mainAxis: 4 }}
       >

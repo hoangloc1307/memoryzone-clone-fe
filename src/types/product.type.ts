@@ -26,6 +26,7 @@ export interface Category {
   id: number
   name: string
   parentId: number
+  order: number
   children?: Category[]
 }
 
@@ -46,6 +47,7 @@ export interface Product {
   }
   productAttributes: ProductAttributeValue[]
   images: ProductImage[]
+  categories: Category[]
 }
 
 export interface Product2 {
