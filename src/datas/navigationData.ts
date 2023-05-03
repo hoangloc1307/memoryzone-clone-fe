@@ -118,6 +118,11 @@ export const adminNavigation = [
     ],
   },
   {
+    title: 'Quản lý hình ảnh',
+    link: path.admin.images,
+    children: [],
+  },
+  {
     title: 'Trang web',
     link: path.home,
     children: [],

@@ -8,6 +8,7 @@ const path = {
   me: '/me',
   admin: {
     dashboard: '/admin',
+    images: '/admin/images',
     products: '/admin/products',
     productAttributes: '/admin/products/attributes',
     productCategories: '/admin/products/categories',

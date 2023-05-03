@@ -330,7 +330,7 @@ const AdminCategoriesPage = () => {
           control={control}
           name='order'
           render={({ field }) => (
-            <InputNumber label='Thứ tự' classNameWrapper='mt-5' defaultValue={field.value} onChange={field.onChange} />
+            <InputNumber label='Thứ tự' classNameWrapper='mt-5' value={field.value} onChange={field.onChange} />
           )}
         />
 

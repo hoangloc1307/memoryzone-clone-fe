@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import Link from 'next/link'
 import { ReactNode, useId } from 'react'
-import path from '~/constants/path'
 import { AdminNavigation, adminNavigation } from '~/datas/navigationData'
 
 interface Props {
@@ -19,10 +18,12 @@ export default function AdminLayout({ children }: Props) {
             <li
               key={index}
               className={classNames({
-                'pl-2': level !== 0,
+                'pl-5': level !== 0,
               })}
             >
-              <Link href={item.link}>{item.title}</Link>
+              <Link href={item.link} className='block py-1 hover:underline'>
+                {item.title}
+              </Link>
               {item.children.length > 0 && renderMenu(item.children, level + 1)}
             </li>
           ))}
