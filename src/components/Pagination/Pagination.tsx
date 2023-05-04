@@ -1,17 +1,15 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import Link from 'next/link'
-import { ProductListConfig } from '~/types/product.type'
 
 interface Props {
-  queryConfig: ProductListConfig
+  currentPage: number
   totalPage: number
   range?: number
+  queryString?: {}
 }
 
-export default function Pagination({ queryConfig, totalPage, range = 1 }: Props) {
-  const currentPage = Number(queryConfig.page)
-
+export default function Pagination({ currentPage = 1, totalPage, range = 1, queryString }: Props) {
   const renderPagination = () => {
     let isRenderDotBefore = false
     let isRenderDotAfter = false
@@ -67,8 +65,7 @@ export default function Pagination({ queryConfig, totalPage, range = 1 }: Props)
               <Link
                 key={index}
                 href={{
-                  pathname: queryConfig.pathname,
-                  query: { ...queryConfig, page: pageNumber },
+                  query: { ...queryString, page: pageNumber },
                 }}
                 className={classNames('w-8 rounded p-1.5 text-center text-sm', {
                   'bg-primary text-white': pageNumber === currentPage,
@@ -89,8 +86,7 @@ export default function Pagination({ queryConfig, totalPage, range = 1 }: Props)
       {currentPage > 1 ? (
         <Link
           href={{
-            pathname: queryConfig.pathname,
-            query: { ...queryConfig, page: currentPage - 1 },
+            query: { ...queryString, page: currentPage - 1 },
           }}
           className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'
         >
@@ -107,8 +103,7 @@ export default function Pagination({ queryConfig, totalPage, range = 1 }: Props)
       {currentPage < totalPage ? (
         <Link
           href={{
-            pathname: queryConfig.pathname,
-            query: { ...queryConfig, page: currentPage + 1 },
+            query: { ...queryString, page: currentPage + 1 },
           }}
           className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'
         >

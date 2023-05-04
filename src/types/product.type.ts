@@ -50,6 +50,15 @@ export interface Product {
   categories: Category[]
 }
 
+export interface ProductWithPagination {
+  pagination: {
+    limit: number
+    page: number
+    total: number
+  }
+  products: Product[]
+}
+
 export interface Product2 {
   id: string
   thumbnail: string

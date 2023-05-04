@@ -27,7 +27,7 @@ export default function CategoryPage() {
   const queryConfig = useQueryConfig()
   const router = useRouter()
   const idCheckbox = useId()
-  const { q, view = 'grid', page, limit = 8, sort_by = 'default', price_min, price_max } = queryConfig
+  const { q, view = 'grid', page = '1', limit = '8', sort_by = 'default', price_min, price_max } = queryConfig
 
   const handleChangeViewStyle = (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     const viewData = (event.target as HTMLElement).dataset.view
@@ -258,7 +258,8 @@ export default function CategoryPage() {
             {/* Pagination */}
             <div className='mt-10'>
               <Pagination
-                queryConfig={queryConfig}
+                queryString={queryConfig}
+                currentPage={Number(page)}
                 range={2}
                 totalPage={Math.ceil(productsData.length / Number(limit))}
               />
