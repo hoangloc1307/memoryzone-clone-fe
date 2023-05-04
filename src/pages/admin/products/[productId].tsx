@@ -270,14 +270,14 @@ const AdminProductDetailPage = () => {
               <Input
                 label='Tên'
                 placeholder='Tên sản phẩm'
-                defaultValue={product.name}
+                value={product.name}
                 classNameWrapper='mt-5'
                 onChange={field.onChange}
               />
             )}
           />
 
-          <div className='mt-5 grid grid-cols-12 gap-5'>
+          <div className='relative z-20 mt-5 grid grid-cols-12 gap-5'>
             {/* Price */}
             <Controller
               name='price'
@@ -327,8 +327,8 @@ const AdminProductDetailPage = () => {
               render={({ field }) => (
                 <InputAutocomplete
                   label='Thương hiệu'
-                  defaultValue={product.vendor}
-                  suggestList={vendorSuggestList || []}
+                  value={product.vendor}
+                  suggestList={vendorSuggestList}
                   classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-20'
                   onChange={(value: string) => {
                     setValue('vendor', value)
@@ -344,7 +344,7 @@ const AdminProductDetailPage = () => {
               render={({ field }) => (
                 <InputSelect
                   label='Loại sản phẩm'
-                  defaultValue={{ id: product.productType?.id, type: product.productType?.type }}
+                  value={{ id: product.productType?.id, type: product.productType?.type }}
                   options={types ?? []}
                   propertyDisplay='type'
                   propertyValue='id'
@@ -377,7 +377,7 @@ const AdminProductDetailPage = () => {
               render={({ field }) => (
                 <InputList
                   label='Mô tả ngắn'
-                  defaultValue={product.shortInfo}
+                  value={product.shortInfo}
                   classNameWrapper='col-span-12 lg:col-span-8 lg:col-start-5 lg:row-span-6 lg:row-start-1'
                   onChange={field.onChange}
                 />
@@ -422,12 +422,7 @@ const AdminProductDetailPage = () => {
             control={control}
             name='slug'
             render={({ field }) => (
-              <Input
-                label='URL tuỳ chỉnh'
-                defaultValue={product.slug}
-                classNameWrapper='mt-5'
-                onChange={field.onChange}
-              />
+              <Input label='URL tuỳ chỉnh' value={product.slug} classNameWrapper='mt-5' onChange={field.onChange} />
             )}
           />
 

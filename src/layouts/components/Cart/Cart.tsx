@@ -1,3 +1,5 @@
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import { ShoppingBagIcon } from '@heroicons/react/24/solid'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -56,7 +58,7 @@ export default function Cart() {
                     </p>
                     <div>
                       <QuantityController
-                        value={quantity[index]}
+                        value={String(quantity[index])}
                         max={100}
                         onDecrease={(value) => handleQuantityChange(value, index, quantity[index] > 1)}
                         onIncrease={(value) => handleQuantityChange(value, index, quantity[index] < 100)}
@@ -75,16 +77,7 @@ export default function Cart() {
                 {/* Delete */}
                 <div className='w-8 shrink-0 text-center'>
                   <button className='rounded-full border border-slate-300 p-2 text-slate-500 outline-none'>
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='h-4 w-4'
-                    >
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-                    </svg>
+                    <XMarkIcon className='h-4 w-4' />
                   </button>
                 </div>
               </li>
@@ -118,13 +111,7 @@ export default function Cart() {
     >
       <Link href={path.cart} className='flex items-center justify-end gap-2'>
         <span className='flex h-10 w-10 items-center justify-center rounded-full border-2 border-white p-1'>
-          <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
-            <path
-              fillRule='evenodd'
-              d='M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z'
-              clipRule='evenodd'
-            />
-          </svg>
+          <ShoppingBagIcon className='h-4 w-4' />
         </span>
         <p className='flex flex-col'>
           <span className='font-bold'>

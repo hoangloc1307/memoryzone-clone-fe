@@ -13,7 +13,7 @@ const InputRichText = ({ label, defaultValue, classNameWrapper, onChange }: Prop
     <div className={classNameWrapper}>
       <label className='mb-2 block text-sm font-semibold empty:hidden'>{label}</label>
       <Editor
-        apiKey={process.env.TINYMCE_KEY}
+        apiKey={process.env.NEXT_PUBLIC_TINYMCE_KEY}
         initialValue={defaultValue}
         onEditorChange={onChange}
         init={{

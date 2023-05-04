@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { navigationData } from '~/datas/navigationData'
 import path from '~/constants/path'
+import { Bars3Icon } from '@heroicons/react/24/outline'
 
 export default function Hamburger() {
   const [show, setShow] = useState(false)
@@ -11,18 +12,7 @@ export default function Hamburger() {
   return (
     <>
       {/* Icon */}
-      <span onClick={() => setShow((prev) => !prev)}>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          strokeWidth={1.5}
-          stroke='currentColor'
-          className='h-6 w-6'
-        >
-          <path strokeLinecap='round' strokeLinejoin='round' d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5' />
-        </svg>
-      </span>
+      <Bars3Icon className='h-6 w-6' onClick={() => setShow((prev) => !prev)} />
 
       {/* Popover */}
       <div

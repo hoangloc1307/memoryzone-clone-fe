@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Props as InputProps } from '../Input'
 import classNames from 'classnames'
+import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
 interface Props extends InputProps {
   max?: number
@@ -107,16 +108,7 @@ export default function QuantityController({ max, value, onDecrease, onIncrease,
         onTouchEnd={handleMouseLeave}
         onMouseLeave={handleMouseLeave}
       >
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          strokeWidth={1.5}
-          stroke='currentColor'
-          className='pointer-events-none h-4 w-4'
-        >
-          <path strokeLinecap='round' strokeLinejoin='round' d='M19.5 12h-15' />
-        </svg>
+        <MinusIcon className='pointer-events-none h-4 w-4' />
       </button>
       <input
         type='number'
@@ -138,16 +130,7 @@ export default function QuantityController({ max, value, onDecrease, onIncrease,
         onTouchEnd={handleMouseLeave}
         onMouseLeave={handleMouseLeave}
       >
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          fill='none'
-          viewBox='0 0 24 24'
-          strokeWidth={1.5}
-          stroke='currentColor'
-          className='pointer-events-none h-4 w-4'
-        >
-          <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-        </svg>
+        <PlusIcon className='pointer-events-none h-4 w-4' />
       </button>
     </div>
   )

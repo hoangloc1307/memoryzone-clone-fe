@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         return axios
-          .post(`${process.env.backEndUrl}/auth/login`, credentials, {
+          .post(`${process.env.NEXT_PUBLIC_BACK_END_URL}/auth/login`, credentials, {
             headers: { 'Content-Type': 'application/json' },
           })
           .then((res) => {
@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
       if (account && account.provider !== 'credentials') {
         try {
           const res = await axios.post(
-            `${process.env.backEndUrl}/auth/get-access-token`,
+            `${process.env.NEXT_PUBLIC_BACK_END_URL}/auth/get-access-token`,
             { ...user, ...account },
             { headers: { 'Content-Type': 'application/json' } }
           )

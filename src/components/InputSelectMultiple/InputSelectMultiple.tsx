@@ -1,5 +1,6 @@
 import { memo, useState } from 'react'
 import Popover from '../Popover'
+import { ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   label?: string
@@ -72,18 +73,7 @@ const InputSelectMultiple = ({
               className='flex items-center gap-1 rounded border border-slate-300 px-2 py-1 text-sm'
             >
               <span>{item[propertyDisplay]}</span>
-              <span className='cursor-pointer py-0.5 hover:text-danger' onClick={handleDeleteItem(item)}>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='h-4 w-4'
-                >
-                  <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-                </svg>
-              </span>
+              <XMarkIcon className='h-5 w-4 cursor-pointer py-0.5 hover:text-danger' onClick={handleDeleteItem(item)} />
             </div>
           ))}
 
@@ -120,30 +110,17 @@ const InputSelectMultiple = ({
       >
         {/* Input */}
         <div className='relative mt-2'>
-          <span className='flex h-10 w-full cursor-pointer select-none items-center rounded border border-slate-300 px-3 text-sm outline-none focus:ring-1 focus:ring-primary'>
+          <span className='flex h-10 w-full cursor-pointer select-none items-center rounded border border-slate-300 px-3 text-sm outline-none'>
             {defaultValue?.[propertyDisplay as keyof {}] ?? localValue[propertyDisplay as keyof {}] ?? 'Chọn'}
           </span>
           <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='text-gray-400 h-5 w-5'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9'
-              />
-            </svg>
+            <ChevronUpDownIcon className='h-5 w-5' />
           </span>
         </div>
       </Popover>
 
       {/* Error message */}
-      <p className='mt-2 text-xs italic text-red-500 empty:hidden'>{errorMessage}</p>
+      {errorMessage && <p className='mt-2 text-xs italic text-red-500 empty:hidden'>{errorMessage}</p>}
     </div>
   )
 }

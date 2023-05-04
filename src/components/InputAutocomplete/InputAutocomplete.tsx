@@ -4,8 +4,8 @@ import Popover from '../Popover'
 
 export interface Props {
   label?: string
-  suggestList: string[]
-  defaultValue?: string
+  suggestList?: string[]
+  value?: string
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
@@ -16,7 +16,7 @@ export interface Props {
 const InputAutocomplete = ({
   label,
   suggestList,
-  defaultValue,
+  value,
   errorMessage,
   classNameWrapper,
   classNameInput,
@@ -24,17 +24,17 @@ const InputAutocomplete = ({
 }: Props) => {
   const id = useId()
   const inputRef = useRef<HTMLInputElement>(null)
-  const [localValue, setLocalValue] = useState(defaultValue ?? '')
+  const [localValue, setLocalValue] = useState(value ?? '')
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value
-    setLocalValue(value)
-    onChange && onChange(value)
+    const _value = event.target.value
+    setLocalValue(_value)
+    onChange && onChange(_value)
   }
 
   const handleItemClick = (item: string) => () => {
-    setLocalValue(item)
     inputRef.current?.focus()
+    setLocalValue(item)
     onChange && onChange(item)
   }
 
@@ -43,8 +43,8 @@ const InputAutocomplete = ({
       <Popover
         floatingElement={
           <>
-            {suggestList.length > 0 && (
-              <div className='c-scrollbar z-20 max-h-40 w-full overflow-auto rounded bg-white py-2 shadow ring-1 ring-black/5'>
+            {suggestList && suggestList.length > 0 && (
+              <div className='c-scrollbar z-10 max-h-40 w-full overflow-auto rounded bg-white py-2 shadow ring-1 ring-black/5'>
                 {suggestList.map((item) => (
                   <p
                     key={item}
@@ -64,9 +64,11 @@ const InputAutocomplete = ({
         offsetOption={{ mainAxis: 4 }}
       >
         {/* Label */}
-        <label className='block text-sm font-semibold empty:hidden' htmlFor={id}>
-          {label}
-        </label>
+        {label && (
+          <label className='block text-sm font-semibold empty:hidden' htmlFor={id}>
+            {label}
+          </label>
+        )}
 
         {/* Input */}
         <input
@@ -83,7 +85,7 @@ const InputAutocomplete = ({
       </Popover>
 
       {/* Error message */}
-      <p className='mt-2 text-xs italic text-red-500 empty:hidden'>{errorMessage}</p>
+      {errorMessage && <p className='mt-2 text-xs italic text-red-500 empty:hidden'>{errorMessage}</p>}
     </div>
   )
 }

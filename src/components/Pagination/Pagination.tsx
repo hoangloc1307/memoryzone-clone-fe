@@ -1,3 +1,4 @@
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import classNames from 'classnames'
 import Link from 'next/link'
 import { ProductListConfig } from '~/types/product.type'
@@ -93,29 +94,11 @@ export default function Pagination({ queryConfig, totalPage, range = 1 }: Props)
           }}
           className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'
         >
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='h-5 w-5'
-          >
-            <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
-          </svg>
+          <ChevronLeftIcon className='h-5 w-5' />
         </Link>
       ) : (
         <span className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='h-5 w-5'
-          >
-            <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
-          </svg>
+          <ChevronLeftIcon className='h-5 w-5' />
         </span>
       )}
       {/* Number */}
@@ -129,29 +112,11 @@ export default function Pagination({ queryConfig, totalPage, range = 1 }: Props)
           }}
           className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'
         >
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='h-5 w-5'
-          >
-            <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
-          </svg>
+          <ChevronRightIcon className='h-5 w-5' />
         </Link>
       ) : (
         <span className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='h-5 w-5'
-          >
-            <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
-          </svg>
+          <ChevronRightIcon className='h-5 w-5' />
         </span>
       )}
     </div>

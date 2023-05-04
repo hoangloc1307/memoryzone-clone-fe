@@ -5,6 +5,7 @@ import { cartData } from '~/datas/cartData'
 import QuantityController from '~/components/QuantityController'
 import { generateSlug } from '~/utils/url'
 import { numberAsCurrency } from '~/utils/utils'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 
 export default function CartPage() {
   const [quantity, setQuantity] = useState(cartData.map((item) => item.quantity))
@@ -68,7 +69,7 @@ export default function CartPage() {
                   </p>
                   <div className='lg:text-center'>
                     <QuantityController
-                      value={quantity[index]}
+                      value={String(quantity[index])}
                       max={100}
                       onDecrease={(value) => handleQuantityChange(value, index, quantity[index] > 1)}
                       onIncrease={(value) => handleQuantityChange(value, index, quantity[index] < 100)}
@@ -87,16 +88,7 @@ export default function CartPage() {
               {/* Delete */}
               <div className='w-10 shrink-0 text-center'>
                 <button className='rounded-full border border-slate-300 p-2 text-slate-500 outline-none'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='h-4 w-4'
-                  >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-                  </svg>
+                  <XMarkIcon className='h-4 w-4' />
                 </button>
               </div>
             </li>

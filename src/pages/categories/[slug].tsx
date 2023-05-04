@@ -1,4 +1,6 @@
 import { Listbox } from '@headlessui/react'
+import { BarsArrowDownIcon, ListBulletIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { AdjustmentsHorizontalIcon, Squares2X2Icon } from '@heroicons/react/24/solid'
 import classNames from 'classnames'
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
@@ -132,30 +134,8 @@ export default function CategoryPage() {
             htmlFor={idCheckbox}
             className='group fixed top-1/2 left-0 z-10 flex h-10 w-[340px] -translate-x-[300px] -translate-y-1/2 items-center justify-center rounded-r-full bg-primary pl-[300px] pr-1.5 text-white transition-all duration-500 ease-in-out peer-checked:translate-x-0 peer-checked:bg-danger lg:hidden'
           >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='h-6 w-6 peer-checked:group-first-of-type:hidden'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75'
-              />
-            </svg>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='hidden h-6 w-6 peer-checked:group-first-of-type:block'
-            >
-              <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-            </svg>
+            <AdjustmentsHorizontalIcon className='h-6 w-6 peer-checked:group-first-of-type:hidden' />
+            <XMarkIcon className='hidden h-6 w-6 peer-checked:group-first-of-type:block' />
           </label>
           {/* Filter */}
           <div className='fixed top-0 left-0 z-10 h-screen w-[300px] -translate-x-full space-y-10 overflow-auto bg-white p-3 pr-10 pt-12 shadow-lg transition-transform duration-500 ease-in-out peer-checked:translate-x-0 lg:static lg:z-0 lg:col-span-3 lg:h-full lg:w-full lg:translate-x-0 lg:p-0 lg:pt-12 lg:shadow-none'>
@@ -206,18 +186,7 @@ export default function CategoryPage() {
                 className='inline-block cursor-pointer rounded border border-slate-400 p-1.5 text-slate-400 data-[view-active=true]:border-primary data-[view-active=true]:bg-primary data-[view-active=true]:text-white'
                 onClick={handleChangeViewStyle}
               >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  fill='currentColor'
-                  className='pointer-events-none h-5 w-5'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M2.625 6.75a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0A.75.75 0 018.25 6h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75zM2.625 12a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zM7.5 12a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12A.75.75 0 017.5 12zm-4.875 5.25a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0zm4.875 0a.75.75 0 01.75-.75h12a.75.75 0 010 1.5h-12a.75.75 0 01-.75-.75z'
-                    clipRule='evenodd'
-                  />
-                </svg>
+                <ListBulletIcon className='pointer-events-none h-5 w-5' />
               </span>
               <span
                 data-view='grid'
@@ -225,18 +194,7 @@ export default function CategoryPage() {
                 className='ml-1 inline-block cursor-pointer rounded border border-slate-400 p-1.5 text-slate-400 data-[view-active=true]:border-primary data-[view-active=true]:bg-primary data-[view-active=true]:text-white'
                 onClick={handleChangeViewStyle}
               >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  fill='currentColor'
-                  className='pointer-events-none h-5 w-5'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M3 6a3 3 0 013-3h2.25a3 3 0 013 3v2.25a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm9.75 0a3 3 0 013-3H18a3 3 0 013 3v2.25a3 3 0 01-3 3h-2.25a3 3 0 01-3-3V6zM3 15.75a3 3 0 013-3h2.25a3 3 0 013 3V18a3 3 0 01-3 3H6a3 3 0 01-3-3v-2.25zm9.75 0a3 3 0 013-3H18a3 3 0 013 3V18a3 3 0 01-3 3h-2.25a3 3 0 01-3-3v-2.25z'
-                    clipRule='evenodd'
-                  />
-                </svg>
+                <Squares2X2Icon className='pointer-events-none h-5 w-5' />
               </span>
 
               {/* Sort by */}
@@ -245,20 +203,7 @@ export default function CategoryPage() {
                   <Listbox.Button className='group relative h-[34px] w-[180px] rounded border border-slate-400 px-3 py-1.5 text-left leading-4 text-[#444] data-[headlessui-state=open]:rounded-b-none data-[headlessui-state=open]:border-primary'>
                     {sortByValueToText(sort_by as SortType)}
                     <span className='absolute top-1/2 right-3 -translate-y-1/2'>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        strokeWidth={1.5}
-                        stroke='currentColor'
-                        className='h-5 w-5'
-                      >
-                        <path
-                          strokeLinecap='round'
-                          strokeLinejoin='round'
-                          d='M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25'
-                        />
-                      </svg>
+                      <BarsArrowDownIcon className='h-5 w-5' />
                     </span>
                   </Listbox.Button>
                   <Listbox.Options className='absolute top-[34px] left-0 z-10 w-full rounded-b border border-y-0 border-slate-400 bg-white shadow'>

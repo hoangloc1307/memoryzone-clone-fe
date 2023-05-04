@@ -16,7 +16,7 @@ import { hotBrandsData } from '~/datas/sliderData'
 import { homeSlogan } from '~/datas/sloganData'
 import useViewport from '~/hooks/useViewport'
 import { Banner as BannerType } from '~/types/banner.type'
-import { Product } from '~/types/product.type'
+import { Product, Product2 } from '~/types/product.type'
 
 interface DataProductWithCategory {
   category: string
@@ -25,7 +25,7 @@ interface DataProductWithCategory {
     category: string
     url: string
   }[]
-  products: Product[]
+  products: Product2[]
   banners: BannerType[]
 }
 

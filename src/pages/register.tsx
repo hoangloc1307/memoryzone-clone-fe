@@ -5,7 +5,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import NProgress from 'nprogress'
-import { SubmitHandler, useForm } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import Input from '~/components/Input'
 import layout from '~/constants/layout'
 import path from '~/constants/path'
@@ -20,9 +20,9 @@ const RegisterPage = () => {
   const router = useRouter()
   const http = useAuthAxios()
   const {
-    register,
     setError,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<FormType>({ resolver: yupResolver(authenSchema) })
 
@@ -73,43 +73,67 @@ const RegisterPage = () => {
               <div className='h-2 rounded-t-md bg-primary/70' />
               <div className='px-8 py-6'>
                 <form onSubmit={handleSubmit(onSubmit)}>
-                  <Input
-                    label='Họ tên'
-                    placeholder='Họ tên'
+                  <Controller
+                    control={control}
                     name='name'
-                    register={register}
-                    required
-                    errorMessage={errors.name?.message}
+                    render={({ field }) => (
+                      <Input
+                        label='Họ tên'
+                        placeholder='Họ tên'
+                        required
+                        errorMessage={errors.name?.message}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
-                  <Input
-                    label='Email'
-                    placeholder='Email'
-                    classNameWrapper='mt-5'
+
+                  <Controller
+                    control={control}
                     name='email'
-                    register={register}
-                    required
-                    errorMessage={errors.email?.message}
+                    render={({ field }) => (
+                      <Input
+                        label='Email'
+                        placeholder='Email'
+                        classNameWrapper='mt-5'
+                        required
+                        errorMessage={errors.email?.message}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
-                  <Input
-                    label='Mật khẩu'
-                    placeholder='Mật khẩu'
-                    classNameWrapper='mt-5'
-                    register={register}
+
+                  <Controller
+                    control={control}
                     name='password'
-                    type='password'
-                    required
-                    errorMessage={errors.password?.message}
+                    render={({ field }) => (
+                      <Input
+                        label='Mật khẩu'
+                        placeholder='Mật khẩu'
+                        classNameWrapper='mt-5'
+                        type='password'
+                        required
+                        errorMessage={errors.password?.message}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
-                  <Input
-                    label='Nhập lại mật khẩu'
-                    placeholder='Nhập lại mật khẩu'
-                    classNameWrapper='mt-5'
-                    register={register}
+
+                  <Controller
+                    control={control}
                     name='confirmPassword'
-                    type='password'
-                    required
-                    errorMessage={errors.confirmPassword?.message}
+                    render={({ field }) => (
+                      <Input
+                        label='Nhập lại mật khẩu'
+                        placeholder='Nhập lại mật khẩu'
+                        classNameWrapper='mt-5'
+                        type='password'
+                        required
+                        errorMessage={errors.confirmPassword?.message}
+                        onChange={field.onChange}
+                      />
+                    )}
                   />
+
                   <div className='flex items-baseline justify-center'>
                     <button
                       type='submit'

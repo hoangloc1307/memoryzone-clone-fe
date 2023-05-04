@@ -1,5 +1,5 @@
 import axios, { AxiosError, HttpStatusCode } from 'axios'
-import { Product, SortType } from '~/types/product.type'
+import { Product, Product2, SortType } from '~/types/product.type'
 import { ErrorResponse } from '~/types/response.type'
 
 export const isBrowser = typeof window !== 'undefined'
@@ -63,7 +63,7 @@ export const shortSpecsToHTML = (shortSpecs: string[]) => {
   return html
 }
 
-export const sortProductsBy = (products: Product[], sortValue: SortType): Product[] => {
+export const sortProductsBy = (products: Product2[], sortValue: SortType): Product2[] => {
   if (products && products.length > 0) {
     const temp = [...products]
     switch (sortValue) {

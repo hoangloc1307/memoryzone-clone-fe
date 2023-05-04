@@ -2,10 +2,11 @@ import classNames from 'classnames'
 import { memo, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import Popover from '../Popover'
+import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   label?: string
-  defaultValue?: {}
+  value?: {}
   options: any[]
   disabled?: boolean
   propertyDisplay: string
@@ -20,7 +21,7 @@ interface Props {
 
 const InputSelect = ({
   label,
-  defaultValue,
+  value,
   options,
   disabled,
   errorMessage,
@@ -33,7 +34,8 @@ const InputSelect = ({
   render,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [localValue, setLocalValue] = useState<{}>(defaultValue ?? {})
+  const [localValue, setLocalValue] = useState<{}>(value ?? {})
+
   const handleItemClick = (item: {}) => () => {
     setLocalValue(item)
     inputRef.current?.click()
@@ -46,7 +48,7 @@ const InputSelect = ({
         floatingElement={
           <>
             {options && options.length > 0 && (
-              <div className='c-scrollbar z-20 max-h-40 w-full overflow-auto rounded bg-white py-2 shadow ring-1 ring-black/5'>
+              <div className='c-scrollbar relative z-10 max-h-40 w-full overflow-auto rounded bg-white py-2 shadow ring-1 ring-black/5'>
                 {render
                   ? render(options, handleItemClick)
                   : options.map((item, index) => {
@@ -71,10 +73,12 @@ const InputSelect = ({
       >
         <div className={disabled ? 'cursor-not-allowed' : ''}>
           {/* Label */}
-          <label className='block text-sm font-semibold empty:hidden'>
-            {label}
-            {required && <span className='ml-0.5 text-red-500'>*</span>}
-          </label>
+          {label && (
+            <label className='block text-sm font-semibold empty:hidden'>
+              {label}
+              {required && <span className='ml-0.5 text-red-500'>*</span>}
+            </label>
+          )}
 
           {/* Input */}
           <div className='relative mt-2'>
@@ -91,30 +95,17 @@ const InputSelect = ({
                 classNameInput
               )}
             >
-              {defaultValue?.[propertyDisplay as keyof {}] ?? localValue[propertyDisplay as keyof {}] ?? 'Chọn'}
+              {value?.[propertyDisplay as keyof {}] ?? localValue[propertyDisplay as keyof {}] ?? 'Chọn'}
             </span>
             <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={1.5}
-                stroke='currentColor'
-                className='text-gray-400 h-5 w-5'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9'
-                />
-              </svg>
+              <ChevronUpDownIcon className='h-5 w-5' />
             </span>
           </div>
         </div>
       </Popover>
 
       {/* Error message */}
-      <p className='mt-2 text-xs italic text-red-500 empty:hidden'>{errorMessage}</p>
+      {errorMessage && <p className='mt-2 text-xs italic text-red-500 empty:hidden'>{errorMessage}</p>}
     </div>
   )
 }

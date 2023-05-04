@@ -4,9 +4,10 @@ import type { Settings } from 'react-slick'
 import Slider from 'react-slick'
 import useViewport from '~/hooks/useViewport'
 import { Banner as BannerType } from '~/types/banner.type'
-import { Product } from '~/types/product.type'
+import { Product2 } from '~/types/product.type'
 import Banner from '../Banner'
 import ProductItem from '../ProductItem'
+import { BarsArrowDownIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   data: {
@@ -16,7 +17,7 @@ interface Props {
       category: string
       url: string
     }[]
-    products: Product[]
+    products: Product2[]
     banners: BannerType[]
   }
   bannerPosition?: 'left' | 'right'
@@ -58,36 +59,14 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
               ))}
               <li className='hidden  lg:list-item lg:text-[#444]'>
                 <div className='flex'>
-                  <span
-                    className='block cursor-pointer p-1 hover:text-primary'
+                  <ChevronLeftIcon
+                    className='h-8 w-8 cursor-pointer p-1 hover:text-primary'
                     onClick={() => slickRef.current?.slickPrev()}
-                  >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='h-6 w-6'
-                    >
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M15.75 19.5L8.25 12l7.5-7.5' />
-                    </svg>
-                  </span>
-                  <span
-                    className='block cursor-pointer p-1 hover:text-primary'
+                  />
+                  <ChevronRightIcon
+                    className='h-8 w-8 cursor-pointer p-1 hover:text-primary'
                     onClick={() => slickRef.current?.slickNext()}
-                  >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      strokeWidth={1.5}
-                      stroke='currentColor'
-                      className='h-6 w-6'
-                    >
-                      <path strokeLinecap='round' strokeLinejoin='round' d='M8.25 4.5l7.5 7.5-7.5 7.5' />
-                    </svg>
-                  </span>
+                  />
                 </div>
               </li>
             </ul>
@@ -96,15 +75,7 @@ export default function ProductAndCategory({ data, bannerPosition = 'left' }: Pr
               htmlFor={inputId}
               className='absolute top-1/2 right-0 h-10 -translate-y-1/2 p-2 pr-0 transition-transform duration-700 peer-checked:rotate-[540deg] peer-checked:text-primary lg:hidden'
             >
-              <span>
-                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-6 w-6'>
-                  <path
-                    fillRule='evenodd'
-                    d='M2.25 4.5A.75.75 0 013 3.75h14.25a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75zm0 4.5A.75.75 0 013 8.25h9.75a.75.75 0 010 1.5H3A.75.75 0 012.25 9zm15-.75A.75.75 0 0118 9v10.19l2.47-2.47a.75.75 0 111.06 1.06l-3.75 3.75a.75.75 0 01-1.06 0l-3.75-3.75a.75.75 0 111.06-1.06l2.47 2.47V9a.75.75 0 01.75-.75zm-15 5.25a.75.75 0 01.75-.75h9.75a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-              </span>
+              <BarsArrowDownIcon className='h-6 w-6' />
             </label>
           </div>
           {/* Product list */}

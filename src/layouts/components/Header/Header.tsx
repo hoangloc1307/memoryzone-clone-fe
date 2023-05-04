@@ -10,6 +10,7 @@ import Hamburger from '../Hamburger'
 import SearchBox from '../SearchBox'
 import { memo, useCallback } from 'react'
 import useAuthAxios from '~/hooks/useAuthAxios'
+import { ChatBubbleOvalLeftEllipsisIcon, FireIcon, PhoneIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 
 const Header = () => {
   const { data: session } = useSession()
@@ -70,53 +71,17 @@ const Header = () => {
                 showArrow
               >
                 <div className='flex cursor-default items-center gap-0.5 py-1 sm:py-2'>
-                  <span>
-                    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
-                      <path
-                        fillRule='evenodd'
-                        d='M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z'
-                        clipRule='evenodd'
-                      />
-                    </svg>
-                  </span>
+                  <UserCircleIcon className='h-4 w-4' />
                   <span>{session?.user?.name || 'Tài khoản'}</span>
                 </div>
               </Popover>
               {/* Hot sale */}
               <a href='#' className='group flex items-center gap-0.5 py-1 sm:py-2'>
-                <span>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='red'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='orange'
-                    className='h-4 w-4 text-red-500'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      d='M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z'
-                    />
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      d='M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z'
-                    />
-                  </svg>
-                </span>
+                <FireIcon className='h-4 w-4 text-red-500' stroke='orange' />
                 <span className='group-hover:text-warn'>Khuyến mãi hot</span>
               </a>
               <a href='#' className='group flex items-center gap-0.5 py-1 sm:py-2'>
-                <span>
-                  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
-                    <path
-                      fillRule='evenodd'
-                      d='M5.337 21.718a6.707 6.707 0 01-.533-.074.75.75 0 01-.44-1.223 3.73 3.73 0 00.814-1.686c.023-.115-.022-.317-.254-.543C3.274 16.587 2.25 14.41 2.25 12c0-5.03 4.428-9 9.75-9s9.75 3.97 9.75 9c0 5.03-4.428 9-9.75 9-.833 0-1.643-.097-2.417-.279a6.721 6.721 0 01-4.246.997z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                </span>
+                <ChatBubbleOvalLeftEllipsisIcon className='h-4 w-4' />
                 <span className='group-hover:text-warn'>Dịch vụ doanh nghiệp</span>
               </a>
             </div>
@@ -140,13 +105,7 @@ const Header = () => {
             {/* Hotline */}
             <div className='col-span-7 flex items-center gap-2 md:hidden lg:col-span-3 lg:flex lg:justify-self-end'>
               <span className='flex h-10 w-10 items-center justify-center rounded-full border-2 border-white p-1'>
-                <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' className='h-4 w-4'>
-                  <path
-                    fillRule='evenodd'
-                    d='M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z'
-                    clipRule='evenodd'
-                  />
-                </svg>
+                <PhoneIcon className='h-4 w-4' />
               </span>
               <p className='flex flex-col'>
                 <span className='font-bold'>(028) 7301 3878 (10 line)</span>

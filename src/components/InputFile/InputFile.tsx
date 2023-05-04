@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { memo, useEffect, useRef, useState } from 'react'
 import { ProductImage } from '~/types/product.type'
+import { ArrowUpTrayIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   label?: string
@@ -85,16 +86,7 @@ const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onD
                   type='button'
                   onClick={handleDeleteDefaultImage(image.id, image.deleteHash)}
                 >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='pointer-events-none h-10 w-10'
-                  >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-                  </svg>
+                  <XMarkIcon className='pointer-events-none h-10 w-10' />
                 </button>
               </div>
               <p
@@ -121,16 +113,7 @@ const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onD
                   type='button'
                   onClick={handleDelete(index)}
                 >
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                    strokeWidth={1.5}
-                    stroke='currentColor'
-                    className='pointer-events-none h-10 w-10'
-                  >
-                    <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-                  </svg>
+                  <XMarkIcon className='pointer-events-none h-10 w-10' />
                 </button>
               </div>
               <p
@@ -149,22 +132,7 @@ const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onD
           className='flex h-[120px] w-[160px] flex-col items-center justify-center gap-2 rounded border border-slate-300'
           onClick={handleAdd}
         >
-          <span>
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='h-5 w-5'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                d='M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5'
-              />
-            </svg>
-          </span>
+          <ArrowUpTrayIcon className='h-5 w-5' />
           <span>Tải ảnh lên</span>
         </button>
       </div>

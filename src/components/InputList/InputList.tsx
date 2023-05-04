@@ -1,45 +1,42 @@
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import React, { memo, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export interface Props {
   label?: string
-  defaultValue?: string[]
+  value?: string[]
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
   onChange?: (value: string[]) => void
 }
 
-const InputList = ({ label, defaultValue, errorMessage, classNameWrapper, classNameInput, onChange }: Props) => {
-  const [localValue, setLocalValue] = useState<string[]>(defaultValue && defaultValue.length > 0 ? defaultValue : [''])
+const InputList = ({ label, value, errorMessage, classNameWrapper, classNameInput, onChange }: Props) => {
+  const [localValue, setLocalValue] = useState<string[]>(value ?? [''])
 
   const handleRemove = (index: number) => () => {
-    const value = localValue.filter((_, i) => index !== i)
-    setLocalValue(value)
-    onChange && onChange(value)
+    const _value = localValue.filter((_, idx) => index !== idx)
+    setLocalValue(_value)
+    onChange && onChange(_value)
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const value = localValue.map((item, i) => {
-      if (index === i) {
-        return event.target.value
-      }
-      return item
-    })
-    setLocalValue(value)
-    onChange && onChange(value)
+    const _value = [...localValue]
+    _value[index] = event.target.value
+    setLocalValue(_value)
+    onChange && onChange(_value)
   }
 
   const handleAdd = () => {
-    const value = [...localValue, '']
-    setLocalValue(value)
-    onChange && onChange(value)
+    const _value = [...localValue, '']
+    setLocalValue(_value)
+    onChange && onChange(_value)
   }
 
   return (
     <div className={classNameWrapper}>
       {/* Label */}
-      <label className='block text-sm font-semibold empty:hidden'>{label}</label>
+      {label && <label className='block text-sm font-semibold empty:hidden'>{label}</label>}
 
       {localValue.map((item, index) => (
         <div key={index} className='relative mt-2'>
@@ -55,22 +52,10 @@ const InputList = ({ label, defaultValue, errorMessage, classNameWrapper, classN
           />
 
           {/* Delete button */}
-          <button
-            className='absolute top-1/2 right-0 -translate-y-1/2 border-l border-l-slate-300 p-2 hover:text-danger'
+          <XMarkIcon
+            className='absolute top-0 right-0 h-10 w-10 cursor-pointer border-l border-l-slate-300 p-2 hover:text-danger'
             onClick={handleRemove(index)}
-            type='button'
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              fill='none'
-              viewBox='0 0 24 24'
-              strokeWidth={1.5}
-              stroke='currentColor'
-              className='h-6 w-6'
-            >
-              <path strokeLinecap='round' strokeLinejoin='round' d='M6 18L18 6M6 6l12 12' />
-            </svg>
-          </button>
+          />
         </div>
       ))}
 
@@ -80,23 +65,12 @@ const InputList = ({ label, defaultValue, errorMessage, classNameWrapper, classN
         className='mt-2 ml-auto mr-0 flex items-center gap-2 rounded bg-primary py-1 px-3 text-white'
         onClick={handleAdd}
       >
-        <span>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='h-5 w-5'
-          >
-            <path strokeLinecap='round' strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-          </svg>
-        </span>
+        <PlusIcon className='h-5 w-5' />
         <span>Thêm</span>
       </button>
 
       {/* Error message */}
-      <p className='mt-2 text-xs text-red-500 empty:hidden'>{errorMessage}</p>
+      {errorMessage && <p className='mt-2 text-xs text-red-500 empty:hidden'>{errorMessage}</p>}
     </div>
   )
 }
