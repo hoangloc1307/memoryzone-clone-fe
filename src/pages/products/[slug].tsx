@@ -82,7 +82,9 @@ export default function ProductDetailPage() {
               {/* Name */}
               <h1 className='text-2xl font-medium text-dark'>{product.name}</h1>
               {/* Stars */}
-              <RatingStars rating={product.rating} classNameStars='w-6 h-6' classNameWrapper='mt-2 items-start' />
+              <div className='mt-2 items-start'>
+                <RatingStars rating={product.rating} size='lg' />
+              </div>
               {/* Brand and status */}
               <div className='mt-2 flex items-center gap-2 text-sm'>
                 <p>

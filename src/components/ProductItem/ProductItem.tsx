@@ -21,7 +21,6 @@ interface Props {
     priceWrapper?: string
     priceDiscount?: string
     starsWrapper?: string
-    stars?: string
   }
 }
 
@@ -75,7 +74,7 @@ export default function ProductItem({ product, showRating, showDiscountPercent, 
           {/* Rating start */}
           {showRating && (
             <div className={twMerge('mt-2 flex justify-center', customClass?.starsWrapper)}>
-              <RatingStars rating={product.rating} classNameStars={customClass?.stars} />
+              <RatingStars rating={product.rating} size='sm' />
             </div>
           )}
           {/* Short specs */}

@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useRef, useState } from 'react'
 import Pagination from '~/components/Pagination'
+import RatingStars from '~/components/RatingStars'
 import layout from '~/constants/layout'
 import path from '~/constants/path'
 import useAuthAxios from '~/hooks/useAuthAxios'
@@ -87,68 +88,74 @@ const AdminProductsPage = () => {
           </div>
 
           {/* Table */}
-          <table className='mt-5 w-full text-left text-sm text-gray-500'>
-            <thead className='bg-gray-50 text-xs uppercase text-gray-700'>
-              <tr>
-                <th className='w-80 px-4 py-3'>Sản phẩm</th>
-                <th className='px-4 py-3'>Loại</th>
-                <th className='px-4 py-3'>Tồn kho</th>
-                <th className='px-4 py-3'>Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.length > 0 &&
-                products.map((product) => (
-                  <tr key={product.id} className='border-b hover:bg-gray-100'>
-                    <th className='flex items-center gap-1 px-4 py-2 font-medium text-gray-900'>
-                      <Image
-                        src={product.images[0]?.link || 'https://i.imgur.com/I3fognq.png'}
-                        alt={product.name}
-                        width={50}
-                        height={50}
-                        className='mx-auto block rounded-md'
-                      />
-                      <span className='line-clamp-3'>{product.name}</span>
-                    </th>
-                    <td className='px-4 py-2'>
-                      <span className='rounded bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary empty:hidden'>
-                        {product.productType?.type}
-                      </span>
-                    </td>
-                    <td className='whitespace-nowrap px-4 py-2 font-medium text-gray-900'>
-                      <div className='flex items-center'>
-                        <span
-                          className={classNames('mr-2 inline-block h-4 w-4 rounded-full', {
-                            'bg-red-700': product.quantity <= 5,
-                            'bg-orange-500': 5 < product.quantity && product.quantity <= 10,
-                            'bg-yellow-300': 10 < product.quantity && product.quantity <= 20,
-                            'bg-green-400': product.quantity > 20,
-                          })}
+          <div className='overflow-x-auto'>
+            <table className='mt-5 w-[1000px] min-w-full text-left text-sm text-gray-500'>
+              <thead className='bg-gray-50 text-xs uppercase text-gray-700'>
+                <tr>
+                  <th className='w-96 px-4 py-3'>Sản phẩm</th>
+                  <th className='w-40 px-4 py-3'>Loại</th>
+                  <th className='w-28 px-4 py-3'>Tồn kho</th>
+                  <th className='w-28 px-4 py-3'>Đánh giá</th>
+                  <th className='px-4 py-3'>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.length > 0 &&
+                  products.map((product) => (
+                    <tr key={product.id} className='border-b hover:bg-gray-100'>
+                      <th className='flex items-center gap-2 px-4 py-2 font-medium text-gray-900'>
+                        <Image
+                          src={product.image || 'https://i.imgur.com/I3fognq.png'}
+                          alt={product.name}
+                          width={50}
+                          height={50}
+                          className='mx-auto block rounded-md'
                         />
-                        <span>{product.quantity}</span>
-                      </div>
-                    </td>
-                    <td className='px-2 py-1 text-center'>
-                      <Link
-                        href={`${path.admin.products}/${product.id}`}
-                        className='inline-block p-2 hover:text-blue-400'
-                      >
-                        <PencilSquareIcon className='h-5 w-5' />
-                      </Link>
+                        <span className='line-clamp-3'>{product.name}</span>
+                      </th>
+                      <td className='px-4 py-2'>
+                        <span className='rounded bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary empty:hidden'>
+                          {product.type}
+                        </span>
+                      </td>
+                      <td className='whitespace-nowrap px-4 py-2 font-medium text-gray-900'>
+                        <div className='flex items-center'>
+                          <span
+                            className={classNames('mr-2 inline-block h-4 w-4 rounded-full', {
+                              'bg-red-700': product.quantity <= 5,
+                              'bg-orange-500': 5 < product.quantity && product.quantity <= 10,
+                              'bg-yellow-300': 10 < product.quantity && product.quantity <= 20,
+                              'bg-green-400': product.quantity > 20,
+                            })}
+                          />
+                          <span>{product.quantity}</span>
+                        </div>
+                      </td>
+                      <td className='px-4 py-2'>
+                        <RatingStars rating={product.rating ?? 0} size='sm' />
+                      </td>
+                      <td className='px-2 py-1 text-center'>
+                        <Link
+                          href={`${path.admin.products}/${product.id}`}
+                          className='inline-block p-2 hover:text-blue-400'
+                        >
+                          <PencilSquareIcon className='h-5 w-5' />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+
+                {/* No products */}
+                {products.length == 0 && (
+                  <tr>
+                    <td colSpan={4} className='border border-slate-300 px-2 py-1 text-center italic text-danger'>
+                      Không tìm thấy sản phẩm nào
                     </td>
                   </tr>
-                ))}
-
-              {/* No products */}
-              {products.length == 0 && (
-                <tr>
-                  <td colSpan={4} className='border border-slate-300 px-2 py-1 text-center italic text-danger'>
-                    Không tìm thấy sản phẩm nào
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
 
           {/* Pagination */}
           {pagination && pagination.total > 0 && (
