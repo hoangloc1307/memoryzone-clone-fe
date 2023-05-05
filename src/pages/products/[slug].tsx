@@ -105,7 +105,7 @@ export default function ProductDetailPage() {
               </div>
               {/* Price */}
               <div className='mt-2 flex items-end gap-5'>
-                <del className='text-gray'>
+                <del className='text-grey'>
                   {numberAsCurrency(product.price)}
                   <sup>đ</sup>
                 </del>
@@ -286,7 +286,7 @@ export default function ProductDetailPage() {
                       className='h-auto'
                     />
                   </div>
-                  <div className='text-sm text-gray'>
+                  <div className='text-sm text-grey'>
                     <p className='font-bold uppercase'>{item.title}</p>
                     <p>{item.description}</p>
                   </div>

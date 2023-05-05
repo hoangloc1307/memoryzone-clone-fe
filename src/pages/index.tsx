@@ -216,7 +216,7 @@ const HomePage = () => {
                   </div>
                   <p className='flex flex-col gap-1 text-center text-xs lg:items-start lg:text-left'>
                     <span className='font-bold text-primary'>{item.title}</span>
-                    <span className='text-gray'>{item.description}</span>
+                    <span className='text-grey'>{item.description}</span>
                   </p>
                 </div>
               </li>

@@ -10,7 +10,7 @@ module.exports = {
         warn: '#f3a20e',
         danger: '#c80606',
         dark: '#393a44',
-        gray: '#888',
+        grey: '#888',
         link: '#337ab7',
       },
     },

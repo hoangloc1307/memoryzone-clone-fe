@@ -1,4 +1,5 @@
 import path from '~/constants/path'
+import { ChartPieIcon, ComputerDesktopIcon, PhotoIcon, GlobeAltIcon } from '@heroicons/react/24/solid'
 
 export const navigationData = ['Thanh toán', 'Trả góp', 'Liên hệ', 'Chăm sóc khách hàng', 'Thư viện', 'Tuyển dụng']
 
@@ -87,6 +88,7 @@ export const footerNavigationData = [
 export interface AdminNavigation {
   title: string
   link: string
+  icon?: any
   children: AdminNavigation[]
 }
 
@@ -94,11 +96,13 @@ export const adminNavigation = [
   {
     title: 'Dashboard',
     link: path.admin.dashboard,
+    icon: ChartPieIcon,
     children: [],
   },
   {
     title: 'Sản phẩm',
     link: path.admin.products,
+    icon: ComputerDesktopIcon,
     children: [
       {
         title: 'Tất cả sản phẩm',
@@ -120,11 +124,13 @@ export const adminNavigation = [
   {
     title: 'Quản lý hình ảnh',
     link: path.admin.images,
+    icon: PhotoIcon,
     children: [],
   },
   {
     title: 'Trang web',
     link: path.home,
+    icon: GlobeAltIcon,
     children: [],
   },
 ]

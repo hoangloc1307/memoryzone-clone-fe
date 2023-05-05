@@ -33,7 +33,7 @@ export default function Footer() {
               <ul className='max-h-0 overflow-hidden [transition:all_0.5s_ease-in-out] peer-open:max-h-[500px] md:max-h-max'>
                 {item.children.map((child, index) => (
                   <li key={index}>
-                    <a href={child.url} className='block py-2 text-sm text-gray hover:text-primary hover:underline'>
+                    <a href={child.url} className='block py-2 text-sm text-grey hover:text-primary hover:underline'>
                       {child.tiltle}
                     </a>
                   </li>
@@ -48,7 +48,7 @@ export default function Footer() {
               <br />
               MST: 0311427563 - Cấp ngày 22 tháng 12 năm 2011 tại Sở Kế Hoạch Và Đầu Tư Thành phố Hồ Chí Minh
             </p>
-            <ul className='mt-5 flex flex-col gap-3 text-gray'>
+            <ul className='mt-5 flex flex-col gap-3 text-grey'>
               <li className='text-sm'>
                 <p className='font-semibold uppercase text-black'>SHOWROOM HỒ CHÍ MINH:</p>
                 <p>Địa chỉ: 4C Đồng Xoài, Phường 13, Quận Tân Bình</p>

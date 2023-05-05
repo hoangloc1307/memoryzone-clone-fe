@@ -69,7 +69,7 @@ export default function Category() {
                 href={item.url}
                 className={classNames('block hover:text-primary hover:underline', {
                   'pb-1 text-sm': level === 0,
-                  'text-[13px] text-gray': level === 1,
+                  'text-[13px] text-grey': level === 1,
                 })}
               >
                 {item.title}

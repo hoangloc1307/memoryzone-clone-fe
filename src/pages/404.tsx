@@ -159,13 +159,13 @@ export default function Custom404Page() {
           />
         </svg>
         <div className='flex flex-col items-center justify-center'>
-          <p className='text-gray-800 mt-10 text-3xl capitalize md:text-4xl lg:text-5xl'>Trang không tồn tại</p>
-          <p className='text-gray-600 mt-3 text-center md:text-lg lg:text-xl'>
+          <p className='mt-10 text-3xl capitalize text-gray-800 md:text-4xl lg:text-5xl'>Trang không tồn tại</p>
+          <p className='mt-3 text-center text-gray-600 md:text-lg lg:text-xl'>
             Xin lỗi, có lẽ trang bạn đang tìm không tồn tại hoặc đã bị xoá.
           </p>
           <Link
             href={path.home}
-            className='text-gray-100 mt-10 flex items-center space-x-2 rounded bg-primary/80 px-4 py-2 text-white transition duration-150 hover:bg-primary'
+            className='mt-10 flex items-center space-x-2 rounded bg-primary/80 px-4 py-2 text-white transition duration-150 hover:bg-primary'
             title='Quay lại trang chủ'
           >
             <ArrowLeftIcon className='h-4 w-4' />

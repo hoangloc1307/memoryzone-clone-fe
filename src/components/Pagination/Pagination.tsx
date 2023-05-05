@@ -18,7 +18,10 @@ export default function Pagination({ currentPage = 1, totalPage, range = 1, quer
       if (!isRenderDotBefore) {
         isRenderDotBefore = true
         return (
-          <span key={index} className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'>
+          <span
+            key={index}
+            className='select-none border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500'
+          >
             ...
           </span>
         )
@@ -30,7 +33,10 @@ export default function Pagination({ currentPage = 1, totalPage, range = 1, quer
       if (!isRenderDotAfter) {
         isRenderDotAfter = true
         return (
-          <span key={index} className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'>
+          <span
+            key={index}
+            className='select-none border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500'
+          >
             ...
           </span>
         )
@@ -67,9 +73,9 @@ export default function Pagination({ currentPage = 1, totalPage, range = 1, quer
                 href={{
                   query: { ...queryString, page: pageNumber },
                 }}
-                className={classNames('w-8 rounded p-1.5 text-center text-sm', {
+                className={classNames('border border-gray-300 px-3 py-2 leading-tight', {
                   'bg-primary text-white': pageNumber === currentPage,
-                  'bg-[#f2f2f2]': pageNumber !== currentPage,
+                  'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700': pageNumber !== currentPage,
                 })}
               >
                 {pageNumber}
@@ -81,19 +87,19 @@ export default function Pagination({ currentPage = 1, totalPage, range = 1, quer
   }
 
   return (
-    <div className='flex justify-center gap-2'>
+    <div className='flex justify-center -space-x-px'>
       {/* Prev */}
       {currentPage > 1 ? (
         <Link
           href={{
             query: { ...queryString, page: currentPage - 1 },
           }}
-          className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'
+          className='ml-0 block select-none rounded-l-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700'
         >
           <ChevronLeftIcon className='h-5 w-5' />
         </Link>
       ) : (
-        <span className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'>
+        <span className='ml-0 block select-none rounded-l-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700'>
           <ChevronLeftIcon className='h-5 w-5' />
         </span>
       )}
@@ -105,12 +111,12 @@ export default function Pagination({ currentPage = 1, totalPage, range = 1, quer
           href={{
             query: { ...queryString, page: currentPage + 1 },
           }}
-          className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'
+          className='block select-none rounded-r-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 '
         >
           <ChevronRightIcon className='h-5 w-5' />
         </Link>
       ) : (
-        <span className='w-8 rounded bg-[#f2f2f2] p-1.5 text-center text-sm'>
+        <span className='block select-none rounded-r-lg border border-gray-300 bg-white px-3 py-2 leading-tight text-gray-500 hover:bg-gray-100 hover:text-gray-700 '>
           <ChevronRightIcon className='h-5 w-5' />
         </span>
       )}

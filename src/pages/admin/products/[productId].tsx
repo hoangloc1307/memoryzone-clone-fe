@@ -260,7 +260,7 @@ const AdminProductDetailPage = () => {
     <>
       {product && (
         <form className='block text-sm' onSubmit={handleSubmit(onSubmit)} spellCheck='false'>
-          <p className='font-medium italic text-gray'>ID: {product.id}</p>
+          <p className='font-medium italic text-grey'>ID: {product.id}</p>
 
           {/* Name */}
           <Controller

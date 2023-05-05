@@ -63,7 +63,7 @@ export default function ProductItem({ product, showRating, showDiscountPercent, 
               customClass?.priceWrapper
             )}
           >
-            <del className='text-gray'>
+            <del className='text-grey'>
               {numberAsCurrency(product.price)}
               <sup>đ</sup>
             </del>
@@ -80,10 +80,10 @@ export default function ProductItem({ product, showRating, showDiscountPercent, 
           )}
           {/* Short specs */}
           {showShortSpecs && width < 768 && (
-            <p className='mt-2 text-sm text-gray line-clamp-3'>{product.shortSpecs.join(' | ')}</p>
+            <p className='mt-2 text-sm text-grey line-clamp-3'>{product.shortSpecs.join(' | ')}</p>
           )}
           {showShortSpecs && width >= 768 && (
-            <ul className='mt-2 space-y-1 text-sm text-gray'>
+            <ul className='mt-2 space-y-1 text-sm text-grey'>
               {product.shortSpecs.map((item, index) => (
                 <li key={index}>{item}</li>
               ))}
