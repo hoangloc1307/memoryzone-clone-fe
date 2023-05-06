@@ -62,10 +62,10 @@ const InputList = ({ label, value, errorMessage, classNameWrapper, classNameInpu
       {/* Add button */}
       <button
         type='button'
-        className='mt-2 ml-auto mr-0 flex items-center gap-2 rounded bg-primary py-1 px-3 text-white'
+        className='mt-2 flex w-full items-center justify-center rounded-lg border border-green-700 px-5 py-2.5 text-center text-sm font-medium text-green-700 outline-none hover:bg-green-800 hover:text-white'
         onClick={handleAdd}
       >
-        <PlusIcon className='h-5 w-5' />
+        <PlusIcon className='mr-2 h-5 w-5' />
         <span>Thêm</span>
       </button>
 

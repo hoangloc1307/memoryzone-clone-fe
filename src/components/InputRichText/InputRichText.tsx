@@ -3,18 +3,18 @@ import { memo } from 'react'
 
 interface Props {
   label?: string
-  defaultValue?: string
+  value?: string
   classNameWrapper?: string
   onChange?: () => void
 }
 
-const InputRichText = ({ label, defaultValue, classNameWrapper, onChange }: Props) => {
+const InputRichText = ({ label, value, classNameWrapper, onChange }: Props) => {
   return (
     <div className={classNameWrapper}>
       <label className='mb-2 block text-sm font-semibold empty:hidden'>{label}</label>
       <Editor
         apiKey={process.env.NEXT_PUBLIC_TINYMCE_KEY}
-        initialValue={defaultValue}
+        initialValue={value}
         onEditorChange={onChange}
         init={{
           height: 500,

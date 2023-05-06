@@ -79,7 +79,7 @@ const InputAutocomplete = ({
             'mt-2 h-10 w-full rounded border border-slate-300 px-3 text-sm outline-none focus:ring-1 focus:ring-primary',
             classNameInput
           )}
-          value={localValue}
+          value={value ?? localValue}
           onChange={handleChange}
         />
       </Popover>

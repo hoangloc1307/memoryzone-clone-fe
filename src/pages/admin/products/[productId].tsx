@@ -1,76 +1,38 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { Tab } from '@headlessui/react'
+import { AdjustmentsVerticalIcon, ListBulletIcon, PhotoIcon } from '@heroicons/react/24/solid'
+import { useQuery } from '@tanstack/react-query'
+import classNames from 'classnames'
 import { useRouter } from 'next/router'
-import NProgress from 'nprogress'
-import { useCallback, useMemo } from 'react'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
+import { Fragment, useCallback, useMemo } from 'react'
+import { Controller, useForm, SubmitHandler } from 'react-hook-form'
 import Input from '~/components/Input'
 import InputAutocomplete from '~/components/InputAutocomplete'
-import InputFile from '~/components/InputFile'
 import InputList from '~/components/InputList'
 import InputNumber from '~/components/InputNumber'
-import InputProductAttributeValue from '~/components/InputProductAttributeValue'
 import InputRichText from '~/components/InputRichText'
 import InputSelect from '~/components/InputSelect'
 import InputSelectMultiple from '~/components/InputSelectMultiple'
 import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
-import {
-  Category,
+import { Category, Product, ProductType } from '~/types/product.type'
+import { SuccessResponse } from '~/types/response.type'
+
+type BasicInfoFormType = Pick<
   Product,
-  ProductAttribute,
-  ProductAttributeValue,
-  ProductImage,
-  ProductType,
-} from '~/types/product.type'
-import { ErrorResponse, SuccessResponse } from '~/types/response.type'
-import { isAxiosError } from '~/utils/utils'
+  'name' | 'price' | 'priceDiscount' | 'quantity' | 'vendor' | 'shortInfo' | 'categories' | 'slug' | 'description'
+>
 
-interface FormType {
-  name?: string
-  price?: number
-  priceDiscount?: number
-  quantity?: number
-  vendor?: string
-  typeId?: number
-  shortInfo?: string[]
-  slug?: string
-  description?: string
-  isDraft?: boolean
-  isPublish?: boolean
-  images?: (File & { preview: string })[]
-  attributes?: ProductAttributeValue[]
-  categories?: number[]
-}
-
-const defaultFormValue: FormType = {
-  name: undefined,
-  price: undefined,
-  priceDiscount: undefined,
-  quantity: undefined,
-  vendor: undefined,
-  typeId: undefined,
-  shortInfo: undefined,
-  slug: undefined,
-  description: undefined,
-  isDraft: undefined,
-  isPublish: undefined,
-  images: undefined,
-  attributes: undefined,
-  categories: undefined,
+type SpecificationFormType = {
+  typeId: number
 }
 
 const AdminProductDetailPage = () => {
   const router = useRouter()
   const productId = router.query.productId
   const http = useAuthAxios()
-
-  // Form
-  const { handleSubmit, setValue, watch, reset, control } = useForm<FormType>({
-    defaultValues: defaultFormValue,
-  })
-  const vendorInputValue = watch('vendor')
-  const typeIdInputValue = watch('typeId')
+  const basicInfoForm = useForm<BasicInfoFormType>()
+  const specificationForm = useForm<SpecificationFormType>()
+  const vendorInputValue = basicInfoForm.watch('vendor')
 
   // Get product detail
   const productQuery = useQuery({
@@ -79,141 +41,31 @@ const AdminProductDetailPage = () => {
     enabled: !!productId,
   })
   const product = productQuery.data?.data.data
-
-  // Get product types
-  const typesQuery = useQuery({
-    queryKey: ['types'],
-    queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
-    enabled: product?.productType === null,
-  })
-  const types = typesQuery.data?.data.data
-
-  // Get product vendors
-  const vendorsQuery = useQuery({
-    queryKey: ['vendors'],
-    queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
-  })
-  const vendors = vendorsQuery.data?.data.data
-
-  // Vendor suggest list
-  const vendorSuggestList = useMemo(() => {
-    return vendors?.filter((vendor) => {
-      return vendor.toLowerCase().includes((vendorInputValue || '').toLowerCase())
-    })
-  }, [vendors, vendorInputValue])
-
-  // Get product attribute
-  const attributesQuery = useQuery({
-    queryKey: ['attributes', typeIdInputValue],
-    queryFn: () => http.get<SuccessResponse<ProductAttribute[]>>(`/products/attributes/${typeIdInputValue}`),
-    enabled: product?.productType === null && !!typeIdInputValue,
-    staleTime: Infinity,
-  })
-  const attributes = attributesQuery.data?.data.data
-
   // Get categories
   const categoryQuery = useQuery({
     queryKey: ['categories'],
     queryFn: () => http.get<SuccessResponse<Category[]>>('/category'),
   })
   const categories = categoryQuery.data?.data.data
-
-  // Product mutation
-  const productMutation = useMutation({
-    mutationFn: (
-      data: Omit<FormType, 'categories'> & { categories: { add: number[]; delete: number[] } | undefined }
-    ) => {
-      return http.patchForm<SuccessResponse<Product>>(`/products/${productId}`, data)
-    },
+  // Get product types
+  const typesQuery = useQuery({
+    queryKey: ['types'],
+    queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
+    enabled: product?.type.id === null,
   })
-
-  // Image mutation
-  const imageMutation = useMutation({
-    mutationFn: (data: {}) => {
-      return http.patch<SuccessResponse<ProductImage>>('/products/images', data)
-    },
+  const types = typesQuery.data?.data.data
+  // Get product vendors
+  const vendorsQuery = useQuery({
+    queryKey: ['vendors'],
+    queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
   })
-
-  // Submit form
-  const onSubmit: SubmitHandler<FormType> = (data) => {
-    // Handle data before send to server
-    data.shortInfo = data.shortInfo?.reduce((result: string[], current) => {
-      return current ? [...result, current] : [...result]
-    }, [])
-    data.attributes = data.attributes?.reduce((result: ProductAttributeValue[], current) => {
-      return current.value.trim() ? [...result, current] : [...result]
-    }, [])
-    data.slug = data.slug || undefined
-    const categories: { add: number[]; delete: number[] } | undefined = data.categories
-      ? { add: [], delete: [] }
-      : undefined
-    if (categories) {
-      product?.categories.forEach((item) => {
-        if (!data.categories?.includes(item.id)) {
-          categories.delete.push(item.id)
-        }
-      })
-      data.categories?.forEach((item) => {
-        const isExists = product?.categories.some((i) => item === i.id)
-        if (!isExists) {
-          categories.add.push(item)
-        }
-      })
-    }
-
-    const payload = { ...data, categories }
-
-    const isSomeDataChange = Object.values(payload).some((value) => {
-      if (
-        (value instanceof Array && value.length > 0) ||
-        (!(value instanceof Object) && value) ||
-        (categories && (categories.add.length > 0 || categories.delete.length > 0))
-      ) {
-        return true
-      }
-      return false
+  const vendors = vendorsQuery.data?.data.data
+  // Vendor suggest list
+  const vendorSuggestList = useMemo(() => {
+    return vendors?.filter((vendor) => {
+      return vendor.toLowerCase().includes((vendorInputValue || '').toLowerCase())
     })
-
-    if (isSomeDataChange) {
-      NProgress.start()
-      productMutation.mutate(payload, {
-        onSuccess(data) {
-          productQuery.refetch()
-          reset(defaultFormValue)
-          toast.success(data.data.message)
-        },
-        onError(error) {
-          if (isAxiosError<ErrorResponse<undefined>>(error)) {
-            toast.error(error.response?.data.message)
-          }
-        },
-        onSettled() {
-          NProgress.done()
-        },
-      })
-    } else {
-      toast.info('Dữ liệu chưa có sự thay đổi')
-    }
-  }
-
-  const handleDeleteImage = (imageId: number, deleteHash: string) => {
-    NProgress.start()
-    imageMutation.mutate(
-      { imageId, deleteHash },
-      {
-        onSuccess(data) {
-          productQuery.refetch()
-          toast.success(data.data.message)
-        },
-        onError(error) {
-          console.log(error)
-        },
-        onSettled() {
-          NProgress.done()
-        },
-      }
-    )
-  }
+  }, [vendors, vendorInputValue])
 
   const renderCategorySelect = (options: Category[], onClick: (item: {}) => () => void) => {
     // Tạo một đối tượng Map để lưu trữ các danh mục con theo id
@@ -253,204 +105,218 @@ const AdminProductDetailPage = () => {
 
   const handleRenderCategorySelect = useCallback((options: any[], onClick: (item: {}) => () => void) => {
     return renderCategorySelect(options, onClick)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Submit basic info form
+  const handleBasicInfoFormSubmit: SubmitHandler<BasicInfoFormType> = (data) => {
+    console.log(data)
+  }
+
+  // Submit specifications form
+  const handleSpecificationFormSubmit: SubmitHandler<SpecificationFormType> = (data) => {
+    console.log(data)
+  }
 
   return (
     <>
       {product && (
-        <form className='block text-sm' onSubmit={handleSubmit(onSubmit)} spellCheck='false'>
-          <p className='font-medium italic text-grey'>ID: {product.id}</p>
-
-          {/* Name */}
-          <Controller
-            control={control}
-            name='name'
-            render={({ field }) => (
-              <Input
-                label='Tên'
-                placeholder='Tên sản phẩm'
-                value={product.name}
-                classNameWrapper='mt-5'
-                onChange={field.onChange}
-              />
-            )}
-          />
-
-          <div className='relative z-20 mt-5 grid grid-cols-12 gap-5'>
-            {/* Price */}
-            <Controller
-              name='price'
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  label='Giá'
-                  value={field.value ?? product.price}
-                  classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
-                  onChange={field.onChange}
+        <Tab.Group>
+          <Tab.List className='-mb-px flex flex-wrap border-b border-gray-200 text-center text-sm font-medium text-gray-500'>
+            {[
+              { title: 'Thông tin cơ bản', icon: ListBulletIcon },
+              { title: 'Thông số kỹ thuật', icon: AdjustmentsVerticalIcon },
+              { title: 'Hình ảnh', icon: PhotoIcon },
+            ].map((item, index) => {
+              const Icon = item.icon
+              return (
+                <Tab key={index} as={Fragment}>
+                  {({ selected }) => (
+                    <button
+                      className={classNames('group inline-flex rounded-t-lg border-b-2 p-4 outline-none', {
+                        'border-blue-600 text-blue-600': selected,
+                        'border-transparent hover:border-gray-300 hover:text-gray-600': !selected,
+                        'ml-4': index !== 0,
+                      })}
+                    >
+                      <Icon className='mr-2 h-5 w-5' />
+                      {item.title}
+                    </button>
+                  )}
+                </Tab>
+              )
+            })}
+          </Tab.List>
+          <Tab.Panels>
+            {/* Basic info */}
+            <Tab.Panel className='outline-none'>
+              <form onSubmit={basicInfoForm.handleSubmit(handleBasicInfoFormSubmit)}>
+                {/* Name */}
+                <Controller
+                  control={basicInfoForm.control}
+                  name='name'
+                  render={({ field }) => (
+                    <Input
+                      label='Tên sản phẩm'
+                      value={product.name}
+                      classNameWrapper='mt-5'
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
-              )}
-            />
-
-            {/* Price discount */}
-            <Controller
-              name='priceDiscount'
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  label='Giá khuyến mãi'
-                  value={field.value ?? product.priceDiscount}
-                  classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
-                  onChange={field.onChange}
+                <div className='relative z-20 mt-5 grid grid-cols-12 gap-5'>
+                  {/* Price */}
+                  <Controller
+                    name='price'
+                    control={basicInfoForm.control}
+                    render={({ field }) => (
+                      <InputNumber
+                        label='Giá'
+                        value={field.value ?? product.price}
+                        classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  {/* Price discount */}
+                  <Controller
+                    name='priceDiscount'
+                    control={basicInfoForm.control}
+                    render={({ field }) => (
+                      <InputNumber
+                        label='Giá khuyến mãi'
+                        value={field.value ?? product.priceDiscount}
+                        classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  {/* Quantity */}
+                  <Controller
+                    name='quantity'
+                    control={basicInfoForm.control}
+                    render={({ field }) => (
+                      <InputNumber
+                        label='Số lượng'
+                        value={field.value ?? product.quantity}
+                        classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  {/* Vendor */}
+                  <Controller
+                    name='vendor'
+                    control={basicInfoForm.control}
+                    render={({ field }) => (
+                      <InputAutocomplete
+                        label='Thương hiệu'
+                        value={field.value ?? product.vendor}
+                        suggestList={vendorSuggestList}
+                        classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-20'
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                  {/* Short info */}
+                  <Controller
+                    name='shortInfo'
+                    control={basicInfoForm.control}
+                    render={({ field }) => (
+                      <InputList
+                        label='Mô tả ngắn'
+                        value={product.shortInfo}
+                        classNameWrapper='col-span-12 lg:col-span-8 lg:col-start-5 lg:row-span-5 lg:row-start-1'
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                </div>
+                {/* Slug */}
+                <Controller
+                  control={basicInfoForm.control}
+                  name='slug'
+                  render={({ field }) => (
+                    <Input
+                      label='URL tuỳ chỉnh'
+                      value={product.slug ?? undefined}
+                      classNameWrapper='mt-5'
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
-              )}
-            />
-
-            {/* Quantity */}
-            <Controller
-              name='quantity'
-              control={control}
-              render={({ field }) => (
-                <InputNumber
-                  label='Số lượng'
-                  value={field.value ?? product.quantity}
-                  classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
-                  onChange={field.onChange}
+                {/* Categories */}
+                <Controller
+                  control={basicInfoForm.control}
+                  name='categories'
+                  render={({ field }) => (
+                    <InputSelectMultiple
+                      label='Danh mục sản phẩm'
+                      options={categories || []}
+                      propertyValue='id'
+                      propertyDisplay='name'
+                      classNameWrapper='relative mt-5 z-10'
+                      render={handleRenderCategorySelect}
+                      defaultValue={product.categories}
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
-              )}
-            />
-
-            {/* Vendor */}
-            <Controller
-              name='vendor'
-              control={control}
-              render={({ field }) => (
-                <InputAutocomplete
-                  label='Thương hiệu'
-                  value={product.vendor}
-                  suggestList={vendorSuggestList}
-                  classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-20'
-                  onChange={(value: string) => {
-                    setValue('vendor', value)
-                  }}
+                {/* Description */}
+                <Controller
+                  name='description'
+                  control={basicInfoForm.control}
+                  render={({ field }) => (
+                    <InputRichText
+                      label='Mô tả sản phẩm'
+                      value={product.description}
+                      classNameWrapper='mt-5'
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
-              )}
-            />
+                <button
+                  type='submit'
+                  className=' mt-10 w-full rounded bg-primary px-5 py-2.5 text-center text-sm font-medium text-white outline-none hover:bg-green-800 focus:ring-4 focus:ring-green-300'
+                >
+                  Cập nhật sản phẩm
+                </button>
+              </form>
+            </Tab.Panel>
 
-            {/* Product type */}
-            <Controller
-              control={control}
-              name='typeId'
-              render={({ field }) => (
-                <InputSelect
-                  label='Loại sản phẩm'
-                  value={{ id: product.productType?.id, type: product.productType?.type }}
-                  options={types ?? []}
-                  propertyDisplay='type'
-                  propertyValue='id'
-                  disabled={product.productType !== null}
-                  classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-10'
-                  onChange={field.onChange}
+            {/* Specifications */}
+            <Tab.Panel className='outline-none'>
+              <form onSubmit={specificationForm.handleSubmit(handleSpecificationFormSubmit)}>
+                {/* Product type */}
+                <Controller
+                  control={specificationForm.control}
+                  name='typeId'
+                  render={({ field }) => (
+                    <InputSelect
+                      label='Loại sản phẩm'
+                      value={{ id: product.type?.id, type: product.type?.name }}
+                      options={types ?? []}
+                      propertyDisplay='type'
+                      propertyValue='id'
+                      disabled={product.type.id !== null}
+                      classNameWrapper='mt-5'
+                      onChange={field.onChange}
+                    />
+                  )}
                 />
-              )}
-            />
 
-            {/* Product attribute */}
-            <Controller
-              control={control}
-              name='attributes'
-              render={({ field }) => (
-                <InputProductAttributeValue
-                  label='Thuộc tính sản phẩm'
-                  classNameWrapper='col-span-12 lg:col-span-12'
-                  attributes={product.productType?.productAttributes ?? attributes ?? []}
-                  defaultValue={product.productAttributes}
-                  onChange={field.onChange}
-                />
-              )}
-            />
+                <button
+                  type='submit'
+                  className=' mt-10 w-full rounded bg-primary px-5 py-2.5 text-center text-sm font-medium text-white outline-none hover:bg-green-800 focus:ring-4 focus:ring-green-300'
+                >
+                  Cập nhật thông số sản phẩm
+                </button>
+              </form>
+            </Tab.Panel>
 
-            {/* Short info */}
-            <Controller
-              name='shortInfo'
-              control={control}
-              render={({ field }) => (
-                <InputList
-                  label='Mô tả ngắn'
-                  value={product.shortInfo}
-                  classNameWrapper='col-span-12 lg:col-span-8 lg:col-start-5 lg:row-span-6 lg:row-start-1'
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </div>
-
-          {/* Categories */}
-          <Controller
-            control={control}
-            name='categories'
-            render={({ field }) => (
-              <InputSelectMultiple
-                label='Danh mục sản phẩm'
-                options={categories || []}
-                propertyValue='id'
-                propertyDisplay='name'
-                classNameWrapper='relative mt-5 z-10'
-                render={handleRenderCategorySelect}
-                defaultValue={product.categories}
-                onChange={field.onChange}
-              />
-            )}
-          />
-
-          {/* Description */}
-          <Controller
-            name='description'
-            control={control}
-            render={({ field }) => (
-              <InputRichText
-                label='Mô tả sản phẩm'
-                defaultValue={product.description}
-                classNameWrapper='mt-5'
-                onChange={field.onChange}
-              />
-            )}
-          />
-
-          {/* Slug */}
-          <Controller
-            control={control}
-            name='slug'
-            render={({ field }) => (
-              <Input label='URL tuỳ chỉnh' value={product.slug} classNameWrapper='mt-5' onChange={field.onChange} />
-            )}
-          />
-
-          {/* Images */}
-          <Controller
-            control={control}
-            name='images'
-            render={({ field }) => (
-              <InputFile
-                label='Hình ảnh sản phẩm'
-                classNameWrapper='mt-5'
-                defaultValue={product.images}
-                value={field.value}
-                onChange={field.onChange}
-                onDelete={handleDeleteImage}
-              />
-            )}
-          />
-
-          {/* Submit button */}
-          <button
-            type='submit'
-            className='mt-10 w-full rounded bg-primary py-2 px-4 text-sm font-medium uppercase text-white'
-            disabled={productMutation.isLoading}
-          >
-            Cập nhật sản phẩm
-          </button>
-        </form>
+            {/* Images */}
+            <Tab.Panel className='outline-none'>Hình ảnh</Tab.Panel>
+          </Tab.Panels>
+        </Tab.Group>
       )}
     </>
   )

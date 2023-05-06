@@ -3,23 +3,10 @@ export interface ProductAttribute {
   attribute: string
 }
 
-export interface ProductType {
-  id: number
-  type: string
-}
-
 export interface ProductAttributeValue {
+  productAttribute: string
   productAttributeId: number
   value: string
-}
-
-export interface ProductImage {
-  id: number
-  alt: string
-  deleteHash: string
-  name: string
-  link: string
-  order: number
 }
 
 export interface Category {
@@ -27,7 +14,11 @@ export interface Category {
   name: string
   parentId: number
   order: number
-  children?: Category[]
+}
+
+export interface ProductType {
+  id: number
+  name: string
 }
 
 export interface Product {
@@ -39,15 +30,27 @@ export interface Product {
   vendor: string
   shortInfo: string[]
   description: string
-  slug: string
+  slug: string | null
   isDraft: boolean
   isPublish: boolean
-  productType?: ProductType & {
-    productAttributes: ProductAttribute[]
-  }
-  productAttributes: ProductAttributeValue[]
-  images: ProductImage[]
-  categories: Category[]
+  type: ProductType
+  attributes: {
+    id: number
+    name: string
+    value: string
+  }[]
+  images: {
+    id: number
+    alt: string
+    deleteHash: string
+    name: string
+    link: string
+    order: number
+  }[]
+  categories: {
+    id: number
+    name: string
+  }[]
 }
 
 export interface ProductManageList {
@@ -59,6 +62,7 @@ export interface ProductManageList {
   type?: string
   quantity: number
   rating: number
+  categories: string[]
 }
 
 export interface ProductWithPagination {
