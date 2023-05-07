@@ -6,8 +6,8 @@ import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   label?: string
-  value?: {}
-  options: any[]
+  value?: { [key: string]: any }
+  options?: { [key: string]: any }[]
   disabled?: boolean
   propertyDisplay: string
   propertyValue: string
@@ -34,12 +34,12 @@ const InputSelect = ({
   render,
 }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [localValue, setLocalValue] = useState<{}>(value ?? {})
+  const [localValue, setLocalValue] = useState<{ [key: string]: any }>(value ?? {})
 
-  const handleItemClick = (item: {}) => () => {
+  const handleItemClick = (item: { [key: string]: any }) => () => {
     setLocalValue(item)
     inputRef.current?.click()
-    onChange && onChange(item[propertyValue as keyof {}])
+    onChange && onChange(item[propertyValue])
   }
 
   return (
@@ -58,7 +58,7 @@ const InputSelect = ({
                           className='bg-white px-3 py-2 hover:bg-primary/10 hover:text-primary'
                           onClick={handleItemClick(item)}
                         >
-                          {item[propertyDisplay as keyof {}]}
+                          {item[propertyDisplay]}
                         </p>
                       )
                     })}
@@ -67,11 +67,11 @@ const InputSelect = ({
           </>
         }
         showOnHover={false}
-        showOnClick
+        showOnClick={!disabled}
         floatingElementWidth={'100%'}
         offsetOption={{ mainAxis: 4 }}
       >
-        <div className={disabled ? 'cursor-not-allowed' : ''}>
+        <div className={disabled ? 'cursor-not-allowed' : 'cursor-pointer'}>
           {/* Label */}
           {label && (
             <label className='block text-sm font-semibold empty:hidden'>
@@ -86,16 +86,12 @@ const InputSelect = ({
               ref={inputRef}
               className={twMerge(
                 classNames(
-                  'flex h-10 w-full select-none items-center rounded border border-slate-300 px-3 text-sm outline-none focus:ring-1 focus:ring-primary',
-                  {
-                    'cursor-pointer': !disabled,
-                    'cursor-not-allowed': disabled,
-                  }
+                  'flex h-10 w-full select-none items-center rounded border border-slate-300 px-3 text-sm outline-none focus:ring-1 focus:ring-primary'
                 ),
                 classNameInput
               )}
             >
-              {value?.[propertyDisplay as keyof {}] ?? localValue[propertyDisplay as keyof {}] ?? 'Chọn'}
+              {value?.[propertyDisplay] ?? localValue[propertyDisplay] ?? 'Chọn'}
             </span>
             <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
               <ChevronUpDownIcon className='h-5 w-5' />

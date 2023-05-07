@@ -9,12 +9,13 @@ import Input from '~/components/Input'
 import InputAutocomplete from '~/components/InputAutocomplete'
 import InputList from '~/components/InputList'
 import InputNumber from '~/components/InputNumber'
+import InputProductAttributeValue from '~/components/InputProductAttributeValue'
 import InputRichText from '~/components/InputRichText'
 import InputSelect from '~/components/InputSelect'
 import InputSelectMultiple from '~/components/InputSelectMultiple'
 import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
-import { Category, Product, ProductType } from '~/types/product.type'
+import { Attribute, Category, Product, ProductType } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
 
 type BasicInfoFormType = Pick<
@@ -24,6 +25,7 @@ type BasicInfoFormType = Pick<
 
 type SpecificationFormType = {
   typeId: number
+  attributes: Product['attributes']
 }
 
 const AdminProductDetailPage = () => {
@@ -33,6 +35,7 @@ const AdminProductDetailPage = () => {
   const basicInfoForm = useForm<BasicInfoFormType>()
   const specificationForm = useForm<SpecificationFormType>()
   const vendorInputValue = basicInfoForm.watch('vendor')
+  const typeIdInputValue = specificationForm.watch('typeId')
 
   // Get product detail
   const productQuery = useQuery({
@@ -41,25 +44,39 @@ const AdminProductDetailPage = () => {
     enabled: !!productId,
   })
   const product = productQuery.data?.data.data
+
   // Get categories
   const categoryQuery = useQuery({
     queryKey: ['categories'],
     queryFn: () => http.get<SuccessResponse<Category[]>>('/category'),
   })
   const categories = categoryQuery.data?.data.data
+
   // Get product types
   const typesQuery = useQuery({
     queryKey: ['types'],
     queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
-    enabled: product?.type.id === null,
+    enabled: !product?.type.id,
   })
   const types = typesQuery.data?.data.data
+
+  // Get product attribute
+  const typeid = product?.type.id ? product.type.id : typeIdInputValue
+  const attributesQuery = useQuery({
+    queryKey: ['attributes', typeid],
+    queryFn: () => http.get<SuccessResponse<Attribute[]>>(`/products/attributes/${typeid}`),
+    enabled: !!product?.type.id || !!typeIdInputValue,
+    staleTime: Infinity,
+  })
+  const attributes = attributesQuery.data?.data.data
+
   // Get product vendors
   const vendorsQuery = useQuery({
     queryKey: ['vendors'],
     queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
   })
   const vendors = vendorsQuery.data?.data.data
+
   // Vendor suggest list
   const vendorSuggestList = useMemo(() => {
     return vendors?.filter((vendor) => {
@@ -293,11 +310,25 @@ const AdminProductDetailPage = () => {
                   render={({ field }) => (
                     <InputSelect
                       label='Loại sản phẩm'
-                      value={{ id: product.type?.id, type: product.type?.name }}
-                      options={types ?? []}
-                      propertyDisplay='type'
+                      value={{ id: product.type?.id, name: product.type?.name }}
+                      options={types}
+                      propertyDisplay='name'
                       propertyValue='id'
-                      disabled={product.type.id !== null}
+                      disabled={!!product.type.id}
+                      classNameWrapper='mt-5 relative'
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+                {/* Product attribute */}
+                <Controller
+                  control={specificationForm.control}
+                  name='attributes'
+                  render={({ field }) => (
+                    <InputProductAttributeValue
+                      label='Thuộc tính sản phẩm'
+                      attributes={attributes ?? []}
+                      value={product.attributes}
                       classNameWrapper='mt-5'
                       onChange={field.onChange}
                     />

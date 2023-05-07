@@ -1,11 +1,10 @@
-export interface ProductAttribute {
+export interface Attribute {
   id: number
-  attribute: string
+  name: string
 }
 
 export interface ProductAttributeValue {
-  productAttribute: string
-  productAttributeId: number
+  id: number
   value: string
 }
 
@@ -34,11 +33,7 @@ export interface Product {
   isDraft: boolean
   isPublish: boolean
   type: ProductType
-  attributes: {
-    id: number
-    name: string
-    value: string
-  }[]
+  attributes: ProductAttributeValue[]
   images: {
     id: number
     alt: string
