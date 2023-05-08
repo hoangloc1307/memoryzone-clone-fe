@@ -1,23 +1,27 @@
+import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
+import { XCircleIcon } from '@heroicons/react/24/solid'
 import { memo, useState } from 'react'
 import Popover from '../Popover'
-import { ChevronUpDownIcon, XMarkIcon } from '@heroicons/react/24/outline'
 
 interface Props {
   label?: string
-  defaultValue?: any[]
-  options: any[]
+  value?: { [key: string]: any }[]
+  options?: { [key: string]: any }[]
   required?: boolean
   propertyDisplay: string
   propertyValue: string
   errorMessage?: string
   classNameWrapper?: string
   onChange?: (values: any[]) => void
-  render?: (options: {}[], onClick: (item: {}) => () => void) => React.ReactNode
+  render?: (
+    options: { [key: string]: any }[],
+    handleClick: (item: { [key: string]: any }) => () => void
+  ) => React.ReactNode
 }
 
 const InputSelectMultiple = ({
   label,
-  defaultValue,
+  value,
   options,
   required,
   propertyDisplay,
@@ -27,33 +31,21 @@ const InputSelectMultiple = ({
   onChange,
   render,
 }: Props) => {
-  const [localValue, setLocalValue] = useState<any[]>(defaultValue ?? [])
+  const [localValue, setLocalValue] = useState<{ [key: string]: any }[]>(value ?? [])
 
-  const handleItemClick = (item: {}) => () => {
-    const isExists = localValue.some((i) => i[propertyValue] === item[propertyValue as keyof {}])
+  const handleItemClick = (item: { [key: string]: any }) => () => {
+    const isExists = localValue.some((i) => i[propertyValue] === item[propertyValue])
     if (!isExists) {
       const values = [...localValue, item]
       setLocalValue(values)
-      onChange &&
-        onChange(
-          values.map((i) => {
-            return i[propertyValue]
-          })
-        )
+      onChange && onChange(values.map((i) => i[propertyValue]))
     }
   }
 
-  const handleDeleteItem = (item: {}) => () => {
-    const index = localValue.findIndex((i) => i[propertyValue] === item[propertyValue as keyof {}])
-    const temp = [...localValue]
-    temp.splice(index, 1)
-    setLocalValue(temp)
-    onChange &&
-      onChange(
-        temp.map((i) => {
-          return i[propertyValue]
-        })
-      )
+  const handleDeleteItem = (item: { [key: string]: any }) => () => {
+    const values = localValue.filter((i) => i[propertyValue] !== item[propertyValue])
+    setLocalValue(values)
+    onChange && onChange(values.map((i) => i[propertyValue]))
   }
 
   return (
@@ -65,19 +57,20 @@ const InputSelectMultiple = ({
       </label>
 
       {/* Selected items */}
-      <div className='mt-2 flex flex-wrap gap-2 rounded border border-slate-300 p-3'>
+      <div className='mt-2 flex flex-wrap gap-2 empty:hidden'>
         {localValue.length > 0 &&
           localValue.map((item) => (
             <div
               key={item[propertyValue]}
-              className='flex items-center gap-1 rounded border border-slate-300 px-2 py-1 text-sm'
+              className='flex items-center gap-1 rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700'
             >
               <span>{item[propertyDisplay]}</span>
-              <XMarkIcon className='h-5 w-4 cursor-pointer py-0.5 hover:text-danger' onClick={handleDeleteItem(item)} />
+              <XCircleIcon
+                className='h-4 w-4 cursor-pointer select-none hover:text-danger'
+                onClick={handleDeleteItem(item)}
+              />
             </div>
           ))}
-
-        {localValue.length === 0 && <p className='text-sm italic text-danger'>Chưa chọn danh mục nào</p>}
       </div>
 
       {/* Select box */}
@@ -95,7 +88,7 @@ const InputSelectMultiple = ({
                           className='bg-white px-3 py-2 hover:bg-primary/10 hover:text-primary'
                           onClick={handleItemClick(item)}
                         >
-                          {item[propertyDisplay as keyof {}]}
+                          {item[propertyDisplay]}
                         </p>
                       )
                     })}
@@ -111,7 +104,7 @@ const InputSelectMultiple = ({
         {/* Input */}
         <div className='relative mt-2'>
           <span className='flex h-10 w-full cursor-pointer select-none items-center rounded border border-slate-300 px-3 text-sm outline-none'>
-            {defaultValue?.[propertyDisplay as keyof {}] ?? localValue[propertyDisplay as keyof {}] ?? 'Chọn'}
+            Chọn
           </span>
           <span className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2'>
             <ChevronUpDownIcon className='h-5 w-5' />

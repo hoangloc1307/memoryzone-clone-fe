@@ -20,6 +20,15 @@ export interface ProductType {
   name: string
 }
 
+export interface ProductImage {
+  id: number
+  alt: string
+  deleteHash: string
+  name: string
+  link: string
+  order: number
+}
+
 export interface Product {
   id: number
   name: string
@@ -34,14 +43,7 @@ export interface Product {
   isPublish: boolean
   type: ProductType
   attributes: ProductAttributeValue[]
-  images: {
-    id: number
-    alt: string
-    deleteHash: string
-    name: string
-    link: string
-    order: number
-  }[]
+  images: ProductImage[]
   categories: {
     id: number
     name: string

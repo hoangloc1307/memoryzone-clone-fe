@@ -166,7 +166,7 @@ const AdminProductsPage = () => {
             {/* No products */}
             {products && products.length == 0 && (
               <tr>
-                <td colSpan={4} className='border border-slate-300 px-2 py-1 text-center italic text-danger'>
+                <td colSpan={6} className='px-4 py-2 text-center italic text-danger'>
                   Không tìm thấy sản phẩm nào
                 </td>
               </tr>

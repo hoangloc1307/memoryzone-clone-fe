@@ -12,7 +12,7 @@ interface Props {
   onDelete?: (imageId: number, deleteHash: string) => void
 }
 
-const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onDelete }: Props) => {
+const InputImage = ({ label, value, defaultValue, classNameWrapper, onChange, onDelete }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [files, setFiles] = useState<(File & { preview: string })[]>([])
   const defaultImages = defaultValue ?? []
@@ -140,4 +140,4 @@ const InputFile = ({ label, value, defaultValue, classNameWrapper, onChange, onD
   )
 }
 
-export default memo(InputFile)
+export default memo(InputImage)

@@ -4,9 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { useRouter } from 'next/router'
 import { Fragment, useCallback, useMemo } from 'react'
-import { Controller, useForm, SubmitHandler } from 'react-hook-form'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import Input from '~/components/Input'
 import InputAutocomplete from '~/components/InputAutocomplete'
+import InputImage from '~/components/InputImage'
+import { FileWithPreview } from '~/components/InputImage/InputImage'
 import InputList from '~/components/InputList'
 import InputNumber from '~/components/InputNumber'
 import InputProductAttributeValue from '~/components/InputProductAttributeValue'
@@ -28,12 +30,17 @@ type SpecificationFormType = {
   attributes: Product['attributes']
 }
 
+type ImageFormType = {
+  images: FileWithPreview[]
+}
+
 const AdminProductDetailPage = () => {
   const router = useRouter()
   const productId = router.query.productId
   const http = useAuthAxios()
   const basicInfoForm = useForm<BasicInfoFormType>()
   const specificationForm = useForm<SpecificationFormType>()
+  const imageForm = useForm<ImageFormType>()
   const vendorInputValue = basicInfoForm.watch('vendor')
   const typeIdInputValue = specificationForm.watch('typeId')
 
@@ -49,6 +56,7 @@ const AdminProductDetailPage = () => {
   const categoryQuery = useQuery({
     queryKey: ['categories'],
     queryFn: () => http.get<SuccessResponse<Category[]>>('/category'),
+    staleTime: Infinity,
   })
   const categories = categoryQuery.data?.data.data
 
@@ -57,6 +65,7 @@ const AdminProductDetailPage = () => {
     queryKey: ['types'],
     queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
     enabled: !product?.type.id,
+    staleTime: Infinity,
   })
   const types = typesQuery.data?.data.data
 
@@ -74,6 +83,7 @@ const AdminProductDetailPage = () => {
   const vendorsQuery = useQuery({
     queryKey: ['vendors'],
     queryFn: () => http.get<SuccessResponse<string[]>>('/products/vendors'),
+    staleTime: Infinity,
   })
   const vendors = vendorsQuery.data?.data.data
 
@@ -84,7 +94,7 @@ const AdminProductDetailPage = () => {
     })
   }, [vendors, vendorInputValue])
 
-  const renderCategorySelect = (options: Category[], onClick: (item: {}) => () => void) => {
+  const renderCategorySelect = (options: Category[], handleClick: (item: Category) => () => void) => {
     // Tạo một đối tượng Map để lưu trữ các danh mục con theo id
     const map = new Map<number, Category[]>()
     options.forEach((option) => {
@@ -105,7 +115,10 @@ const AdminProductDetailPage = () => {
             const itemChildren = map.get(item.id) || []
             return (
               <li key={item.id}>
-                <p className='cursor-pointer py-1 px-3 hover:bg-primary/10 hover:text-primary' onClick={onClick(item)}>
+                <p
+                  className='cursor-pointer py-1 px-3 hover:bg-primary/10 hover:text-primary'
+                  onClick={handleClick(item)}
+                >
                   {'__ '.repeat(level)}
                   {item.name}
                 </p>
@@ -120,9 +133,12 @@ const AdminProductDetailPage = () => {
     return renderTree(0, 0)
   }
 
-  const handleRenderCategorySelect = useCallback((options: any[], onClick: (item: {}) => () => void) => {
-    return renderCategorySelect(options, onClick)
-  }, [])
+  const handleRenderCategorySelect = useCallback(
+    (options: { [key: string]: any }[], handleClick: (item: { [key: string]: any }) => () => void) => {
+      return renderCategorySelect(options as Category[], handleClick)
+    },
+    []
+  )
 
   // Submit basic info form
   const handleBasicInfoFormSubmit: SubmitHandler<BasicInfoFormType> = (data) => {
@@ -131,6 +147,11 @@ const AdminProductDetailPage = () => {
 
   // Submit specifications form
   const handleSpecificationFormSubmit: SubmitHandler<SpecificationFormType> = (data) => {
+    console.log(data)
+  }
+
+  // Submit images form
+  const handleImageFormSubmit: SubmitHandler<ImageFormType> = (data) => {
     console.log(data)
   }
 
@@ -174,7 +195,7 @@ const AdminProductDetailPage = () => {
                   render={({ field }) => (
                     <Input
                       label='Tên sản phẩm'
-                      value={product.name}
+                      value={field.value ?? product.name}
                       classNameWrapper='mt-5'
                       onChange={field.onChange}
                     />
@@ -273,7 +294,7 @@ const AdminProductDetailPage = () => {
                       propertyDisplay='name'
                       classNameWrapper='relative mt-5 z-10'
                       render={handleRenderCategorySelect}
-                      defaultValue={product.categories}
+                      value={product.categories}
                       onChange={field.onChange}
                     />
                   )}
@@ -345,7 +366,33 @@ const AdminProductDetailPage = () => {
             </Tab.Panel>
 
             {/* Images */}
-            <Tab.Panel className='outline-none'>Hình ảnh</Tab.Panel>
+            <Tab.Panel className='outline-none'>
+              <form onSubmit={imageForm.handleSubmit(handleImageFormSubmit)}>
+                {/* Images */}
+                <Controller
+                  control={imageForm.control}
+                  name='images'
+                  render={({ field }) => (
+                    <InputImage
+                      label='Hình ảnh sản phẩm'
+                      classNameWrapper='mt-5'
+                      value={product.images}
+                      onChange={field.onChange}
+                      onDelete={(images) => {
+                        console.log(images)
+                      }}
+                    />
+                  )}
+                />
+
+                <button
+                  type='submit'
+                  className=' mt-10 w-full rounded bg-primary px-5 py-2.5 text-center text-sm font-medium text-white outline-none hover:bg-green-800 focus:ring-4 focus:ring-green-300'
+                >
+                  Cập nhật hình ảnh
+                </button>
+              </form>
+            </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
       )}
