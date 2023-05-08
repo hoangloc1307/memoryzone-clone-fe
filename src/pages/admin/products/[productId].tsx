@@ -1,7 +1,9 @@
 import { Tab } from '@headlessui/react'
 import { AdjustmentsVerticalIcon, ListBulletIcon, PhotoIcon } from '@heroicons/react/24/solid'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
+import omitBy from 'lodash/omitBy'
+import isNil from 'lodash/isNil'
 import { useRouter } from 'next/router'
 import { Fragment, useCallback, useMemo } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -19,11 +21,13 @@ import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
 import { Attribute, Category, Product, ProductType } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
+import { toast } from 'react-toastify'
+import nProgress from 'nprogress'
 
 type BasicInfoFormType = Pick<
   Product,
-  'name' | 'price' | 'priceDiscount' | 'quantity' | 'vendor' | 'shortInfo' | 'categories' | 'slug' | 'description'
->
+  'name' | 'price' | 'priceDiscount' | 'quantity' | 'vendor' | 'shortInfo' | 'slug' | 'description'
+> & { categories: number[] }
 
 type SpecificationFormType = {
   typeId: number
@@ -94,6 +98,12 @@ const AdminProductDetailPage = () => {
     })
   }, [vendors, vendorInputValue])
 
+  // Update product
+  const productMutation = useMutation({
+    mutationFn: (data: { [key: string]: any }) =>
+      http.patch<SuccessResponse<undefined>>(`/products/${product?.id}`, data),
+  })
+
   const renderCategorySelect = (options: Category[], handleClick: (item: Category) => () => void) => {
     // Tạo một đối tượng Map để lưu trữ các danh mục con theo id
     const map = new Map<number, Category[]>()
@@ -142,16 +152,65 @@ const AdminProductDetailPage = () => {
 
   // Submit basic info form
   const handleBasicInfoFormSubmit: SubmitHandler<BasicInfoFormType> = (data) => {
-    console.log(data)
+    // Prepare payload
+    const categories: { add: number[]; delete: number[] } | undefined = data.categories
+      ? { add: [], delete: [] }
+      : undefined
+
+    if (categories && product) {
+      const categoryIds = data.categories
+      const productCategoryIds = product.categories.map((category) => category.id)
+
+      //If form data don't have any id in product categories then that id was deleted
+      categories.add = categoryIds.filter((id) => !productCategoryIds.includes(id))
+      //If form data have any id and it not exists in product categories then id must be add
+      categories.delete = productCategoryIds.filter((id) => !categoryIds.includes(id))
+    }
+
+    const payload = omitBy({ ...data, categories }, isNil)
+
+    if (Object.keys(payload).length > 0) {
+      nProgress.start()
+      productMutation.mutate(payload, {
+        onSuccess(data) {
+          productQuery.refetch()
+          toast.success(data.data.message)
+        },
+        onSettled() {
+          nProgress.done()
+        },
+      })
+    } else {
+      toast.info('Dữ liệu chưa có sự thay đổi')
+    }
   }
 
   // Submit specifications form
   const handleSpecificationFormSubmit: SubmitHandler<SpecificationFormType> = (data) => {
-    console.log(data)
+    const payload = omitBy(data, isNil)
+
+    if (Object.keys(payload).length > 0) {
+      nProgress.start()
+      productMutation.mutate(payload, {
+        onSuccess(data) {
+          productQuery.refetch()
+          toast.success(data.data.message)
+        },
+        onSettled() {
+          nProgress.done()
+        },
+      })
+    } else {
+      toast.info('Dữ liệu chưa có sự thay đổi')
+    }
   }
 
   // Submit images form
   const handleImageFormSubmit: SubmitHandler<ImageFormType> = (data) => {
+    // Clear blob data
+    data.images.forEach((image) => {
+      URL.revokeObjectURL(image.preview as string)
+    })
     console.log(data)
   }
 

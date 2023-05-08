@@ -37,6 +37,7 @@ const InputImage = ({ label, value, classNameWrapper, onChange, onDelete }: Prop
     onChange && onChange(imagesWithPreview)
   }
 
+  // Function to find index if exists
   const indexExists = (item: ProductImage | FileWithPreview) => {
     const index =
       item.constructor.name === 'File'
@@ -57,10 +58,10 @@ const InputImage = ({ label, value, classNameWrapper, onChange, onDelete }: Prop
   }
 
   const handleDelete = () => {
-    //Xoá blob khi xoá local image
     const remoteImages: ProductImage[] = []
     const localImages = imagesCheck.reduce((result: string[], current) => {
       if (current.constructor.name === 'File') {
+        URL.revokeObjectURL((current as FileWithPreview).preview as string)
         return [...result, (current as FileWithPreview).preview as string]
       }
       remoteImages.push(current as ProductImage)
