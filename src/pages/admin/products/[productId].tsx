@@ -19,7 +19,7 @@ import InputSelect from '~/components/InputSelect'
 import InputSelectMultiple from '~/components/InputSelectMultiple'
 import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
-import { Attribute, Category, Product, ProductType } from '~/types/product.type'
+import { Attribute, Category, Product, ProductImage, ProductType } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
 import { toast } from 'react-toastify'
 import nProgress from 'nprogress'
@@ -36,6 +36,7 @@ type SpecificationFormType = {
 
 type ImageFormType = {
   images: FileWithPreview[]
+  altImages?: string[]
 }
 
 const AdminProductDetailPage = () => {
@@ -102,6 +103,17 @@ const AdminProductDetailPage = () => {
   const productMutation = useMutation({
     mutationFn: (data: { [key: string]: any }) =>
       http.patch<SuccessResponse<undefined>>(`/products/${product?.id}`, data),
+  })
+
+  // Update product images
+  const uploadProductImageMutation = useMutation({
+    mutationFn: (data: ImageFormType) => http.patchForm<SuccessResponse<undefined>>(`/products/${productId}`, data),
+  })
+
+  // Delete images
+  const deleteProductImageMutation = useMutation({
+    mutationFn: (data: { ids: number[]; deleteHashs: string[] }) =>
+      http.patch<SuccessResponse<undefined>>('/products/images', data),
   })
 
   const renderCategorySelect = (options: Category[], handleClick: (item: Category) => () => void) => {
@@ -207,11 +219,52 @@ const AdminProductDetailPage = () => {
 
   // Submit images form
   const handleImageFormSubmit: SubmitHandler<ImageFormType> = (data) => {
-    // Clear blob data
-    data.images.forEach((image) => {
-      URL.revokeObjectURL(image.preview as string)
-    })
-    console.log(data)
+    const checkData = omitBy(data, (value) => (value && value.length > 0 ? false : true))
+
+    if (Object.keys(checkData).length > 0) {
+      nProgress.start()
+      // // Clear blob data
+      data.images?.forEach((image) => {
+        URL.revokeObjectURL(image.preview as string)
+      })
+
+      const payload = {
+        images: checkData.images as FileWithPreview[],
+        altImages: (checkData.images as FileWithPreview[]).map((item) => item.alt ?? ''),
+      }
+
+      uploadProductImageMutation.mutate(payload, {
+        onSuccess(data) {
+          productQuery.refetch()
+          toast.success(data.data.message)
+          imageForm.setValue('images', [])
+        },
+        onSettled() {
+          nProgress.done()
+        },
+      })
+    } else {
+      toast.info('Dữ liệu chưa có sự thay đổi')
+    }
+  }
+
+  const handleDeleteImages = (images: ProductImage[]) => {
+    if (images.length > 0) {
+      nProgress.start()
+      const payload: { ids: number[]; deleteHashs: string[] } = { ids: [], deleteHashs: [] }
+      payload.ids = images.map((image) => image.id)
+      payload.deleteHashs = images.map((image) => image.deleteHash)
+
+      deleteProductImageMutation.mutate(payload, {
+        onSuccess(data) {
+          productQuery.refetch()
+          toast.success(data.data.message)
+        },
+        onSettled() {
+          nProgress.done()
+        },
+      })
+    }
   }
 
   return (
@@ -436,10 +489,9 @@ const AdminProductDetailPage = () => {
                       label='Hình ảnh sản phẩm'
                       classNameWrapper='mt-5'
                       value={product.images}
+                      localValue={field.value}
                       onChange={field.onChange}
-                      onDelete={(images) => {
-                        console.log(images)
-                      }}
+                      onDelete={handleDeleteImages}
                     />
                   )}
                 />
