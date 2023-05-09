@@ -1,8 +1,13 @@
 import { ArrowUpTrayIcon } from '@heroicons/react/24/outline'
 import { CheckIcon, TrashIcon } from '@heroicons/react/24/solid'
+import { useMutation } from '@tanstack/react-query'
 import Image from 'next/image'
+import nProgress from 'nprogress'
 import { memo, useEffect, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
+import useAuthAxios from '~/hooks/useAuthAxios'
 import { ProductImage } from '~/types/product.type'
+import { SuccessResponse } from '~/types/response.type'
 
 export type FileWithPreview = File & { preview?: string; alt?: string }
 
@@ -19,10 +24,21 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
   const inputRef = useRef<HTMLInputElement>(null)
   const [files, setFiles] = useState<FileWithPreview[]>(localValue ?? [])
   const [imagesCheck, setImagesCheck] = useState<(ProductImage | FileWithPreview)[]>([])
+  const [altImages, setAltImages] = useState<{ id: number; alt: string }[]>([])
+  const http = useAuthAxios()
 
   useEffect(() => {
     setFiles(localValue ?? [])
   }, [localValue])
+
+  useEffect(() => {
+    setAltImages(value ? value.map((item) => ({ id: item.id, alt: item.alt })) : [])
+  }, [value])
+
+  const updateImageMutation = useMutation({
+    mutationFn: (data: { id: number; alt: string }) =>
+      http.patch<SuccessResponse<{ id: number; alt: string }>>(`/image/${data.id}`, data),
+  })
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const images = event.target.files as FileList
@@ -96,8 +112,24 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
     }
   }
 
-  const handleChangeAltServer = (item: ProductImage) => () => {
-    console.log(item)
+  const handleChangeAltServer = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
+    const newAltImages = altImages.map((item) => (item.id === id ? { ...item, alt: event.target.value } : item))
+    setAltImages(newAltImages)
+  }
+
+  const handleSubmitChangeAltServer = (id: number) => () => {
+    nProgress.start()
+    const payload = altImages.find((item) => item.id === id)
+    if (payload) {
+      updateImageMutation.mutate(payload, {
+        onSuccess(data) {
+          toast.success(data.data.message)
+        },
+        onSettled() {
+          nProgress.done()
+        },
+      })
+    }
   }
 
   return (
@@ -109,40 +141,45 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
       <div className='mt-2 flex flex-wrap gap-5'>
         {value &&
           value.length > 0 &&
-          value.map((image) => (
-            <div key={image.id} className='relative w-[166px] overflow-hidden rounded border border-blue-500 p-2'>
-              <Image
-                alt={image.alt}
-                src={image.link}
-                width={150}
-                height={150}
-                className='mx-auto block aspect-square h-auto w-[150px] rounded object-contain'
-              />
-              <p
-                className='mt-2 cursor-default overflow-hidden text-ellipsis whitespace-nowrap border-t border-blue-500 pt-2 text-left [direction:rtl]'
-                title={image.name}
-              >
-                {image.name}
-              </p>
-              <input
-                type='checkbox'
-                className='absolute top-1 right-1 h-5 w-5 cursor-pointer outline-none'
-                checked={indexExists(image) > -1}
-                onChange={handleCheck(image)}
-              />
-              <div className='relative mt-2'>
+          value.map((image) => {
+            const alt = altImages.find((i) => i.id === image.id)?.alt
+            return (
+              <div key={image.id} className='relative w-[166px] overflow-hidden rounded border border-blue-500 p-2'>
+                <Image
+                  alt={image.alt}
+                  src={image.link}
+                  width={150}
+                  height={150}
+                  className='mx-auto block aspect-square h-auto w-[150px] rounded object-contain'
+                />
+                <p
+                  className='mt-2 cursor-default overflow-hidden text-ellipsis whitespace-nowrap border-t border-blue-500 pt-2 text-left [direction:rtl]'
+                  title={image.name}
+                >
+                  {image.name}
+                </p>
                 <input
-                  type='text'
-                  className='h-7 w-full rounded border border-blue-500 py-1 pl-2 pr-9 text-xs outline-none'
-                  placeholder={image.alt}
+                  type='checkbox'
+                  className='absolute top-1 right-1 h-5 w-5 cursor-pointer outline-none'
+                  checked={indexExists(image) > -1}
+                  onChange={handleCheck(image)}
                 />
-                <CheckIcon
-                  className='absolute top-0 right-0 h-7 w-7 cursor-pointer rounded-r border border-blue-500 bg-slate-100 p-1 text-gray-400 hover:bg-primary hover:text-white'
-                  onClick={handleChangeAltServer(image)}
-                />
+                <div className='relative mt-2'>
+                  <input
+                    type='text'
+                    data-changed={alt !== image.alt}
+                    className='peer h-7 w-full rounded border border-blue-500 py-1 pl-2 pr-9 text-xs outline-none'
+                    value={alt ?? ''}
+                    onChange={(event) => handleChangeAltServer(event, image.id)}
+                  />
+                  <CheckIcon
+                    className='absolute top-0 right-0 h-7 w-7 cursor-pointer rounded-r border border-blue-500 bg-slate-100 p-1 text-gray-400 peer-data-[changed=true]:bg-primary peer-data-[changed=true]:text-white'
+                    onClick={handleSubmitChangeAltServer(image.id)}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         {files.length > 0 &&
           files.map((file, index) => (
             <div key={index} className='relative w-[166px] overflow-hidden rounded border border-danger p-2'>
