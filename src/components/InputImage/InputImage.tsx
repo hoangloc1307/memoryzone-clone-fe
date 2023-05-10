@@ -43,12 +43,14 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const images = event.target.files as FileList
 
+    // Clear blob created before
     files.forEach((file) => {
       if (file.preview) {
         URL.revokeObjectURL(file.preview)
       }
     })
 
+    // Create image blob
     const imagesWithPreview = [...files, ...Array.from(images)].map((file: FileWithPreview) => {
       file.preview = URL.createObjectURL(file)
       file.alt = ''
@@ -56,9 +58,6 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
     })
 
     onChange && onChange(imagesWithPreview)
-
-    //@ts-ignore
-    ;(inputRef.current as HTMLInputElement).value = null
   }
 
   // Function to find index if exists
@@ -144,7 +143,7 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
           value.map((image) => {
             const alt = altImages.find((i) => i.id === image.id)?.alt
             return (
-              <div key={image.id} className='relative w-[166px] overflow-hidden rounded border border-blue-500 p-2'>
+              <div key={image.id} className='relative w-[166px] overflow-hidden rounded-md p-2 shadow-md'>
                 <Image
                   alt={image.alt}
                   src={image.link}
@@ -153,7 +152,7 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
                   className='mx-auto block aspect-square h-auto w-[150px] rounded object-contain'
                 />
                 <p
-                  className='mt-2 cursor-default overflow-hidden text-ellipsis whitespace-nowrap border-t border-blue-500 pt-2 text-left [direction:rtl]'
+                  className='mt-2 cursor-default overflow-hidden text-ellipsis whitespace-nowrap border-t border-slate-300 pt-2 text-left [direction:rtl]'
                   title={image.name}
                 >
                   {image.name}
@@ -167,13 +166,14 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
                 <div className='relative mt-2'>
                   <input
                     type='text'
-                    data-changed={alt !== image.alt}
-                    className='peer h-7 w-full rounded border border-blue-500 py-1 pl-2 pr-9 text-xs outline-none'
+                    title={alt}
+                    className='peer h-7 w-full border-b border-slate-300 py-1 pl-2 pr-9 text-sm outline-none'
                     value={alt ?? ''}
                     onChange={(event) => handleChangeAltServer(event, image.id)}
                   />
                   <CheckIcon
-                    className='absolute top-0 right-0 h-7 w-7 cursor-pointer rounded-r border border-blue-500 bg-slate-100 p-1 text-gray-400 peer-data-[changed=true]:bg-primary peer-data-[changed=true]:text-white'
+                    title='Cập nhật alt hình ảnh'
+                    className='absolute top-0 right-0 h-7 w-7 cursor-pointer p-1 text-gray-400 hover:text-primary'
                     onClick={handleSubmitChangeAltServer(image.id)}
                   />
                 </div>
@@ -182,7 +182,7 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
           })}
         {files.length > 0 &&
           files.map((file, index) => (
-            <div key={index} className='relative w-[166px] overflow-hidden rounded border border-danger p-2'>
+            <div key={index} className='relative w-[166px] overflow-hidden rounded-md p-2 shadow-md'>
               <Image
                 alt={file.name}
                 src={file.preview as string}
@@ -191,7 +191,7 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
                 className='mx-auto block aspect-square h-auto w-[150px] rounded object-contain'
               />
               <p
-                className='mt-2 cursor-default overflow-hidden text-ellipsis whitespace-nowrap border-t border-danger pt-2 text-left [direction:rtl]'
+                className='mt-2 cursor-default overflow-hidden text-ellipsis whitespace-nowrap border-t border-slate-300 pt-2 text-left [direction:rtl]'
                 title={file.name}
               >
                 {file.name}
@@ -214,7 +214,7 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
 
         {/* Add button */}
         <input type='file' hidden ref={inputRef} multiple onChange={handleChange} />
-        <div className='flex h-[244px] w-[160px] flex-col items-center justify-center gap-2 rounded border border-blue-500 p-2 '>
+        <div className='flex h-[244px] w-[160px] flex-col items-center justify-center gap-2 p-2 '>
           <button
             type='button'
             className='mt-2 flex w-full items-center justify-center rounded-lg border border-green-700 px-5 py-2.5 text-center text-sm font-medium text-green-700 outline-none hover:bg-green-800 hover:text-white'

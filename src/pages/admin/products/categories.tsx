@@ -1,21 +1,21 @@
+import { BarsArrowDownIcon, BarsArrowUpIcon, MinusIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
+import nProgress from 'nprogress'
 import React, { useCallback, useState } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
+import Dialog from '~/components/Dialog'
+import Input from '~/components/Input'
+import InputNumber from '~/components/InputNumber'
+import InputSelect from '~/components/InputSelect'
 import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
 import { Category } from '~/types/product.type'
 import { ErrorResponse, SuccessResponse } from '~/types/response.type'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
-import Input from '~/components/Input'
-import InputSelect from '~/components/InputSelect'
-import nProgress from 'nprogress'
-import { toast } from 'react-toastify'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { categorySchema } from '~/utils/rules'
 import { isAxiosBadRequestError } from '~/utils/utils'
-import Dialog from '~/components/Dialog'
-import InputNumber from '~/components/InputNumber'
-import { MinusIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 interface FormType {
   id?: number
@@ -61,7 +61,7 @@ const AdminCategoriesPage = () => {
     mutationFn: (data: FormType) => http.patch<SuccessResponse<Category>>(`/category/${data.id}`, data),
   })
 
-  // Update category
+  // Delete category
   const deleteCategoryMutation = useMutation({
     mutationFn: (id: number) => http.delete<SuccessResponse<Category>>(`/category/${id}`),
   })
@@ -93,27 +93,21 @@ const AdminCategoriesPage = () => {
 
   // Render category tree
   const renderCategoryTree = (categories: Category[]) => {
-    // Tạo một đối tượng Map để lưu trữ các danh mục con theo id
     const map = new Map<number, Category[]>()
     categories.forEach((category) => {
-      // Nếu phần tử có parentId, thì thêm nó vào danh sách con của parentId đó
       const children = map.get(category.parentId) || []
       children.push(category)
       map.set(category.parentId, children)
     })
 
-    // Hàm đệ quy để hiển thị cây từ một phần tử cha
     const renderTree = (parentId: number, level: number) => {
-      // Lấy danh sách con của phần tử cha từ map
       const children = map.get(parentId) || []
-      // Nếu không có danh sách con, trả về null
       if (children.length === 0) {
         return null
       }
-      // Nếu có danh sách con, duyệt qua từng phần tử và gọi đệ quy để hiển thị chúng
       return (
         <ul
-          className={classNames('border-l-2 border-slate-600 text-sm', {
+          className={classNames('border-l-2 border-primary/30 text-sm', {
             'ml-[29px] max-h-0 overflow-hidden peer-checked:max-h-max': level !== 0,
           })}
         >
@@ -121,11 +115,15 @@ const AdminCategoriesPage = () => {
             <li key={item.id}>
               {map.get(item.id) && <input type='checkbox' className='peer' id={`children-of-${item.id}`} hidden />}
               <div className='group relative flex select-none items-center gap-1'>
-                <span className={classNames('absolute top-1/2 left-0 h-0.5 w-5 -translate-y-1/2 bg-slate-600')} />
+                <span
+                  className={classNames(
+                    'absolute top-1/2 left-0 h-0 w-5 -translate-y-1/2 border-b-2 border-primary/30'
+                  )}
+                />
                 {map.get(item.id) && (
                   <label
                     htmlFor={`children-of-${item.id}`}
-                    className='absolute left-[22px] top-1/2 -translate-y-1/2 cursor-pointer border-2 border-slate-600'
+                    className='absolute left-[22px] top-1/2 -translate-y-1/2 cursor-pointer border-2 border-primary/30 peer-checked:group-first-of-type:bg-primary/30'
                   >
                     <PlusIcon className='h-3 w-3 peer-checked:group-first-of-type:hidden' />
                     <MinusIcon className='hidden h-3 w-3 peer-checked:group-first-of-type:block' />
@@ -157,15 +155,12 @@ const AdminCategoriesPage = () => {
       )
     }
 
-    // Gọi hàm đệ quy với parentId ban đầu
     return renderTree(0, 0)
   }
 
   const renderCategorySelect = (options: Category[], onClick: (item: {}) => () => void) => {
-    // Tạo một đối tượng Map để lưu trữ các danh mục con theo id
     const map = new Map<number, Category[]>()
     options.forEach((option) => {
-      // Nếu phần tử có parentId, thì thêm nó vào danh sách con của parentId đó
       const children = map.get(option.parentId) || []
       children.push(option)
       map.set(option.parentId, children)
@@ -251,9 +246,37 @@ const AdminCategoriesPage = () => {
     setMode('ADD')
   }
 
+  const handleExpandCollapse = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const type = (event.target as HTMLInputElement).dataset.type
+    const checkboxes = document.querySelectorAll<HTMLInputElement>('input[type="checkbox"][id^="children-of-"]')
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = type === 'expand'
+    })
+  }
+
   return (
     <div className='grid h-full gap-5 sm:grid-cols-2'>
-      <div className='h-full rounded border border-slate-300 p-2'>{renderCategoryTree(categories || [])}</div>
+      <div className='c-scrollbar h-full overflow-y-auto rounded border border-slate-300 p-2'>
+        <div className='flex justify-end gap-2'>
+          <button
+            data-type='expand'
+            className='flex items-center gap-1 rounded border px-2 py-1 text-sm outline-none hover:border-primary hover:text-primary'
+            onClick={handleExpandCollapse}
+          >
+            Mở rộng
+            <BarsArrowDownIcon className='pointer-events-none h-4 w-4' />
+          </button>
+          <button
+            data-type='collapse'
+            className='flex items-center gap-1 rounded border px-2 py-1 text-sm outline-none hover:border-primary hover:text-primary'
+            onClick={handleExpandCollapse}
+          >
+            Thu gọn
+            <BarsArrowUpIcon className='pointer-events-none h-4 w-4' />
+          </button>
+        </div>
+        <div className='mt-5'>{renderCategoryTree(categories || [])}</div>
+      </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Name */}
         <Controller
@@ -305,7 +328,14 @@ const AdminCategoriesPage = () => {
           <button className='w-full rounded bg-primary py-2 px-4' type='submit'>
             {mode === 'ADD' ? 'Thêm danh mục' : 'Cập nhật danh mục'}
           </button>
-          <button className='w-full rounded bg-danger py-2 px-4' type='reset' onClick={onReset}>
+          <button
+            className={classNames('w-full rounded py-2 px-4', {
+              'bg-blue-500': mode === 'ADD',
+              'bg-danger': mode !== 'ADD',
+            })}
+            type='reset'
+            onClick={onReset}
+          >
             {mode === 'ADD' ? 'Đặt lại' : 'Huỷ'}
           </button>
         </div>

@@ -12,6 +12,7 @@
   /* Scroll bar */
   .c-scrollbar::-webkit-scrollbar {
     width: 5px;
+    height: 10px;
   }
   .c-scrollbar::-webkit-scrollbar-thumb {
     border-radius: 10px;

@@ -60,6 +60,7 @@ export interface ProductManageList {
   quantity: number
   rating: number
   categories: string[]
+  updatedAt: string | null
 }
 
 export interface ProductWithPagination {

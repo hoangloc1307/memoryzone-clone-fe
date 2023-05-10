@@ -1,6 +1,7 @@
 import { MagnifyingGlassIcon, PencilSquareIcon } from '@heroicons/react/24/solid'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import classNames from 'classnames'
+import { format } from 'date-fns'
 import debounce from 'lodash/debounce'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
@@ -10,11 +11,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useRef, useState } from 'react'
 import Pagination from '~/components/Pagination'
-import RatingStars from '~/components/RatingStars'
 import layout from '~/constants/layout'
 import path from '~/constants/path'
 import useAuthAxios from '~/hooks/useAuthAxios'
-import { ProductWithPagination } from '~/types/product.type'
+import { Product, ProductWithPagination } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
 import { numberAsCurrency } from '~/utils/utils'
 
@@ -25,6 +25,7 @@ export const getServerSideProps: GetServerSideProps<{}> = async () => {
 }
 
 const AdminProductsPage = () => {
+  const queryClient = useQueryClient()
   const http = useAuthAxios()
   const router = useRouter()
   const query = router.query
@@ -58,7 +59,6 @@ const AdminProductsPage = () => {
         params: { ...queryString, limit: LIMIT },
       }),
     keepPreviousData: true,
-    staleTime: 5 * 60 * 1000, //5min
   })
   const products = productsQuery.data?.data.data.products
   const pagination = productsQuery.data?.data.data.pagination
@@ -67,6 +67,13 @@ const AdminProductsPage = () => {
     const value = event.target.value
     setKeyword(value)
     debounceCallApi(value)
+  }
+
+  const handlePreloadProduct = (id: number) => () => {
+    queryClient.prefetchQuery(['products', String(id)], {
+      queryFn: () => http.get<SuccessResponse<Product>>(`/products/${id}`),
+      staleTime: 60 * 1000,
+    })
   }
 
   return (
@@ -88,19 +95,24 @@ const AdminProductsPage = () => {
       </div>
 
       {/* Table */}
-      <div className='overflow-x-auto'>
-        <table className='mt-5 w-[1000px] min-w-full text-left text-sm text-gray-500 lg:w-[980px]'>
+      <div className='c-scrollbar overflow-x-auto'>
+        <table className='mt-5 w-[1000px] min-w-full text-left text-sm text-gray-500 lg:w-[1200px]'>
           <thead className='bg-gray-50 text-xs uppercase text-gray-700'>
             <tr>
               <th className='w-80 px-4 py-3'>Sản phẩm</th>
-              <th className='w-32 px-4 py-3'>Loại</th>
-              <th className='w-24 px-4 py-3'>Tồn kho</th>
-              <th className='w-28 px-4 py-3'>Giá</th>
-              <th className='px-4 py-3'>Danh mục</th>
-              <th className='w-24 px-4 py-3'>Thao tác</th>
+              <th className='w-32 px-4 py-3 text-center'>Loại</th>
+              <th className='w-24 px-4 py-3 text-center'>Tồn kho</th>
+              <th className='w-28 px-4 py-3 text-center'>Giá</th>
+              <th className='px-4 py-3 text-center'>Danh mục</th>
+              <th className='w-40 px-4 py-3 text-center'>Cập nhật lần cuối</th>
+              <th className='w-24 px-4 py-3 text-center'>Thao tác</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody
+            className={classNames({
+              'animate-pulse': !products,
+            })}
+          >
             {products &&
               products.length > 0 &&
               products.map((product) => (
@@ -111,11 +123,11 @@ const AdminProductsPage = () => {
                       alt={product.name}
                       width={50}
                       height={50}
-                      className='mx-auto block rounded-md'
+                      className='mx-auto block h-[50px] w-[50px] shrink-0 rounded-md object-contain'
                     />
-                    <span className='line-clamp-3'>{product.name}</span>
+                    <span className='flex-grow line-clamp-3'>{product.name}</span>
                   </th>
-                  <td className='px-4 py-2'>
+                  <td className='px-4 py-2 text-center'>
                     <span className='rounded bg-primary/20 px-2 py-0.5 text-xs font-medium text-primary empty:hidden'>
                       {product.type}
                     </span>
@@ -133,7 +145,7 @@ const AdminProductsPage = () => {
                       <span>{product.quantity}</span>
                     </div>
                   </td>
-                  <td className='px-4 py-2 font-medium'>
+                  <td className='px-4 py-2 text-right font-medium'>
                     <div className='text-primary'>
                       {numberAsCurrency(product.priceDiscount)}
                       <sup>đ</sup>
@@ -152,12 +164,15 @@ const AdminProductsPage = () => {
                       ))}
                     </div>
                   </td>
+                  <td className='px-4 py-2 text-center text-xs font-medium text-gray-900'>
+                    {product.updatedAt && format(new Date(product.updatedAt), 'dd/MM/yyyy HH:mm:ss')}
+                  </td>
                   <td className='px-4 py-2 text-center'>
                     <Link
                       href={`${path.admin.products}/${product.id}`}
                       className='inline-block p-2 hover:text-blue-400'
                     >
-                      <PencilSquareIcon className='h-5 w-5' />
+                      <PencilSquareIcon className='h-5 w-5' onMouseEnter={handlePreloadProduct(product.id)} />
                     </Link>
                   </td>
                 </tr>
@@ -217,7 +232,7 @@ const AdminProductsPage = () => {
 
       {/* Pagination */}
       {pagination && pagination.total > 0 && (
-        <nav className='flex items-center justify-between pt-4'>
+        <nav className='flex items-center justify-end gap-10 pt-4'>
           <span className='text-sm font-normal text-gray-500'>
             Hiển thị{' '}
             <span className='font-semibold text-gray-900'>

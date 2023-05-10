@@ -2,11 +2,13 @@ import { Tab } from '@headlessui/react'
 import { AdjustmentsVerticalIcon, ListBulletIcon, PhotoIcon } from '@heroicons/react/24/solid'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
-import omitBy from 'lodash/omitBy'
 import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { useRouter } from 'next/router'
-import { Fragment, useCallback, useMemo } from 'react'
+import nProgress from 'nprogress'
+import { SetStateAction, useCallback, useMemo, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import { toast } from 'react-toastify'
 import Input from '~/components/Input'
 import InputAutocomplete from '~/components/InputAutocomplete'
 import InputImage from '~/components/InputImage'
@@ -21,8 +23,6 @@ import layout from '~/constants/layout'
 import useAuthAxios from '~/hooks/useAuthAxios'
 import { Attribute, Category, Product, ProductImage, ProductType } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
-import { toast } from 'react-toastify'
-import nProgress from 'nprogress'
 
 type BasicInfoFormType = Pick<
   Product,
@@ -40,6 +40,7 @@ type ImageFormType = {
 }
 
 const AdminProductDetailPage = () => {
+  const [currentTab, setCurrentTab] = useState<'BasicInfo' | 'Specification' | 'Image'>('BasicInfo')
   const router = useRouter()
   const productId = router.query.productId
   const http = useAuthAxios()
@@ -54,6 +55,7 @@ const AdminProductDetailPage = () => {
     queryKey: ['products', productId],
     queryFn: () => http.get<SuccessResponse<Product>>(`/products/${productId}`),
     enabled: !!productId,
+    staleTime: 60 * 1000,
   })
   const product = productQuery.data?.data.data
 
@@ -69,7 +71,7 @@ const AdminProductDetailPage = () => {
   const typesQuery = useQuery({
     queryKey: ['types'],
     queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
-    enabled: !product?.type.id,
+    enabled: product && !product.type.id && currentTab === 'Specification',
     staleTime: Infinity,
   })
   const types = typesQuery.data?.data.data
@@ -79,7 +81,7 @@ const AdminProductDetailPage = () => {
   const attributesQuery = useQuery({
     queryKey: ['attributes', typeid],
     queryFn: () => http.get<SuccessResponse<Attribute[]>>(`/products/attributes/${typeid}`),
-    enabled: !!product?.type.id || !!typeIdInputValue,
+    enabled: (!!product?.type.id || !!typeIdInputValue) && currentTab === 'Specification',
     staleTime: Infinity,
   })
   const attributes = attributesQuery.data?.data.data
@@ -269,33 +271,31 @@ const AdminProductDetailPage = () => {
 
   return (
     <>
-      {product && (
-        <Tab.Group>
-          <Tab.List className='-mb-px flex flex-wrap border-b border-gray-200 text-center text-sm font-medium text-gray-500'>
-            {[
-              { title: 'Thông tin cơ bản', icon: ListBulletIcon },
-              { title: 'Thông số kỹ thuật', icon: AdjustmentsVerticalIcon },
-              { title: 'Hình ảnh', icon: PhotoIcon },
-            ].map((item, index) => {
-              const Icon = item.icon
-              return (
-                <Tab key={index} as={Fragment}>
-                  {({ selected }) => (
-                    <button
-                      className={classNames('group inline-flex rounded-t-lg border-b-2 p-4 outline-none', {
-                        'border-blue-600 text-blue-600': selected,
-                        'border-transparent hover:border-gray-300 hover:text-gray-600': !selected,
-                        'ml-4': index !== 0,
-                      })}
-                    >
-                      <Icon className='mr-2 h-5 w-5' />
-                      {item.title}
-                    </button>
-                  )}
-                </Tab>
-              )
-            })}
-          </Tab.List>
+      <Tab.Group>
+        <Tab.List className='-mb-px flex flex-wrap border-b border-gray-200 text-center text-sm font-medium text-gray-500'>
+          {[
+            { title: 'Thông tin cơ bản', icon: ListBulletIcon, key: 'BasicInfo' },
+            { title: 'Thông số kỹ thuật', icon: AdjustmentsVerticalIcon, key: 'Specification' },
+            { title: 'Hình ảnh', icon: PhotoIcon, key: 'Image' },
+          ].map((item, index) => {
+            const Icon = item.icon
+            return (
+              <Tab
+                key={item.key}
+                className={classNames('group inline-flex rounded-t-lg border-b-2 p-4 outline-none', {
+                  'border-blue-600 text-blue-600': item.key === currentTab,
+                  'border-transparent hover:border-gray-300 hover:text-gray-600': item.key !== currentTab,
+                  'ml-4': index !== 0,
+                })}
+                onClick={() => setCurrentTab(item.key as SetStateAction<'BasicInfo' | 'Specification' | 'Image'>)}
+              >
+                <Icon className='mr-2 h-5 w-5' />
+                {item.title}
+              </Tab>
+            )
+          })}
+        </Tab.List>
+        {product && (
           <Tab.Panels>
             {/* Basic info */}
             <Tab.Panel className='outline-none'>
@@ -322,7 +322,7 @@ const AdminProductDetailPage = () => {
                       <InputNumber
                         label='Giá'
                         value={field.value ?? product.price}
-                        classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+                        classNameWrapper='col-span-6 md:col-span-3 lg:col-start-1 lg:col-span-4'
                         onChange={field.onChange}
                       />
                     )}
@@ -335,7 +335,7 @@ const AdminProductDetailPage = () => {
                       <InputNumber
                         label='Giá khuyến mãi'
                         value={field.value ?? product.priceDiscount}
-                        classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+                        classNameWrapper='col-span-6 md:col-span-3 lg:col-start-1 lg:col-span-4'
                         onChange={field.onChange}
                       />
                     )}
@@ -348,7 +348,7 @@ const AdminProductDetailPage = () => {
                       <InputNumber
                         label='Số lượng'
                         value={field.value ?? product.quantity}
-                        classNameWrapper='col-span-6 md:col-span-4 lg:col-start-1 lg:col-span-4'
+                        classNameWrapper='col-span-6 md:col-span-3 lg:col-start-1 lg:col-span-4'
                         onChange={field.onChange}
                       />
                     )}
@@ -362,7 +362,7 @@ const AdminProductDetailPage = () => {
                         label='Thương hiệu'
                         value={field.value ?? product.vendor}
                         suggestList={vendorSuggestList}
-                        classNameWrapper='col-span-6 lg:col-start-1 lg:col-span-4 relative z-20'
+                        classNameWrapper='col-span-6 md:col-span-3 lg:col-start-1 lg:col-span-4 relative z-20'
                         onChange={field.onChange}
                       />
                     )}
@@ -463,6 +463,7 @@ const AdminProductDetailPage = () => {
                       attributes={attributes ?? []}
                       value={product.attributes}
                       classNameWrapper='mt-5'
+                      loading={attributesQuery.isLoading}
                       onChange={field.onChange}
                     />
                   )}
@@ -505,8 +506,49 @@ const AdminProductDetailPage = () => {
               </form>
             </Tab.Panel>
           </Tab.Panels>
-        </Tab.Group>
-      )}
+        )}
+
+        {/* Skeleton */}
+        {!product && (
+          <Tab.Panels className='mt-7 animate-pulse'>
+            <Tab.Panel>
+              <div className='h-[40px] rounded bg-gray-300' />
+              <div className='grid grid-cols-12 gap-x-5'>
+                {Array(4)
+                  .fill(0)
+                  .map((_, index) => (
+                    <div
+                      key={index}
+                      className='col-span-6 mt-7 h-[40px] rounded bg-gray-300 md:col-span-3 lg:col-span-4 lg:col-start-1'
+                    />
+                  ))}
+                <div className='col-span-12 mt-7 h-[40px] rounded bg-gray-300 lg:col-span-8 lg:col-start-5 lg:row-span-4 lg:row-start-1' />
+              </div>
+              <div className='mt-7 h-[40px] rounded bg-gray-300' />
+              <div className='mt-7 h-[40px] rounded bg-gray-300' />
+              <div className='mt-7 h-[300px] rounded bg-gray-300' />
+            </Tab.Panel>
+            <Tab.Panel>
+              <div className='h-[40px] rounded bg-gray-300' />
+              <div className='mt-7 h-[40px] rounded bg-gray-300' />
+              {Array(9)
+                .fill(0)
+                .map((_, index) => (
+                  <div key={index} className='mt-2 h-[40px] rounded bg-gray-300' />
+                ))}
+            </Tab.Panel>
+            <Tab.Panel>
+              <div className='flex flex-wrap gap-5'>
+                {Array(4)
+                  .fill(0)
+                  .map((_, index) => (
+                    <div key={index} className='h-[244px] w-[160px] rounded bg-gray-300' />
+                  ))}
+              </div>
+            </Tab.Panel>
+          </Tab.Panels>
+        )}
+      </Tab.Group>
     </>
   )
 }
