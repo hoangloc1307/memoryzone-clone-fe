@@ -1,6 +1,7 @@
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import React, { memo, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import Button from '../Button'
 
 export interface Props {
   label?: string
@@ -60,14 +61,9 @@ const InputList = ({ label, value, errorMessage, classNameWrapper, classNameInpu
       ))}
 
       {/* Add button */}
-      <button
-        type='button'
-        className='mt-2 flex w-full items-center justify-center rounded-lg border border-green-700 px-5 py-2.5 text-center text-sm font-medium text-green-700 outline-none hover:bg-green-800 hover:text-white'
-        onClick={handleAdd}
-      >
-        <PlusIcon className='mr-2 h-5 w-5' />
-        <span>Thêm</span>
-      </button>
+      <Button leftIcon={PlusIcon} outline size='sm' classNameCustom='w-full mt-2' onClick={handleAdd}>
+        Thêm
+      </Button>
 
       {/* Error message */}
       {errorMessage && <p className='mt-2 text-xs text-red-500 empty:hidden'>{errorMessage}</p>}

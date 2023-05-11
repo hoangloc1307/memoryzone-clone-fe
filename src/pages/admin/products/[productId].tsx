@@ -9,6 +9,7 @@ import nProgress from 'nprogress'
 import { SetStateAction, useCallback, useMemo, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
+import Button from '~/components/Button'
 import Input from '~/components/Input'
 import InputAutocomplete from '~/components/InputAutocomplete'
 import InputImage from '~/components/InputImage'
@@ -180,6 +181,8 @@ const AdminProductDetailPage = () => {
       //If form data have any id and it not exists in product categories then id must be add
       categories.delete = productCategoryIds.filter((id) => !categoryIds.includes(id))
     }
+
+    data.shortInfo = data.shortInfo.filter((item) => !!item)
 
     const payload = omitBy({ ...data, categories }, isNil)
 
@@ -424,12 +427,9 @@ const AdminProductDetailPage = () => {
                     />
                   )}
                 />
-                <button
-                  type='submit'
-                  className=' mt-10 w-full rounded bg-primary px-5 py-2.5 text-center text-sm font-medium text-white outline-none hover:bg-green-800 focus:ring-4 focus:ring-green-300'
-                >
+                <Button type='submit' classNameCustom='mt-5 w-full'>
                   Cập nhật sản phẩm
-                </button>
+                </Button>
               </form>
             </Tab.Panel>
 
@@ -469,12 +469,9 @@ const AdminProductDetailPage = () => {
                   )}
                 />
 
-                <button
-                  type='submit'
-                  className=' mt-10 w-full rounded bg-primary px-5 py-2.5 text-center text-sm font-medium text-white outline-none hover:bg-green-800 focus:ring-4 focus:ring-green-300'
-                >
-                  Cập nhật thông số sản phẩm
-                </button>
+                <Button type='submit' classNameCustom='mt-5 w-full'>
+                  Cập nhật thông số
+                </Button>
               </form>
             </Tab.Panel>
 
@@ -497,12 +494,9 @@ const AdminProductDetailPage = () => {
                   )}
                 />
 
-                <button
-                  type='submit'
-                  className=' mt-10 w-full rounded bg-primary px-5 py-2.5 text-center text-sm font-medium text-white outline-none hover:bg-green-800 focus:ring-4 focus:ring-green-300'
-                >
+                <Button type='submit' classNameCustom='mt-5 w-full'>
                   Cập nhật hình ảnh
-                </button>
+                </Button>
               </form>
             </Tab.Panel>
           </Tab.Panels>

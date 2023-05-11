@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import useAuthAxios from '~/hooks/useAuthAxios'
 import { ProductImage } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
+import Button from '../Button'
 
 export type FileWithPreview = File & { preview?: string; alt?: string }
 
@@ -215,22 +216,17 @@ const InputImage = ({ label, value, localValue, classNameWrapper, onChange, onDe
         {/* Add button */}
         <input type='file' hidden ref={inputRef} multiple onChange={handleChange} />
         <div className='flex h-[244px] w-[160px] flex-col items-center justify-center gap-2 p-2 '>
-          <button
-            type='button'
-            className='mt-2 flex w-full items-center justify-center rounded-lg border border-green-700 px-5 py-2.5 text-center text-sm font-medium text-green-700 outline-none hover:bg-green-800 hover:text-white'
+          <Button
+            outline
+            leftIcon={ArrowUpTrayIcon}
             onClick={() => inputRef.current?.click()}
+            classNameCustom='w-full mt-2'
           >
-            <ArrowUpTrayIcon className='h-5 w-5' />
-            <span>Tải ảnh lên</span>
-          </button>
-          <button
-            type='button'
-            className='mt-2 flex w-full items-center justify-center rounded-lg border border-red-700 px-5 py-2.5 text-center text-sm font-medium text-red-700 outline-none hover:bg-red-800 hover:text-white'
-            onClick={handleDelete}
-          >
-            <TrashIcon className='h-5 w-5' />
-            <span>Xoá</span>
-          </button>
+            Tải ảnh lên
+          </Button>
+          <Button outline color='red' leftIcon={TrashIcon} onClick={handleDelete} classNameCustom='w-full mt-2'>
+            Xoá ảnh
+          </Button>
         </div>
       </div>
     </div>
