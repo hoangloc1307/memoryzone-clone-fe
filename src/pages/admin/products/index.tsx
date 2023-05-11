@@ -1,5 +1,5 @@
-import { MagnifyingGlassIcon, PencilSquareIcon } from '@heroicons/react/24/solid'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { MagnifyingGlassIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/solid'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { format } from 'date-fns'
 import debounce from 'lodash/debounce'
@@ -9,7 +9,11 @@ import { GetServerSideProps } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import nProgress from 'nprogress'
 import { useRef, useState } from 'react'
+import { toast } from 'react-toastify'
+import Button from '~/components/Button'
+import Dialog from '~/components/Dialog'
 import Pagination from '~/components/Pagination'
 import layout from '~/constants/layout'
 import path from '~/constants/path'
@@ -63,12 +67,25 @@ const AdminProductsPage = () => {
   const products = productsQuery.data?.data.data.products
   const pagination = productsQuery.data?.data.data.pagination
 
+  // Add product mutation
+  const addProductMutation = useMutation({
+    mutationFn: () => http.post<SuccessResponse<{ id: number }>>('/products/drafts'),
+  })
+
+  // Update product mutation
+  const updateProductMutation = useMutation({
+    mutationFn: ({ id, status }: { id: number; status: boolean }) =>
+      http.patch<SuccessResponse<undefined>>(`/products/${id}`, { status }),
+  })
+
+  // Handle search keyword change
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
     setKeyword(value)
     debounceCallApi(value)
   }
 
+  // Handle preload product when hover
   const handlePreloadProduct = (id: number) => () => {
     queryClient.prefetchQuery(['products', String(id)], {
       queryFn: () => http.get<SuccessResponse<Product>>(`/products/${id}`),
@@ -76,10 +93,43 @@ const AdminProductsPage = () => {
     })
   }
 
+  // Handle add new product draft
+  const handleAddNewProduct = () => {
+    nProgress.start()
+    addProductMutation.mutate(undefined, {
+      onSuccess(data) {
+        nProgress.done()
+        router.push({
+          pathname: `${path.admin.products}/${data.data.data.id}`,
+        })
+      },
+      onSettled() {
+        nProgress.done()
+      },
+    })
+  }
+
+  // Handle delete product
+  const handleDeleteProduct = (id: number) => () => {
+    nProgress.start()
+    updateProductMutation.mutate(
+      { id, status: false },
+      {
+        onSuccess(data) {
+          productsQuery.refetch()
+          toast.success(data.data.message)
+        },
+        onSettled() {
+          nProgress.done()
+        },
+      }
+    )
+  }
+
   return (
     <>
       {/* Search */}
-      <div>
+      <div className='flex items-center justify-between'>
         <div className='relative'>
           <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3'>
             <MagnifyingGlassIcon className='h-5 w-5 text-gray-500' />
@@ -92,6 +142,9 @@ const AdminProductsPage = () => {
             onChange={handleSearchChange}
           />
         </div>
+        <Button leftIcon={PlusIcon} onClick={handleAddNewProduct} loading={addProductMutation.isLoading}>
+          Thêm sản phẩm
+        </Button>
       </div>
 
       {/* Table */}
@@ -167,13 +220,19 @@ const AdminProductsPage = () => {
                   <td className='px-4 py-2 text-center text-xs font-medium text-gray-900'>
                     {product.updatedAt && format(new Date(product.updatedAt), 'dd/MM/yyyy HH:mm:ss')}
                   </td>
-                  <td className='px-4 py-2 text-center'>
-                    <Link
-                      href={`${path.admin.products}/${product.id}`}
-                      className='inline-block p-2 hover:text-blue-400'
-                    >
-                      <PencilSquareIcon className='h-5 w-5' onMouseEnter={handlePreloadProduct(product.id)} />
-                    </Link>
+                  <td className='px-4 py-2'>
+                    <div className='flex gap-1'>
+                      <Link href={`${path.admin.products}/${product.id}`} className='p-2 hover:text-blue-400'>
+                        <PencilSquareIcon className='h-5 w-5' onMouseEnter={handlePreloadProduct(product.id)} />
+                      </Link>
+                      <Dialog
+                        onConfirm={handleDeleteProduct(product.id)}
+                        heading='Xác nhận xoá'
+                        content={`Bạn chắc chắn muốn xoá sản phẩm '${product.name || product.id}'`}
+                      >
+                        <TrashIcon className='h-9 w-9 cursor-pointer p-2 hover:text-red-500' />
+                      </Dialog>
+                    </div>
                   </td>
                 </tr>
               ))}

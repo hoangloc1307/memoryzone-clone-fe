@@ -247,7 +247,6 @@ export default function CategoryPage() {
                             priceWrapper: 'flex-row justify-start xl:justify-start gap-2 items-end text-base',
                             priceDiscount: 'text-lg md:text-xl',
                             link: 'md:flex md:gap-5 lg:gap-10',
-                            stars: 'h-5 w-5',
                             starsWrapper: 'justify-start',
                           }
                         : undefined

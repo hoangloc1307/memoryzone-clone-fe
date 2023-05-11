@@ -34,7 +34,7 @@ type Props = {
   disabled?: boolean
   loading?: boolean
   classNameCustom?: string
-  onClick?: () => void
+  onClick?: (...rest: any) => void
 } & {
   [key: string]: any
 }

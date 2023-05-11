@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import Pagination from '~/components/Pagination'
 import ProductItem from '~/components/ProductItem'
 import { productsData } from '~/datas/productData'
@@ -8,7 +7,7 @@ import useViewport from '~/hooks/useViewport'
 export default function SearchPage() {
   const queryConfig = useQueryConfig()
   const width = useViewport()
-  const { keyword, page } = queryConfig
+  const { keyword, page = 1 } = queryConfig
   const limit = width < 640 ? 6 : width < 1024 ? 8 : width < 1280 ? 10 : 12
   return (
     <div className='c-container'>
@@ -22,8 +21,9 @@ export default function SearchPage() {
       <div className='mt-10'>
         <Pagination
           range={2}
+          currentPage={page}
           totalPage={Math.ceil(productsData.length / limit)}
-          queryConfig={{ ...queryConfig, limit }}
+          queryString={{ ...queryConfig, limit }}
         />
       </div>
     </div>

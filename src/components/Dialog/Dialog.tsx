@@ -8,6 +8,7 @@ import {
   useInteractions,
 } from '@floating-ui/react'
 import { useState } from 'react'
+import Button from '../Button'
 
 interface Props {
   idPortal?: string
@@ -52,21 +53,18 @@ export default function Dialog({ idPortal = 'id-dialog', heading, content, child
                 <h3 className='font-medium'>{heading ?? 'Heading'}</h3>
                 <p className='mt-2 text-sm'>{content ?? 'Content'}</p>
                 <div className='mt-5 flex justify-around gap-3'>
-                  <button
+                  <Button
+                    outline
                     onClick={(e) => {
                       onConfirm && onConfirm(e)
                       setIsOpen(false)
                     }}
-                    className='rounded border border-primary px-2 py-1 text-primary hover:bg-primary hover:text-white'
                   >
                     Confirm
-                  </button>
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className='rounded border border-danger px-2 py-1 text-danger hover:bg-danger hover:text-white'
-                  >
+                  </Button>
+                  <Button outline color='red' onClick={() => setIsOpen(false)}>
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </div>
             </FloatingFocusManager>

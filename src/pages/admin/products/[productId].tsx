@@ -182,7 +182,7 @@ const AdminProductDetailPage = () => {
       categories.delete = productCategoryIds.filter((id) => !categoryIds.includes(id))
     }
 
-    data.shortInfo = data.shortInfo.filter((item) => !!item)
+    data.shortInfo = data.shortInfo?.filter((item) => !!item)
 
     const payload = omitBy({ ...data, categories }, isNil)
 

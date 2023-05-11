@@ -6,6 +6,7 @@ import nProgress from 'nprogress'
 import React, { useCallback, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
+import Button from '~/components/Button'
 import Dialog from '~/components/Dialog'
 import Input from '~/components/Input'
 import InputNumber from '~/components/InputNumber'
@@ -246,8 +247,7 @@ const AdminCategoriesPage = () => {
     setMode('ADD')
   }
 
-  const handleExpandCollapse = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const type = (event.target as HTMLInputElement).dataset.type
+  const handleExpandCollapse = (type: 'expand' | 'collapse') => () => {
     const checkboxes = document.querySelectorAll<HTMLInputElement>('input[type="checkbox"][id^="children-of-"]')
     checkboxes.forEach((checkbox) => {
       checkbox.checked = type === 'expand'
@@ -258,22 +258,12 @@ const AdminCategoriesPage = () => {
     <div className='grid h-full gap-5 sm:grid-cols-2'>
       <div className='c-scrollbar h-full overflow-y-auto rounded border border-slate-300 p-2'>
         <div className='flex justify-end gap-2'>
-          <button
-            data-type='expand'
-            className='flex items-center gap-1 rounded border px-2 py-1 text-sm outline-none hover:border-primary hover:text-primary'
-            onClick={handleExpandCollapse}
-          >
+          <Button outline size='xs' rightIcon={BarsArrowDownIcon} onClick={handleExpandCollapse('expand')}>
             Mở rộng
-            <BarsArrowDownIcon className='pointer-events-none h-4 w-4' />
-          </button>
-          <button
-            data-type='collapse'
-            className='flex items-center gap-1 rounded border px-2 py-1 text-sm outline-none hover:border-primary hover:text-primary'
-            onClick={handleExpandCollapse}
-          >
+          </Button>
+          <Button outline size='xs' rightIcon={BarsArrowUpIcon} onClick={handleExpandCollapse('collapse')}>
             Thu gọn
-            <BarsArrowUpIcon className='pointer-events-none h-4 w-4' />
-          </button>
+          </Button>
         </div>
         <div className='mt-5'>{renderCategoryTree(categories || [])}</div>
       </div>
@@ -325,19 +315,10 @@ const AdminCategoriesPage = () => {
 
         {/* Submit */}
         <div className='mt-5 grid grid-cols-2 gap-5 text-sm font-medium uppercase text-white'>
-          <button className='w-full rounded bg-primary py-2 px-4' type='submit'>
-            {mode === 'ADD' ? 'Thêm danh mục' : 'Cập nhật danh mục'}
-          </button>
-          <button
-            className={classNames('w-full rounded py-2 px-4', {
-              'bg-blue-500': mode === 'ADD',
-              'bg-danger': mode !== 'ADD',
-            })}
-            type='reset'
-            onClick={onReset}
-          >
+          <Button type='submit'>{mode === 'ADD' ? 'Thêm danh mục' : 'Cập nhật danh mục'}</Button>
+          <Button type='reset' onClick={onReset} color={mode === 'ADD' ? 'blue' : 'red'}>
             {mode === 'ADD' ? 'Đặt lại' : 'Huỷ'}
-          </button>
+          </Button>
         </div>
       </form>
     </div>
