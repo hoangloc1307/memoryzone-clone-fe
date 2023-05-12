@@ -16,7 +16,7 @@ interface Props {
   children: React.ReactNode
   heading?: string
   content?: string
-  onConfirm?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  onConfirm?: () => void
 }
 
 export default function Dialog({ idPortal = 'id-dialog', heading, content, children, onConfirm }: Props) {
@@ -63,8 +63,8 @@ export default function Dialog({ idPortal = 'id-dialog', heading, content, child
                 <div className='flex items-center justify-between rounded-b border-t border-gray-200 p-6'>
                   <Button
                     size='sm'
-                    onClick={(e) => {
-                      onConfirm && onConfirm(e)
+                    onClick={() => {
+                      onConfirm && onConfirm()
                       setIsOpen(false)
                     }}
                   >

@@ -72,8 +72,7 @@ const AdminCategoriesPage = () => {
     reset({ id: item.id, name: item.name, parentId: item.parentId, order: item.order })
   }
 
-  const handleDeleteCategory = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, item: Category) => {
-    event.stopPropagation()
+  const handleDeleteCategory = (item: Category) => {
     nProgress.start()
     deleteCategoryMutation.mutate(item.id, {
       onSuccess(data) {
@@ -140,7 +139,7 @@ const AdminCategoriesPage = () => {
                   {item.name}
                 </div>
                 <Dialog
-                  onConfirm={(event) => handleDeleteCategory(event, item)}
+                  onConfirm={() => handleDeleteCategory(item)}
                   heading='Xác nhận xoá'
                   content={`Bạn chắc chắn muốn xoá danh mục '${item.name}'`}
                 >
