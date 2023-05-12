@@ -110,6 +110,11 @@ export const adminNavigation = [
         children: [],
       },
       {
+        title: 'Loại sản phẩm',
+        link: path.admin.productTypes,
+        children: [],
+      },
+      {
         title: 'Thuộc tính sản phẩm',
         link: path.admin.productAttributes,
         children: [],

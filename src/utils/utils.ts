@@ -1,5 +1,5 @@
 import axios, { AxiosError, HttpStatusCode } from 'axios'
-import { Product, Product2, SortType } from '~/types/product.type'
+import { Product2, SortType } from '~/types/product.type'
 import { ErrorResponse } from '~/types/response.type'
 
 export const isBrowser = typeof window !== 'undefined'

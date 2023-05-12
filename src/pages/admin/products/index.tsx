@@ -20,7 +20,7 @@ import path from '~/constants/path'
 import useAuthAxios from '~/hooks/useAuthAxios'
 import { Product, ProductWithPagination } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
-import { numberAsCurrency } from '~/utils/utils'
+import { isAxiosError, numberAsCurrency } from '~/utils/utils'
 
 const LIMIT = 5
 
@@ -63,6 +63,11 @@ const AdminProductsPage = () => {
         params: { ...queryString, limit: LIMIT },
       }),
     keepPreviousData: true,
+    onError(err) {
+      if (isAxiosError<{ status: string; message: string }>(err)) {
+        toast.error(err.response?.data.message)
+      }
+    },
   })
   const products = productsQuery.data?.data.data.products
   const pagination = productsQuery.data?.data.data.pagination

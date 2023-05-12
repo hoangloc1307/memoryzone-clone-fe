@@ -51,6 +51,8 @@ const AdminProductDetailPage = () => {
   const vendorInputValue = basicInfoForm.watch('vendor')
   const typeIdInputValue = specificationForm.watch('typeId')
 
+  console.log(productId)
+
   // Get product detail
   const productQuery = useQuery({
     queryKey: ['products', productId],
@@ -71,7 +73,7 @@ const AdminProductDetailPage = () => {
   // Get product types
   const typesQuery = useQuery({
     queryKey: ['types'],
-    queryFn: () => http.get<SuccessResponse<ProductType[]>>('/products/types'),
+    queryFn: () => http.get<SuccessResponse<ProductType[]>>('/type'),
     enabled: product && !product.type.id && currentTab === 'Specification',
     staleTime: Infinity,
   })
@@ -463,7 +465,7 @@ const AdminProductDetailPage = () => {
                       attributes={attributes ?? []}
                       value={product.attributes}
                       classNameWrapper='mt-5'
-                      loading={attributesQuery.isLoading}
+                      loading={attributesQuery.isFetching}
                       onChange={field.onChange}
                     />
                   )}

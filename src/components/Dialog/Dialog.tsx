@@ -9,6 +9,7 @@ import {
 } from '@floating-ui/react'
 import { useState } from 'react'
 import Button from '../Button'
+import { XMarkIcon } from '@heroicons/react/24/solid'
 
 interface Props {
   idPortal?: string
@@ -43,18 +44,25 @@ export default function Dialog({ idPortal = 'id-dialog', heading, content, child
       </div>
       <FloatingPortal id={idPortal}>
         {isOpen && (
-          <FloatingOverlay className='z-50 grid place-items-center bg-black/20' lockScroll>
+          <FloatingOverlay className='z-50 grid place-items-center bg-black/50' lockScroll>
             <FloatingFocusManager context={context}>
-              <div
-                className='max-w-[300px] rounded bg-white p-4 shadow-xl'
-                ref={refs.setFloating}
-                {...getFloatingProps()}
-              >
-                <h3 className='font-medium'>{heading ?? 'Heading'}</h3>
-                <p className='mt-2 text-sm'>{content ?? 'Content'}</p>
-                <div className='mt-5 flex justify-around gap-3'>
+              <div className='max-w-[300px] rounded-lg bg-white shadow' ref={refs.setFloating} {...getFloatingProps()}>
+                <div className='flex items-start justify-between rounded-t border-b p-4'>
+                  <h3 className='text-xl font-semibold text-gray-900'>{heading ?? 'Heading'}</h3>
                   <Button
+                    size='xs'
+                    iconButton={XMarkIcon}
+                    classNameCustom='p-1.5 border-none text-gray-400 hover:bg-gray-200 hover:text-gray-900'
                     outline
+                    onClick={() => setIsOpen(false)}
+                  />
+                </div>
+                <div className='space-y-6 p-6'>
+                  <p className='text-base leading-relaxed text-gray-500 '>{content ?? 'Content'}</p>
+                </div>
+                <div className='flex items-center justify-between rounded-b border-t border-gray-200 p-6'>
+                  <Button
+                    size='sm'
                     onClick={(e) => {
                       onConfirm && onConfirm(e)
                       setIsOpen(false)
@@ -62,7 +70,7 @@ export default function Dialog({ idPortal = 'id-dialog', heading, content, child
                   >
                     Confirm
                   </Button>
-                  <Button outline color='red' onClick={() => setIsOpen(false)}>
+                  <Button size='sm' outline color='red' onClick={() => setIsOpen(false)}>
                     Cancel
                   </Button>
                 </div>

@@ -17,5 +17,9 @@ export const categorySchema = object({
   name: string().trim().required('Tên danh mục là bắt buộc'),
 })
 
+export const productTypeSchema = object({
+  type: string().trim().required('Loại sản phẩm là bắt buộc'),
+})
+
 export type AuthenSchema = InferType<typeof authenSchema>
 export type SearchSchema = InferType<typeof searchSchema>
