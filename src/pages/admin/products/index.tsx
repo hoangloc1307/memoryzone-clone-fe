@@ -22,7 +22,7 @@ import { Product, ProductWithPagination } from '~/types/product.type'
 import { SuccessResponse } from '~/types/response.type'
 import { isAxiosError, numberAsCurrency } from '~/utils/utils'
 
-const LIMIT = 5
+const LIMIT = 10
 
 export const getServerSideProps: GetServerSideProps<{}> = async () => {
   return { props: {} }
@@ -64,7 +64,7 @@ const AdminProductsPage = () => {
       }),
     keepPreviousData: true,
     onError(err) {
-      if (isAxiosError<{ status: string; message: string }>(err)) {
+      if (isAxiosError<SuccessResponse<undefined>>(err)) {
         toast.error(err.response?.data.message)
       }
     },
@@ -75,12 +75,28 @@ const AdminProductsPage = () => {
   // Add product mutation
   const addProductMutation = useMutation({
     mutationFn: () => http.post<SuccessResponse<{ id: number }>>('/products/drafts'),
+    onMutate() {
+      nProgress.start()
+    },
+    onSettled() {
+      nProgress.done()
+    },
   })
 
   // Update product mutation
   const updateProductMutation = useMutation({
     mutationFn: ({ id, status }: { id: number; status: boolean }) =>
       http.patch<SuccessResponse<undefined>>(`/products/${id}`, { status }),
+    onMutate() {
+      nProgress.start()
+    },
+    onSuccess(data) {
+      productsQuery.refetch()
+      toast.success(data.data.message)
+    },
+    onSettled() {
+      nProgress.done()
+    },
   })
 
   // Handle search keyword change
@@ -100,35 +116,18 @@ const AdminProductsPage = () => {
 
   // Handle add new product draft
   const handleAddNewProduct = () => {
-    nProgress.start()
     addProductMutation.mutate(undefined, {
       onSuccess(data) {
-        nProgress.done()
         router.push({
           pathname: `${path.admin.products}/${data.data.data.id}`,
         })
-      },
-      onSettled() {
-        nProgress.done()
       },
     })
   }
 
   // Handle delete product
   const handleDeleteProduct = (id: number) => () => {
-    nProgress.start()
-    updateProductMutation.mutate(
-      { id, status: false },
-      {
-        onSuccess(data) {
-          productsQuery.refetch()
-          toast.success(data.data.message)
-        },
-        onSettled() {
-          nProgress.done()
-        },
-      }
-    )
+    updateProductMutation.mutate({ id, status: false })
   }
 
   return (

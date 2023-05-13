@@ -1,5 +1,5 @@
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import React, { memo, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import Button from '../Button'
 
@@ -13,7 +13,11 @@ export interface Props {
 }
 
 const InputList = ({ label, value, errorMessage, classNameWrapper, classNameInput, onChange }: Props) => {
-  const [localValue, setLocalValue] = useState<string[]>(value ?? [''])
+  const [localValue, setLocalValue] = useState<string[]>([''])
+
+  useEffect(() => {
+    setLocalValue(value || [''])
+  }, [value])
 
   const handleRemove = (index: number) => () => {
     const _value = localValue.filter((_, idx) => index !== idx)

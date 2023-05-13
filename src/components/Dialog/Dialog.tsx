@@ -6,10 +6,11 @@ import {
   useDismiss,
   useFloating,
   useInteractions,
+  useRole,
 } from '@floating-ui/react'
+import { XMarkIcon } from '@heroicons/react/24/solid'
 import { useState } from 'react'
 import Button from '../Button'
-import { XMarkIcon } from '@heroicons/react/24/solid'
 
 interface Props {
   idPortal?: string
@@ -28,25 +29,22 @@ export default function Dialog({ idPortal = 'id-dialog', heading, content, child
   })
 
   const click = useClick(context)
-  // const role = useRole(context);
+  const role = useRole(context)
   const dismiss = useDismiss(context, { outsidePressEvent: 'mousedown' })
 
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    click,
-    //   role,
-    dismiss,
-  ])
+  const { getReferenceProps, getFloatingProps } = useInteractions([click, role, dismiss])
 
   return (
     <>
       <div ref={refs.setReference} {...getReferenceProps()}>
         {children}
       </div>
-      <FloatingPortal id={idPortal}>
+      <FloatingPortal id={idPortal} root={document.body}>
         {isOpen && (
-          <FloatingOverlay className='z-50 grid place-items-center bg-black/50' lockScroll>
+          <FloatingOverlay className='z-50 grid place-items-center bg-black/50'>
             <FloatingFocusManager context={context}>
               <div className='max-w-[300px] rounded-lg bg-white shadow' ref={refs.setFloating} {...getFloatingProps()}>
+                {/* Heading */}
                 <div className='flex items-start justify-between rounded-t border-b p-4'>
                   <h3 className='text-xl font-semibold text-gray-900'>{heading ?? 'Heading'}</h3>
                   <Button
@@ -57,9 +55,11 @@ export default function Dialog({ idPortal = 'id-dialog', heading, content, child
                     onClick={() => setIsOpen(false)}
                   />
                 </div>
+                {/* Content */}
                 <div className='space-y-6 p-6'>
                   <p className='text-base leading-relaxed text-gray-500 '>{content ?? 'Content'}</p>
                 </div>
+                {/* Buttons */}
                 <div className='flex items-center justify-between rounded-b border-t border-gray-200 p-6'>
                   <Button
                     size='sm'

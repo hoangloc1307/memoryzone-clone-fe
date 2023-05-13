@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { memo, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { twMerge } from 'tailwind-merge'
 import Popover from '../Popover'
 import { ChevronUpDownIcon } from '@heroicons/react/24/outline'
@@ -15,7 +15,7 @@ interface Props {
   errorMessage?: string
   classNameWrapper?: string
   classNameInput?: string
-  onChange?: (value: string | number) => void
+  onChange?: (value: { [key: string]: any }) => void
   render?: (options: {}[], onClick: (item: {}) => () => void) => React.ReactNode
 }
 
@@ -36,10 +36,14 @@ const InputSelect = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const [localValue, setLocalValue] = useState<{ [key: string]: any }>(value ?? {})
 
+  useEffect(() => {
+    setLocalValue(value || {})
+  }, [value])
+
   const handleItemClick = (item: { [key: string]: any }) => () => {
     setLocalValue(item)
     inputRef.current?.click()
-    onChange && onChange(item[propertyValue])
+    onChange && onChange(item)
   }
 
   return (

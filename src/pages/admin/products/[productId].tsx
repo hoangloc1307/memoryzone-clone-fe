@@ -31,7 +31,7 @@ type BasicInfoFormType = Pick<
 > & { categories: number[] }
 
 type SpecificationFormType = {
-  typeId: number
+  type: ProductType
   attributes: Product['attributes']
 }
 
@@ -49,9 +49,7 @@ const AdminProductDetailPage = () => {
   const specificationForm = useForm<SpecificationFormType>()
   const imageForm = useForm<ImageFormType>()
   const vendorInputValue = basicInfoForm.watch('vendor')
-  const typeIdInputValue = specificationForm.watch('typeId')
-
-  console.log(productId)
+  const typeInputValue = specificationForm.watch('type')
 
   // Get product detail
   const productQuery = useQuery({
@@ -80,11 +78,11 @@ const AdminProductDetailPage = () => {
   const types = typesQuery.data?.data.data
 
   // Get product attribute
-  const typeid = product?.type.id ? product.type.id : typeIdInputValue
+  const typeid = product?.type.id ? product.type.id : typeInputValue?.id
   const attributesQuery = useQuery({
     queryKey: ['attributes', typeid],
     queryFn: () => http.get<SuccessResponse<Attribute[]>>(`/products/attributes/${typeid}`),
-    enabled: (!!product?.type.id || !!typeIdInputValue) && currentTab === 'Specification',
+    enabled: !!typeid && currentTab === 'Specification',
     staleTime: Infinity,
   })
   const attributes = attributesQuery.data?.data.data
@@ -206,7 +204,7 @@ const AdminProductDetailPage = () => {
 
   // Submit specifications form
   const handleSpecificationFormSubmit: SubmitHandler<SpecificationFormType> = (data) => {
-    const payload = omitBy(data, isNil)
+    const payload = omitBy({ typeId: data.type.id, attributes: data.attributes }, isNil)
 
     if (Object.keys(payload).length > 0) {
       nProgress.start()
@@ -441,11 +439,11 @@ const AdminProductDetailPage = () => {
                 {/* Product type */}
                 <Controller
                   control={specificationForm.control}
-                  name='typeId'
+                  name='type'
                   render={({ field }) => (
                     <InputSelect
                       label='Loại sản phẩm'
-                      value={{ id: product.type?.id, name: product.type?.name }}
+                      value={field.value ?? product.type}
                       options={types}
                       propertyDisplay='name'
                       propertyValue='id'
